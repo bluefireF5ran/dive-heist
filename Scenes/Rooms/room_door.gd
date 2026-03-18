@@ -9,7 +9,6 @@ extends Area2D
 var _player_in_range := false
 var _player_ref: CharacterBody2D = null
 var _used := false
-var _door_pressed := false
 
 
 func _ready() -> void:
@@ -22,11 +21,8 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	if _used or not _player_in_range or _player_ref == null:
 		return
-	# Edge-triggered Down/S press while on floor
-	var down_held := Input.is_key_pressed(KEY_S) or Input.is_key_pressed(KEY_DOWN)
-	if _player_ref.is_on_floor() and down_held and not _door_pressed:
+	if _player_ref.is_on_floor() and Input.is_action_just_pressed("interact"):
 		_teleport()
-	_door_pressed = down_held
 
 
 func _teleport() -> void:

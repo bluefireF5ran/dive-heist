@@ -24,7 +24,6 @@ func _ready() -> void:
 
 var _player_in_range := false
 var _player_ref: Node2D = null
-var _buy_pressed := false
 
 
 func _update_price_label() -> void:
@@ -35,12 +34,8 @@ func _update_price_label() -> void:
 func _process(_delta: float) -> void:
 	if _sold or not _player_in_range:
 		return
-	# Buy with Down arrow or S key while on the floor (edge-triggered)
-	var down_held := Input.is_key_pressed(KEY_S) or Input.is_key_pressed(KEY_DOWN)
-	if _player_ref and _player_ref.is_on_floor():
-		if down_held and not _buy_pressed:
-			_try_purchase()
-	_buy_pressed = down_held
+	if _player_ref and _player_ref.is_on_floor() and Input.is_action_just_pressed("interact"):
+		_try_purchase()
 
 
 func _try_purchase() -> void:

@@ -31,7 +31,7 @@
 | 4 | Banco | 3 | 📋 Backlog |
 | 5 | Escape del Banco | 3 | 📋 Backlog |
 
-Cada nivel = 600m de profundidad procedureal. Cada 600m aparece una **sala de descanso**.
+Cada nivel = 600m de profundidad procedural. Cada 600m aparece una **sala de descanso**.
 
 ### 2.2 Ciclo de juego (game loop)
 
@@ -212,7 +212,7 @@ Scenes/
 | move_left | A, ← |
 | move_right | D, → |
 | jump | Space, W, ↑ |
-| (interactuar) | S, ↓ (hardcodeado en room_door y shop_item) |
+| interact | S, ↓ |
 
 ---
 
@@ -259,7 +259,7 @@ Scenes/
 | US-12 | Feedback visual de compra (particulas) | Efecto al comprar, texto "SOLD" |
 | US-13 | Sistema de armas visual | Sprite de arma cambia, usando gun sprites pack |
 | US-14 | Partículas de muerte de enemigos | Explosión pixel, sprites del pack explosiones |
-| US-15 | Input "interact" como acción formal | Registrar en project.godot, no hardcodear S/Down |
+| US-15 | Input "interact" como acción formal | ~~Registrar en project.godot, no hardcodear S/Down~~ ✅ Done |
 
 ### 🟢 Could Have (Sprint 3 — Content)
 
@@ -297,8 +297,8 @@ Una historia de usuario está **Done** cuando:
 
 | Problema | Impacto | Prioridad |
 |----------|---------|-----------|
-| Input "interact" hardcodeado (KEY_S/KEY_DOWN) | Dificulta remapeo | Media |
-| `character_body_2d.tscn` en raíz sin uso | Archivo huérfano | Baja |
+| ~~Input "interact" hardcodeado~~ | ~~Dificulta remapeo~~ | ✅ Resuelto |
+| ~~`character_body_2d.tscn` en raíz sin uso~~ | ~~Archivo huérfano~~ | ✅ Resuelto |
 | weapon_pickup no cambia arma realmente | Feature incompleta | Alta |
 | Shop items sin sprite visual del ítem | UX pobre | Media |
 | Combo reward text usa Label default | Inconsistencia visual | Baja |
