@@ -1,0 +1,68 @@
+[gd_scene load_steps=10 format=3]
+
+[ext_resource type="Script" path="res://Scenes/Collectibles/money.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://Sprites/Scraper/Cyberpunk_Assets/Tilesets/Prison/4 Animated objects/Money.png" id="2_sheet"]
+
+[sub_resource type="AtlasTexture" id="frame_0"]
+atlas = ExtResource("2_sheet")
+region = Rect2(0, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="frame_1"]
+atlas = ExtResource("2_sheet")
+region = Rect2(24, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="frame_2"]
+atlas = ExtResource("2_sheet")
+region = Rect2(48, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="frame_3"]
+atlas = ExtResource("2_sheet")
+region = Rect2(72, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="frame_4"]
+atlas = ExtResource("2_sheet")
+region = Rect2(96, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="frame_5"]
+atlas = ExtResource("2_sheet")
+region = Rect2(120, 0, 24, 24)
+
+[sub_resource type="SpriteFrames" id="money_frames"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("frame_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("frame_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("frame_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("frame_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("frame_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("frame_5")
+}],
+"loop": true,
+"name": &"Spin",
+"speed": 8.0
+}]
+
+[sub_resource type="CircleShape2D" id="pickup_shape"]
+radius = 10.0
+
+[node name="Money" type="Area2D"]
+script = ExtResource("1_script")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("money_frames")
+animation = &"Spin"
+autoplay = "Spin"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("pickup_shape")

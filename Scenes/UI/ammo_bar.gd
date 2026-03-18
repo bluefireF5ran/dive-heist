@@ -1,0 +1,154 @@
+extends Control
+
+# Draws ammo bar (right), HP pips (top-left), depth counter, combo, game over.
+
+const BAR_WIDTH := 8.0
+const BAR_MARGIN_RIGHT := 4.0
+const BAR_MARGIN_TOP := 40.0
+const BAR_MARGIN_BOTTOM := 40.0
+const SEGMENT_GAP := 2.0
+const FILL_COLOR := Color(0.9, 0.8, 0.2, 1.0)
+const EMPTY_COLOR := Color(0.2, 0.2, 0.25, 0.5)
+const BORDER_COLOR := Color(0.6, 0.55, 0.25, 0.8)
+
+# HP display
+const HP_MARGIN_LEFT := 6.0
+const HP_MARGIN_TOP := 6.0
+const HP_SIZE := 8.0
+const HP_GAP := 3.0
+const HP_FILL := Color(0.85, 0.2, 0.2, 1.0)
+const HP_EMPTY := Color(0.3, 0.15, 0.15, 0.5)
+const HP_BORDER := Color(0.6, 0.15, 0.15, 0.8)
+
+var _font: Font
+
+
+func _ready() -> void:
+	_font = load("res://Sprites/Scraper/Cyberpunk_Assets/Game_UI/UI_Main/10 Font/CyberpunkCraftpixPixel.otf")
+
+
+func _draw() -> void:
+	var hud: CanvasLayer = get_parent()
+	_draw_ammo_bar(hud.max_ammo, hud.current_ammo)
+	_draw_hp(hud.max_hp, hud.current_hp)
+	_draw_money(hud.money)
+	_draw_depth(hud.depth)
+	_draw_combo(hud.combo)
+	if hud.reward_text != "":
+		_draw_reward(hud.reward_text, hud.reward_timer)
+	if hud.game_over:
+		_draw_game_over()
+
+
+func _draw_ammo_bar(max_ammo: int, current_ammo: int) -> void:
+	var viewport_size := get_viewport_rect().size
+	var bar_x := viewport_size.x - BAR_WIDTH - BAR_MARGIN_RIGHT
+	var bar_top := BAR_MARGIN_TOP
+	var bar_bottom := viewport_size.y - BAR_MARGIN_BOTTOM
+	var total_height := bar_bottom - bar_top
+	var segment_height := (total_height - SEGMENT_GAP * (max_ammo - 1)) / max_ammo
+
+	for i in range(max_ammo):
+		var seg_y := bar_bottom - (i + 1) * segment_height - i * SEGMENT_GAP
+		var rect := Rect2(bar_x, seg_y, BAR_WIDTH, segment_height)
+
+		if i < current_ammo:
+			draw_rect(rect, FILL_COLOR)
+		else:
+			draw_rect(rect, EMPTY_COLOR)
+
+		draw_rect(rect, BORDER_COLOR, false, 1.0)
+
+
+func _draw_hp(max_hp: int, current_hp: int) -> void:
+	for i in range(max_hp):
+		var x := HP_MARGIN_LEFT + i * (HP_SIZE + HP_GAP)
+		var rect := Rect2(x, HP_MARGIN_TOP, HP_SIZE, HP_SIZE)
+
+		if i < current_hp:
+			draw_rect(rect, HP_FILL)
+		else:
+			draw_rect(rect, HP_EMPTY)
+
+		draw_rect(rect, HP_BORDER, false, 1.0)
+
+
+func _draw_money(amount: int) -> void:
+	var text := "$" + str(amount)
+	var color := Color(0.9, 0.8, 0.2, 1.0)  # Gold, matches ammo bar
+	var font_size := 10
+	# Below HP pips, left-aligned
+	var x := HP_MARGIN_LEFT
+	var y := HP_MARGIN_TOP + HP_SIZE + 12.0
+	draw_string(_font, Vector2(x + 1, y + 1), text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, Color(0, 0, 0, 0.7))
+	draw_string(_font, Vector2(x, y), text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, color)
+
+
+func _draw_depth(depth: int) -> void:
+	var text := str(depth) + "m"
+	var viewport_size := get_viewport_rect().size
+	var text_size := _font.get_string_size(text, HORIZONTAL_ALIGNMENT_CENTER, -1, 10)
+	var x := (viewport_size.x - text_size.x) / 2.0
+	draw_string(_font, Vector2(x, 18), text, HORIZONTAL_ALIGNMENT_CENTER, -1, 10, Color.WHITE)
+
+
+func _draw_combo(combo_val: int) -> void:
+	if combo_val <= 0:
+		return
+	var text := "x" + str(combo_val)
+	var viewport_size := get_viewport_rect().size
+	# Color escalates with combo tier
+	var color: Color
+	var font_size: int
+	if combo_val >= 25:
+		color = Color(1, 0.2, 0.9, 1)  # Hot pink - jackpot tier
+		font_size = 18
+	elif combo_val >= 15:
+		color = Color(1, 0.3, 0.15, 1)  # Red-orange
+		font_size = 16
+	elif combo_val >= 8:
+		color = Color(1, 0.6, 0.1, 1)  # Orange
+		font_size = 15
+	elif combo_val >= 3:
+		color = Color(1, 0.9, 0.3, 1)  # Yellow
+		font_size = 14
+	else:
+		color = Color(0.8, 0.8, 0.8, 1)  # Grey
+		font_size = 12
+	var text_size := _font.get_string_size(text, HORIZONTAL_ALIGNMENT_CENTER, -1, font_size)
+	var x := (viewport_size.x - text_size.x) / 2.0
+	# Outline for readability
+	draw_string(_font, Vector2(x + 1, 39), text, HORIZONTAL_ALIGNMENT_CENTER, -1, font_size, Color.BLACK)
+	draw_string(_font, Vector2(x - 1, 39), text, HORIZONTAL_ALIGNMENT_CENTER, -1, font_size, Color.BLACK)
+	draw_string(_font, Vector2(x, 40), text, HORIZONTAL_ALIGNMENT_CENTER, -1, font_size, Color.BLACK)
+	draw_string(_font, Vector2(x, 38), text, HORIZONTAL_ALIGNMENT_CENTER, -1, font_size, Color.BLACK)
+	draw_string(_font, Vector2(x, 39), text, HORIZONTAL_ALIGNMENT_CENTER, -1, font_size, color)
+
+
+func _draw_reward(text: String, timer: float) -> void:
+	var viewport_size := get_viewport_rect().size
+	var alpha := clampf(timer / 0.5, 0.0, 1.0)  # Fade out in last 0.5s
+	var color := Color(1, 0.95, 0.4, alpha)
+	var font_size := 12
+	var text_size := _font.get_string_size(text, HORIZONTAL_ALIGNMENT_CENTER, -1, font_size)
+	var x := (viewport_size.x - text_size.x) / 2.0
+	var y := 56.0 - (1.0 - alpha) * 8.0  # Float upward as it fades
+	draw_string(_font, Vector2(x + 1, y + 1), text, HORIZONTAL_ALIGNMENT_CENTER, -1, font_size, Color(0, 0, 0, alpha))
+	draw_string(_font, Vector2(x, y), text, HORIZONTAL_ALIGNMENT_CENTER, -1, font_size, color)
+
+
+func _draw_game_over() -> void:
+	var viewport_size := get_viewport_rect().size
+	# Dim overlay
+	draw_rect(Rect2(Vector2.ZERO, viewport_size), Color(0, 0, 0, 0.6))
+	# GAME OVER text
+	var go_text := "GAME OVER"
+	var go_size := _font.get_string_size(go_text, HORIZONTAL_ALIGNMENT_CENTER, -1, 16)
+	var go_x := (viewport_size.x - go_size.x) / 2.0
+	var go_y := viewport_size.y / 2.0
+	draw_string(_font, Vector2(go_x, go_y), go_text, HORIZONTAL_ALIGNMENT_CENTER, -1, 16, Color(0.9, 0.2, 0.2))
+	# Restart hint
+	var hint := "JUMP to restart"
+	var hint_size := _font.get_string_size(hint, HORIZONTAL_ALIGNMENT_CENTER, -1, 8)
+	var hint_x := (viewport_size.x - hint_size.x) / 2.0
+	draw_string(_font, Vector2(hint_x, go_y + 20), hint, HORIZONTAL_ALIGNMENT_CENTER, -1, 8, Color(0.7, 0.7, 0.7))

@@ -1,0 +1,26 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://Scenes/Rooms/shop_item.gd" id="1_script"]
+
+[sub_resource type="CircleShape2D" id="shop_shape"]
+radius = 14.0
+
+[sub_resource type="LabelSettings" id="price_settings"]
+font_size = 8
+
+[node name="ShopItem" type="Area2D"]
+script = ExtResource("1_script")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("shop_shape")
+
+[node name="PriceLabel" type="Label" parent="."]
+offset_left = -20.0
+offset_top = 10.0
+offset_right = 20.0
+offset_bottom = 22.0
+horizontal_alignment = 1
+vertical_alignment = 1
+label_settings = SubResource("price_settings")

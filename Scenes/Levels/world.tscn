@@ -1,0 +1,85 @@
+[gd_scene format=3 uid="uid://dbu75htx4yunk"]
+
+[ext_resource type="PackedScene" uid="uid://doirsokkjusk6" path="res://Scenes/Player/player.tscn" id="1_player"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/ammo_hud.tscn" id="2_hud"]
+[ext_resource type="Script" path="res://Scenes/Levels/world.gd" id="3_world_script"]
+[ext_resource type="PackedScene" path="res://Scenes/Enemies/prisoner.tscn" id="4_prisoner"]
+[ext_resource type="PackedScene" path="res://Scenes/Enemies/warden.tscn" id="5_warden"]
+[ext_resource type="Script" path="res://Scenes/Levels/chunk_generator.gd" id="6_chunkgen"]
+[ext_resource type="PackedScene" path="res://Scenes/Enemies/drone.tscn" id="7_drone"]
+[ext_resource type="Texture2D" path="res://Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/1 Tiles/Tile_10.png" id="8_walltile"]
+[ext_resource type="Texture2D" path="res://Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/1 Tiles/Tile_02.png" id="9_plattile"]
+[ext_resource type="Texture2D" path="res://Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/1 Tiles/Tile_11.png" id="10_walledge_r"]
+[ext_resource type="Texture2D" path="res://Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/1 Tiles/Tile_09.png" id="11_walledge_l"]
+[ext_resource type="Texture2D" path="res://Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/1 Tiles/Tile_50.png" id="12_bg50"]
+[ext_resource type="Texture2D" path="res://Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/1 Tiles/Tile_51.png" id="13_bg51"]
+[ext_resource type="Texture2D" path="res://Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/1 Tiles/Tile_52.png" id="14_bg52"]
+[ext_resource type="Texture2D" path="res://Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/1 Tiles/Tile_53.png" id="15_bg53"]
+[ext_resource type="Texture2D" path="res://Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/1 Tiles/Tile_54.png" id="16_bg54"]
+[ext_resource type="Texture2D" path="res://Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/1 Tiles/Tile_55.png" id="17_bg55"]
+[ext_resource type="Texture2D" path="res://Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/1 Tiles/Tile_56.png" id="18_bg56"]
+[ext_resource type="PackedScene" path="res://Scenes/Enemies/spider.tscn" id="19_spider"]
+[ext_resource type="PackedScene" path="res://Scenes/Enemies/floor_drone.tscn" id="20_fdrone"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wall"]
+size = Vector2(32, 20000)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_start_plat"]
+size = Vector2(120, 16)
+
+[node name="World" type="Node2D" unique_id=1520882836]
+script = ExtResource("3_world_script")
+
+[node name="Player" parent="." unique_id=469304132 instance=ExtResource("1_player")]
+position = Vector2(128, 180)
+
+[node name="StartPlatform" type="StaticBody2D" parent="."]
+position = Vector2(128, 200)
+
+[node name="Visual" type="Sprite2D" parent="StartPlatform"]
+texture = ExtResource("9_plattile")
+texture_repeat = 2
+region_enabled = true
+region_rect = Rect2(0, 0, 120, 16)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StartPlatform"]
+shape = SubResource("RectangleShape2D_start_plat")
+
+[node name="LeftWall" type="StaticBody2D" parent="." unique_id=333087155]
+position = Vector2(-16, 0)
+
+[node name="LeftWallVisual" type="Sprite2D" parent="LeftWall" unique_id=1449512886]
+texture = ExtResource("10_walledge_r")
+texture_repeat = 2
+region_enabled = true
+region_rect = Rect2(0, 0, 32, 960)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="LeftWall" unique_id=581915889]
+shape = SubResource("RectangleShape2D_wall")
+
+[node name="RightWall" type="StaticBody2D" parent="." unique_id=1012069765]
+position = Vector2(272, 0)
+
+[node name="RightWallVisual" type="Sprite2D" parent="RightWall" unique_id=1288304836]
+texture = ExtResource("11_walledge_l")
+texture_repeat = 2
+region_enabled = true
+region_rect = Rect2(0, 0, 32, 960)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RightWall" unique_id=637329195]
+shape = SubResource("RectangleShape2D_wall")
+
+[node name="ChunkGenerator" type="Node2D" parent="."]
+script = ExtResource("6_chunkgen")
+prisoner_scene = ExtResource("4_prisoner")
+warden_scene = ExtResource("5_warden")
+drone_scene = ExtResource("7_drone")
+spider_scene = ExtResource("19_spider")
+floor_drone_scene = ExtResource("20_fdrone")
+platform_tile = ExtResource("9_plattile")
+bg_tiles = Array[Texture2D]([ExtResource("12_bg50"), ExtResource("13_bg51"), ExtResource("14_bg52"), ExtResource("15_bg53"), ExtResource("16_bg54"), ExtResource("17_bg55"), ExtResource("18_bg56")])
+
+[node name="AmmoHUD" parent="." instance=ExtResource("2_hud")]
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(128, 180)

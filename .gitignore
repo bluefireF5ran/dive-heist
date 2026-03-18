@@ -1,0 +1,105 @@
+# Godot 4+ specific ignores
+.godot/
+/android/
+
+# ============================================================
+# Sprites: ignore all unused assets, whitelist only Phase 1
+# Strategy: at each directory level, ignore all (*) then un-ignore (!) used paths
+# ============================================================
+
+# --- Level 0: Sprites/ ---
+Sprites/*
+!Sprites/Craftpix/
+!Sprites/Scraper/
+
+# --- Craftpix Level 1 ---
+Sprites/Craftpix/*
+!Sprites/Craftpix/1.Personajes/
+!Sprites/Craftpix/2. Escenarios/
+
+# --- Craftpix > 1.Personajes ---
+Sprites/Craftpix/1.Personajes/*
+!Sprites/Craftpix/1.Personajes/Cyberpunk Sprites Pixel Art/
+Sprites/Craftpix/1.Personajes/Cyberpunk Sprites Pixel Art/*
+!Sprites/Craftpix/1.Personajes/Cyberpunk Sprites Pixel Art/2 Punk/
+
+# --- Craftpix > 2. Escenarios ---
+Sprites/Craftpix/2. Escenarios/*
+!Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/
+Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/*
+!Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/1 Tiles/
+!Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/3 Objects/
+Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/3 Objects/*
+!Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/3 Objects/3 Stuff/
+
+# --- Scraper Level 1 ---
+Sprites/Scraper/*
+!Sprites/Scraper/Cyberpunk_Assets/
+Sprites/Scraper/Cyberpunk_Assets/*
+!Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/
+!Sprites/Scraper/Cyberpunk_Assets/Tilesets/
+!Sprites/Scraper/Cyberpunk_Assets/Game_UI/
+
+# --- Scraper > Characters_Sprites ---
+Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/*
+!Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/Weapons_Guns_1/
+!Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/NPCs_Police_1/
+!Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/Drones_1/
+!Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/NPCs_Prisoners/
+!Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/NPCs_Prison_Wardens/
+!Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/Enemies_Power_Station/
+
+# Weapons_Guns_1: keep all subfolders (Characters, Guns, Hands, Shoot_effects, Bullets)
+Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/Weapons_Guns_1/*
+!Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/Weapons_Guns_1/1 Characters/
+!Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/Weapons_Guns_1/2 Guns/
+!Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/Weapons_Guns_1/3 Hands/
+!Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/Weapons_Guns_1/4 Shoot_effects/
+!Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/Weapons_Guns_1/5 Bullets/
+# Only keep 2 Punk character variant
+Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/Weapons_Guns_1/1 Characters/*
+!Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/Weapons_Guns_1/1 Characters/2 Punk/
+# Only keep 2 Punk hands variant
+Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/Weapons_Guns_1/3 Hands/*
+!Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/Weapons_Guns_1/3 Hands/2 Punk/
+
+# NPCs_Police_1: only 5 Drone
+Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/NPCs_Police_1/*
+!Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/NPCs_Police_1/5 Drone/
+
+# Drones_1: only 4_Drone_Floor
+Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/Drones_1/*
+!Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/Drones_1/4_Drone_Floor/
+
+# NPCs_Prisoners: only variant 1
+Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/NPCs_Prisoners/*
+!Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/NPCs_Prisoners/1/
+
+# NPCs_Prison_Wardens: only variant 1
+Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/NPCs_Prison_Wardens/*
+!Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/NPCs_Prison_Wardens/1/
+
+# Enemies_Power_Station: only variant 6 (Spider)
+Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/Enemies_Power_Station/*
+!Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/Enemies_Power_Station/6/
+
+# --- Scraper > Tilesets ---
+Sprites/Scraper/Cyberpunk_Assets/Tilesets/*
+!Sprites/Scraper/Cyberpunk_Assets/Tilesets/Prison/
+!Sprites/Scraper/Cyberpunk_Assets/Tilesets/Industrial/
+# Prison: only Tiles + Animated objects
+Sprites/Scraper/Cyberpunk_Assets/Tilesets/Prison/*
+!Sprites/Scraper/Cyberpunk_Assets/Tilesets/Prison/1 Tiles/
+!Sprites/Scraper/Cyberpunk_Assets/Tilesets/Prison/4 Animated objects/
+# Industrial: only Animated objects (Chest)
+Sprites/Scraper/Cyberpunk_Assets/Tilesets/Industrial/*
+!Sprites/Scraper/Cyberpunk_Assets/Tilesets/Industrial/4 Animated objects/
+
+# --- Scraper > Game_UI (only Font) ---
+Sprites/Scraper/Cyberpunk_Assets/Game_UI/*
+!Sprites/Scraper/Cyberpunk_Assets/Game_UI/UI_Main/
+Sprites/Scraper/Cyberpunk_Assets/Game_UI/UI_Main/*
+!Sprites/Scraper/Cyberpunk_Assets/Game_UI/UI_Main/10 Font/
+Sprites/Scraper/Cyberpunk_Assets/Game_UI/UI_Main/10 Font/*
+!Sprites/Scraper/Cyberpunk_Assets/Game_UI/UI_Main/10 Font/CyberpunkCraftpixPixel.otf
+!Sprites/Scraper/Cyberpunk_Assets/Game_UI/UI_Main/10 Font/CyberpunkCraftpixPixel.otf.import
