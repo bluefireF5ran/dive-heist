@@ -1,0 +1,598 @@
+fileFormatVersion: 2
+guid: f61c498b22814d5449443d248ee69801
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -2780291883921560871
+    second: Robot_2_L7_0
+  - first:
+      213: -8694748952016024248
+    second: Robot_2_L7_1
+  - first:
+      213: -7500778807626556378
+    second: Robot_2_L7_2
+  - first:
+      213: -6038469704545926907
+    second: Robot_2_L7_3
+  - first:
+      213: 4775212326119171976
+    second: Robot_2_L7_4
+  - first:
+      213: 7829624488975157411
+    second: Robot_2_L7_5
+  - first:
+      213: 7440978712022411894
+    second: Robot_2_L7_6
+  - first:
+      213: 8757077373475327174
+    second: Robot_2_L7_7
+  - first:
+      213: 5992330672071781248
+    second: Robot_2_L7_8
+  - first:
+      213: 2287553950342269106
+    second: Robot_2_L7_9
+  - first:
+      213: -6348361396967021144
+    second: Robot_2_L7_10
+  - first:
+      213: 741044344090026599
+    second: Robot_2_L7_11
+  - first:
+      213: 8915578658278851390
+    second: Robot_2_L7_12
+  - first:
+      213: 528281060632952199
+    second: Robot_2_L7_13
+  - first:
+      213: -5387526730217355821
+    second: Robot_2_L7_14
+  - first:
+      213: 3737851711156833537
+    second: Robot_2_L7_15
+  - first:
+      213: 3187215551387300430
+    second: Robot_2_L7_16
+  - first:
+      213: 1456767192107473551
+    second: Robot_2_L7_17
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 7
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 32
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Robot_2_L7_0
+      rect:
+        serializedVersion: 2
+        x: 17
+        y: 0
+        width: 13
+        height: 324
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9da24fe134b6a69d0800000000000000
+      internalID: -2780291883921560871
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Robot_2_L7_1
+      rect:
+        serializedVersion: 2
+        x: 42
+        y: 0
+        width: 13
+        height: 324
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 84d82e715eb065780800000000000000
+      internalID: -8694748952016024248
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Robot_2_L7_2
+      rect:
+        serializedVersion: 2
+        x: 99
+        y: 0
+        width: 24
+        height: 324
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 62c14a05a61e7e790800000000000000
+      internalID: -7500778807626556378
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Robot_2_L7_3
+      rect:
+        serializedVersion: 2
+        x: 135
+        y: 0
+        width: 97
+        height: 324
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 50105910ccb033ca0800000000000000
+      internalID: -6038469704545926907
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Robot_2_L7_4
+      rect:
+        serializedVersion: 2
+        x: 459
+        y: 0
+        width: 23
+        height: 324
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 88766697f46f44240800000000000000
+      internalID: 4775212326119171976
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Robot_2_L7_5
+      rect:
+        serializedVersion: 2
+        x: 496
+        y: 0
+        width: 24
+        height: 324
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3a840165df968ac60800000000000000
+      internalID: 7829624488975157411
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Robot_2_L7_6
+      rect:
+        serializedVersion: 2
+        x: 593
+        y: 0
+        width: 13
+        height: 324
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 67ae65fe6baa34760800000000000000
+      internalID: 7440978712022411894
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Robot_2_L7_7
+      rect:
+        serializedVersion: 2
+        x: 618
+        y: 0
+        width: 13
+        height: 324
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6cc8b946973678970800000000000000
+      internalID: 8757077373475327174
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Robot_2_L7_8
+      rect:
+        serializedVersion: 2
+        x: 675
+        y: 0
+        width: 24
+        height: 324
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 08b248d5ff8092350800000000000000
+      internalID: 5992330672071781248
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Robot_2_L7_9
+      rect:
+        serializedVersion: 2
+        x: 711
+        y: 0
+        width: 97
+        height: 324
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2b841b6a2360fbf10800000000000000
+      internalID: 2287553950342269106
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Robot_2_L7_10
+      rect:
+        serializedVersion: 2
+        x: 1035
+        y: 0
+        width: 23
+        height: 324
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8a56afbc1f616e7a0800000000000000
+      internalID: -6348361396967021144
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Robot_2_L7_11
+      rect:
+        serializedVersion: 2
+        x: 1072
+        y: 0
+        width: 24
+        height: 324
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7626c4c97e7b84a00800000000000000
+      internalID: 741044344090026599
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Robot_2_L7_12
+      rect:
+        serializedVersion: 2
+        x: 1169
+        y: 0
+        width: 13
+        height: 324
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e33c3cd8d8f7abb70800000000000000
+      internalID: 8915578658278851390
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Robot_2_L7_13
+      rect:
+        serializedVersion: 2
+        x: 1194
+        y: 0
+        width: 13
+        height: 324
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 78df79063d4d45700800000000000000
+      internalID: 528281060632952199
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Robot_2_L7_14
+      rect:
+        serializedVersion: 2
+        x: 1251
+        y: 0
+        width: 24
+        height: 324
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3d50973bbf8ab35b0800000000000000
+      internalID: -5387526730217355821
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Robot_2_L7_15
+      rect:
+        serializedVersion: 2
+        x: 1287
+        y: 0
+        width: 97
+        height: 324
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 10dc69ac3548fd330800000000000000
+      internalID: 3737851711156833537
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Robot_2_L7_16
+      rect:
+        serializedVersion: 2
+        x: 1611
+        y: 0
+        width: 23
+        height: 324
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e427a0b48a34b3c20800000000000000
+      internalID: 3187215551387300430
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Robot_2_L7_17
+      rect:
+        serializedVersion: 2
+        x: 1648
+        y: 0
+        width: 24
+        height: 324
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f8a520efa0a773410800000000000000
+      internalID: 1456767192107473551
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Robot_2_L7_0: -2780291883921560871
+      Robot_2_L7_1: -8694748952016024248
+      Robot_2_L7_10: -6348361396967021144
+      Robot_2_L7_11: 741044344090026599
+      Robot_2_L7_12: 8915578658278851390
+      Robot_2_L7_13: 528281060632952199
+      Robot_2_L7_14: -5387526730217355821
+      Robot_2_L7_15: 3737851711156833537
+      Robot_2_L7_16: 3187215551387300430
+      Robot_2_L7_17: 1456767192107473551
+      Robot_2_L7_2: -7500778807626556378
+      Robot_2_L7_3: -6038469704545926907
+      Robot_2_L7_4: 4775212326119171976
+      Robot_2_L7_5: 7829624488975157411
+      Robot_2_L7_6: 7440978712022411894
+      Robot_2_L7_7: 8757077373475327174
+      Robot_2_L7_8: 5992330672071781248
+      Robot_2_L7_9: 2287553950342269106
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

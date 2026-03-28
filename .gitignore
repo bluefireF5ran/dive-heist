@@ -16,12 +16,18 @@ Sprites/*
 Sprites/Craftpix/*
 !Sprites/Craftpix/1.Personajes/
 !Sprites/Craftpix/2. Escenarios/
+!Sprites/Craftpix/3. Backgrounds/
+!Sprites/Craftpix/Free Pixel Art Explosions/
 
 # --- Craftpix > 1.Personajes ---
 Sprites/Craftpix/1.Personajes/*
 !Sprites/Craftpix/1.Personajes/Cyberpunk Sprites Pixel Art/
+!Sprites/Craftpix/1.Personajes/trader-cyberpunk-pixel-art-pack/
 Sprites/Craftpix/1.Personajes/Cyberpunk Sprites Pixel Art/*
 !Sprites/Craftpix/1.Personajes/Cyberpunk Sprites Pixel Art/2 Punk/
+# Trader NPC: only Arms dealer (for shop NPC)
+Sprites/Craftpix/1.Personajes/trader-cyberpunk-pixel-art-pack/*
+!Sprites/Craftpix/1.Personajes/trader-cyberpunk-pixel-art-pack/3 Arms dealer/
 
 # --- Craftpix > 2. Escenarios ---
 Sprites/Craftpix/2. Escenarios/*
