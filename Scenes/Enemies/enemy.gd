@@ -4,6 +4,7 @@ signal died
 
 const GRAVITY = 800.0
 const MONEY_SCENE := preload("res://Scenes/Collectibles/money.tscn")
+const DEATH_EXPLOSION := preload("res://Scenes/VFX/death_explosion.tscn")
 
 @export var speed := 40.0
 @export var hp := 2
@@ -93,6 +94,7 @@ func _die() -> void:
 		SFX.play_death_warden()
 	else:
 		SFX.play_death_prisoner()
+	_spawn_death_explosion("explosion")
 	_spawn_money(2 if is_warden else 1)
 	# Disable all collision
 	set_physics_process(false)
@@ -104,6 +106,13 @@ func _die() -> void:
 	# Remove after death animation
 	await sprite.animation_finished
 	queue_free()
+
+
+func _spawn_death_explosion(type: String) -> void:
+	var fx := DEATH_EXPLOSION.instantiate()
+	fx.explosion_type = type
+	fx.global_position = global_position
+	get_tree().current_scene.call_deferred("add_child", fx)
 
 
 func _spawn_money(value: int) -> void:

@@ -1,0 +1,72 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://Scenes/Rooms/weapon_stance.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/1 Tiles/Tile_02.png" id="2_plattile"]
+[ext_resource type="Texture2D" path="res://Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/1 Tiles/Tile_11.png" id="3_walledge_r"]
+[ext_resource type="Texture2D" path="res://Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/1 Tiles/Tile_09.png" id="4_walledge_l"]
+[ext_resource type="PackedScene" path="res://Scenes/Rooms/weapon_pickup.tscn" id="5_weapon"]
+[ext_resource type="PackedScene" path="res://Scenes/Rooms/room_door.tscn" id="6_door"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_floor"]
+size = Vector2(352, 16)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wall"]
+size = Vector2(32, 216)
+
+[node name="WeaponStance" type="Node2D"]
+script = ExtResource("1_script")
+
+[node name="Floor" type="StaticBody2D" parent="."]
+position = Vector2(160, 0)
+
+[node name="Visual" type="Sprite2D" parent="Floor"]
+texture = ExtResource("2_plattile")
+texture_repeat = 2
+region_enabled = true
+region_rect = Rect2(0, 0, 352, 16)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Floor"]
+shape = SubResource("RectangleShape2D_floor")
+
+[node name="Ceiling" type="StaticBody2D" parent="."]
+position = Vector2(160, -200)
+
+[node name="Visual" type="Sprite2D" parent="Ceiling"]
+texture = ExtResource("2_plattile")
+texture_repeat = 2
+region_enabled = true
+region_rect = Rect2(0, 0, 352, 16)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Ceiling"]
+shape = SubResource("RectangleShape2D_floor")
+
+[node name="LeftWall" type="StaticBody2D" parent="."]
+position = Vector2(-16, -100)
+
+[node name="Visual" type="Sprite2D" parent="LeftWall"]
+texture = ExtResource("3_walledge_r")
+texture_repeat = 2
+region_enabled = true
+region_rect = Rect2(0, 0, 32, 216)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="LeftWall"]
+shape = SubResource("RectangleShape2D_wall")
+
+[node name="RightWall" type="StaticBody2D" parent="."]
+position = Vector2(336, -100)
+
+[node name="Visual" type="Sprite2D" parent="RightWall"]
+texture = ExtResource("4_walledge_l")
+texture_repeat = 2
+region_enabled = true
+region_rect = Rect2(0, 0, 32, 216)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RightWall"]
+shape = SubResource("RectangleShape2D_wall")
+
+[node name="WeaponPickup" parent="." instance=ExtResource("5_weapon")]
+position = Vector2(160, -28)
+
+[node name="ExitDoor" parent="." instance=ExtResource("6_door")]
+position = Vector2(300, -24)
+is_exit = true

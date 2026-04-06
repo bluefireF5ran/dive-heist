@@ -20,6 +20,7 @@
 [ext_resource type="Texture2D" path="res://Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/1 Tiles/Tile_56.png" id="18_bg56"]
 [ext_resource type="PackedScene" path="res://Scenes/Enemies/spider.tscn" id="19_spider"]
 [ext_resource type="PackedScene" path="res://Scenes/Enemies/floor_drone.tscn" id="20_fdrone"]
+[ext_resource type="Script" path="res://Scenes/Levels/parallax_background.gd" id="21_parallax"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wall"]
 size = Vector2(32, 20000)
@@ -29,6 +30,9 @@ size = Vector2(120, 16)
 
 [node name="World" type="Node2D" unique_id=1520882836]
 script = ExtResource("3_world_script")
+
+[node name="ParallaxBackground" type="ParallaxBackground" parent="."]
+script = ExtResource("21_parallax")
 
 [node name="Player" parent="." unique_id=469304132 instance=ExtResource("1_player")]
 position = Vector2(128, 180)

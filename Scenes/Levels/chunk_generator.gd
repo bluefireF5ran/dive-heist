@@ -1,7 +1,10 @@
 extends Node2D
 ## Spawns platform chunks below the camera as the player descends.
 ## Each chunk is a horizontal slice of the well with platforms and enemies.
-## Every LEVEL_LENGTH, a rest zone appears with shop/weapon/gem rooms.
+## Every LEVEL_LENGTH, a rest zone appears. A level has 3 stances that cycle:
+##   Stance 0 → Shop (NPC + 3 items)
+##   Stance 1 → Money (breakable crate with money)
+##   Stance 2 → Weapon (weapon pickup)
 
 const WELL_LEFT := 0.0
 const WELL_RIGHT := 256.0
@@ -22,10 +25,17 @@ const LEVEL_LENGTH := 600.0      # Distance between rest zones
 @export var bg_tiles: Array[Texture2D] = []
 
 const ROOM_DOOR_SCENE := preload("res://Scenes/Rooms/room_door.tscn")
-const REST_ROOM_SCENE := preload("res://Scenes/Rooms/rest_room.tscn")
 const ROOM_PLATFORM_TEX := preload("res://Sprites/Scraper/Cyberpunk_Assets/Tilesets/Prison/1 Tiles/room_platform.png")
 
+# Stance scenes — cycled in order: shop → money → weapon → shop → …
+const STANCE_SCENES: Array[PackedScene] = [
+	preload("res://Scenes/Rooms/shop_stance.tscn"),
+	preload("res://Scenes/Rooms/money_stance.tscn"),
+	preload("res://Scenes/Rooms/weapon_stance.tscn"),
+]
+
 const TILE_SIZE := 32.0
+const LEVEL_END_TRIGGER_SCRIPT := preload("res://Scenes/Levels/level_end_trigger.gd")
 
 var _next_chunk_y: float = 0.0
 var _chunks: Array[Node2D] = []
@@ -33,6 +43,7 @@ var _rng := RandomNumberGenerator.new()
 var current_depth := 0  # Set by world.gd for difficulty scaling
 var _start_y: float = 0.0
 var _next_rest_zone_y: float = 0.0  # Y position of next rest zone
+var _stances_in_level := 0  # Counts 0,1,2 = stances; triggers end-of-level at 3
 
 
 func _ready() -> void:
@@ -201,6 +212,7 @@ func _add_floor_drone(parent: Node2D, x: float, y: float) -> void:
 # Instead of generating inline rooms, we place a special green platform
 # touching one wall with a door. The door teleports the player to a
 # side-room built off-screen, and an exit door brings them back.
+# Rooms cycle through 3 stance types: shop → money → weapon → shop → …
 
 const ROOM_OFFSET_X := 600.0  # X offset where rooms are built (off-screen right)
 
@@ -208,6 +220,13 @@ var _room_count := 0
 
 
 func _spawn_rest_zone(y: float) -> void:
+	# After 3 stances, spawn end-of-level zone instead of another stance room
+	if _stances_in_level >= STANCE_SCENES.size():
+		_stances_in_level = 0
+		_spawn_level_end_zone(y)
+		_room_count += 1
+		return
+
 	var zone := Node2D.new()
 	zone.global_position = Vector2(0, y)
 	add_child(zone)
@@ -236,8 +255,12 @@ func _spawn_rest_zone(y: float) -> void:
 	else:
 		door_x = WELL_RIGHT - 8.0
 
-	# Instantiate rest room scene off-screen
-	var room := REST_ROOM_SCENE.instantiate()
+	# Pick the stance scene for this rest zone (cycles 0→1→2)
+	var stance_scene: PackedScene = STANCE_SCENES[_stances_in_level]
+	_stances_in_level += 1
+
+	# Instantiate stance room off-screen
+	var room := stance_scene.instantiate()
 	room.position = Vector2(ROOM_OFFSET_X, 0.0)
 	zone.add_child(room)
 
@@ -245,8 +268,8 @@ func _spawn_rest_zone(y: float) -> void:
 	var return_pos := Vector2(plat_x, y - 20.0)
 	room.exit_door.target_position = return_pos
 
-	# Randomize weapon pickup type
-	room.weapon_pickup.pickup_type = 0 if _rng.randf() < 0.5 else 1
+	# Stance-specific setup
+	_configure_stance(room)
 
 	# Entrance door in the well
 	var room_enter_pos := Vector2(ROOM_OFFSET_X + 40.0, y - 16.0)
@@ -257,6 +280,59 @@ func _spawn_rest_zone(y: float) -> void:
 	zone.add_child(enter_door)
 
 	_room_count += 1
+
+
+# =============================================================================
+# LEVEL END ZONE — Full-width platform with center gap, no enemies
+# =============================================================================
+# The player falls through the gap to trigger level completion.
+
+const LEVEL_END_GAP_WIDTH := 64.0  # Width of the center gap
+const LEVEL_END_TRIGGER_HEIGHT := 200.0  # Height of the trigger area below gap
+
+
+func _spawn_level_end_zone(y: float) -> void:
+	var zone := Node2D.new()
+	zone.global_position = Vector2(0, y)
+	add_child(zone)
+	_chunks.append(zone)
+
+	# Background (same as normal chunk)
+	_fill_background(zone)
+
+	# Calculate left and right platform segments around the center gap
+	var well_center := (WELL_LEFT + WELL_RIGHT) / 2.0
+	var half_gap := LEVEL_END_GAP_WIDTH / 2.0
+
+	# Left platform: from WELL_LEFT to center - half_gap
+	var left_w := well_center - half_gap - WELL_LEFT
+	var left_cx := WELL_LEFT + left_w / 2.0
+	_add_room_platform(zone, left_cx, 0.0, left_w)
+
+	# Right platform: from center + half_gap to WELL_RIGHT
+	var right_w := WELL_RIGHT - (well_center + half_gap)
+	var right_cx := well_center + half_gap + right_w / 2.0
+	_add_room_platform(zone, right_cx, 0.0, right_w)
+
+	# Trigger area below the gap — detects player falling through
+	var trigger := Area2D.new()
+	trigger.set_script(LEVEL_END_TRIGGER_SCRIPT)
+	trigger.position = Vector2(well_center, LEVEL_END_TRIGGER_HEIGHT / 2.0 + PLATFORM_H)
+	zone.add_child(trigger)
+
+	var trigger_shape := CollisionShape2D.new()
+	var shape := RectangleShape2D.new()
+	shape.size = Vector2(LEVEL_END_GAP_WIDTH, LEVEL_END_TRIGGER_HEIGHT)
+	trigger_shape.shape = shape
+	trigger.add_child(trigger_shape)
+
+
+## Apply stance-specific configuration after the room is instantiated.
+func _configure_stance(room: Node2D) -> void:
+	# Weapon stance: randomize pickup type
+	if room.has_node("WeaponPickup"):
+		var pickup: Area2D = room.get_node("WeaponPickup")
+		pickup.pickup_type = 0 if _rng.randf() < 0.5 else 1
 
 
 func _add_room_platform(parent: Node2D, cx: float, cy: float, w: float) -> void:

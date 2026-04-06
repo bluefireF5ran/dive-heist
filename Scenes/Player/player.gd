@@ -22,6 +22,7 @@ const INVINCIBLE_TIME = 1.0  # Seconds of invincibility after taking damage
 
 @onready var sprite: AnimatedSprite2D = $Protagonista
 @onready var gun_pivot: Node2D = $GunPivot
+@onready var gun_sprite: Sprite2D = $GunPivot/GunSprite
 @onready var muzzle_point: Marker2D = $GunPivot/MuzzlePoint
 
 var _gun_pivot_base: Vector2
@@ -36,6 +37,10 @@ var _combo := 0
 var _was_on_floor := true
 var _last_kill_was_stomp := false  # For style bonus tracking
 var _money := 0
+
+# Weapon system — tracks current weapon type for future weapon swapping (US-19).
+# Available types: "pistol" (default), "blaster", "laser", "machinegun"
+var current_weapon := "pistol"
 
 # Per-animation shoulder offset adjustments relative to Idle base position.
 # Tweak these in-game if the arm doesn't sit right on a specific animation.

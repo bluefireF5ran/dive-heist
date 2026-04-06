@@ -4,6 +4,9 @@ extends Area2D
 
 signal purchased(item_id: String)
 
+const TEXT_POPUP := preload("res://Scenes/VFX/text_popup.tscn")
+const PURCHASE_PARTICLES := preload("res://Scenes/VFX/purchase_particles.tscn")
+
 @export var item_id := "heal"
 @export var price := 5
 @export var description := ""
@@ -48,7 +51,9 @@ func _try_purchase() -> void:
 		_apply_item(_player_ref)
 		purchased.emit(item_id)
 		SFX.play(SFX.combo_tier_1, -6.0)
-		# Sold visual
+		# Spawn purchase VFX
+		_spawn_purchase_vfx()
+		# Sold visual — fade out item
 		var tween := create_tween()
 		tween.tween_property(self, "modulate:a", 0.0, 0.3)
 		tween.tween_callback(queue_free)
@@ -65,6 +70,18 @@ func _apply_item(player: Node2D) -> void:
 		"armor":
 			if player.has_method("heal"):
 				player.heal(player.MAX_HP)  # Full heal
+
+
+func _spawn_purchase_vfx() -> void:
+	# Gold particle burst
+	var particles := PURCHASE_PARTICLES.instantiate()
+	particles.global_position = global_position
+	get_tree().current_scene.call_deferred("add_child", particles)
+	# Floating "SOLD!" text
+	var popup := TEXT_POPUP.instantiate()
+	popup.popup_text = "SOLD!"
+	popup.global_position = global_position - Vector2(0, 12)
+	get_tree().current_scene.call_deferred("add_child", popup)
 
 
 func _on_body_entered(body: Node2D) -> void:

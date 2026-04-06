@@ -13,9 +13,22 @@ const CAMERA_SMOOTH := 4.0  # How fast camera catches up when player falls
 var _start_y: float
 var _max_camera_y: float  # Camera only moves DOWN, never up
 var _is_game_over := false
+var _is_level_complete := false
 var _shake_intensity := 0.0
 var _shake_decay := 8.0
 var _music_player: AudioStreamPlayer
+
+# Level tracking
+var _current_level := 1
+var _level_kills := 0
+var _level_max_combo := 0
+var _level_money_earned := 0
+var _last_money := 0  # Previous frame's money total, to detect gains
+
+# Cumulative run stats (for death screen)
+var _total_kills := 0
+var _total_money_earned := 0
+var _overall_max_combo := 0
 
 
 func _ready() -> void:
@@ -48,6 +61,13 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	if _is_game_over:
+		return
+
+	if _is_level_complete:
+		# Still update camera to follow player during level complete
+		_max_camera_y = maxf(_max_camera_y, player.position.y)
+		var target_y := lerpf(camera.position.y, _max_camera_y, CAMERA_SMOOTH * delta)
+		camera.position = Vector2(CAMERA_X, target_y)
 		return
 
 	# Camera only scrolls down — never follows player upward (Downwell style)
@@ -91,6 +111,14 @@ func _on_hp_changed(current: int, _max_val: int) -> void:
 
 func _on_combo_changed(combo: int) -> void:
 	ammo_hud.set_combo(combo)
+	if combo > _level_max_combo:
+		_level_max_combo = combo
+	if combo > _overall_max_combo:
+		_overall_max_combo = combo
+	# Only count kills (combo going up), not resets (combo → 0)
+	if combo > 0:
+		_level_kills += 1
+		_total_kills += 1
 
 
 func _on_combo_reward(tier: int, combo: int) -> void:
@@ -101,6 +129,11 @@ func _on_combo_reward(tier: int, combo: int) -> void:
 
 func _on_money_changed(current: int) -> void:
 	ammo_hud.set_money(current)
+	# Track money earned (only positive deltas, not spending)
+	if current > _last_money:
+		_level_money_earned += current - _last_money
+		_total_money_earned += current - _last_money
+	_last_money = current
 
 
 ## Screen shake — call from anywhere via get_tree().current_scene.screen_shake()
@@ -125,12 +158,41 @@ func _on_player_died() -> void:
 	_is_game_over = true
 	_music_player.stop()
 	SFX.play(SFX.game_over, -5.0)
-	ammo_hud.show_game_over()
+	var depth := int(maxf(0, player.position.y - _start_y))
+	ammo_hud.show_death_screen(depth, _total_kills, _total_money_earned, _overall_max_combo)
 	# Wait for restart input
 	set_process_input(true)
+
+
+## Called by level_end_trigger.gd when player falls through the end-of-level gap.
+func _on_level_complete() -> void:
+	if _is_level_complete or _is_game_over:
+		return
+	_is_level_complete = true
+
+	# Calculate level stats
+	var depth := int(maxf(0, player.position.y - _start_y))
+
+	# Show level complete screen
+	ammo_hud.show_level_complete(_current_level, _level_kills, _level_money_earned, _level_max_combo, depth)
+	SFX.play(SFX.combo_increase, -4.0)
+	screen_shake(3.0)
+
+
+## Called when player presses jump on the level complete screen to continue.
+func _continue_to_next_level() -> void:
+	_is_level_complete = false
+	_current_level += 1
+	_level_kills = 0
+	_level_max_combo = 0
+	_level_money_earned = 0
+	ammo_hud.hide_level_complete()
 
 
 func _input(event: InputEvent) -> void:
 	if _is_game_over and event.is_action_pressed("jump"):
 		SFX.play(SFX.restart_menu, -10.0)
-		get_tree().reload_current_scene()
+		get_tree().change_scene_to_file("res://Scenes/UI/main_menu.tscn")
+	elif _is_level_complete and event.is_action_pressed("jump"):
+		SFX.play(SFX.landing, -8.0)
+		_continue_to_next_level()

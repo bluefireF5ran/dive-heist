@@ -248,17 +248,17 @@ Scenes/
 | US-06 | Como jugador, quiero 5 tipos de enemigos con comportamiento distinto | Prisionero, guardia, drone, spider, floor drone | ✅ Done |
 | US-07 | Como jugador, quiero dificultad progresiva | Más enemigos, plataformas estrechas con profundidad | ✅ Done |
 
-### 🟡 Should Have (Sprint 2 — Polish & Feel)
+### 🟡 Should Have (Sprint 2 — Polish & Feel) ✅ Complete
 
-| ID | Historia | Notas |
-|----|----------|-------|
-| US-08 | Menú principal (Start, Opciones) | Escena separada, transición a world |
-| US-09 | Pantalla de muerte con stats y retry | Mostrar profundidad, kills, dinero. Botón reiniciar |
-| US-10 | Parallax background en el pozo | Usar craftpix backgrounds, 2-3 capas |
-| US-11 | NPC comerciante visual en sala | Sprite Arms dealer Idle/Trade, animación al comprar |
-| US-12 | Feedback visual de compra (particulas) | Efecto al comprar, texto "SOLD" |
-| US-13 | Sistema de armas visual | Sprite de arma cambia, usando gun sprites pack |
-| US-14 | Partículas de muerte de enemigos | Explosión pixel, sprites del pack explosiones |
+| ID | Historia | Notas | Estado |
+|----|----------|-------|--------|
+| US-08 | Menú principal (Start, Opciones) | Escena separada, transición a world | ✅ Done |
+| US-09 | Pantalla de muerte con stats y retry | Mostrar profundidad, kills, dinero. Botón reiniciar | ✅ Done |
+| US-10 | Parallax background en el pozo | Usar craftpix backgrounds, 2-3 capas | ✅ Done |
+| US-11 | NPC comerciante visual en sala | Sprite Arms dealer Idle/Trade, animación al comprar | ✅ Done |
+| US-12 | Feedback visual de compra (particulas) | Efecto al comprar, texto "SOLD" | ✅ Done |
+| US-13 | Sistema de armas visual | Sprite de arma cambia, usando gun sprites pack | ✅ Done |
+| US-14 | Partículas de muerte de enemigos | Explosión pixel, sprites del pack explosiones | ✅ Done |
 | US-15 | Input "interact" como acción formal | ~~Registrar en project.godot, no hardcodear S/Down~~ ✅ Done |
 
 ### 🟢 Could Have (Sprint 3 — Content)

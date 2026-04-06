@@ -36,7 +36,11 @@ func _draw() -> void:
 	_draw_combo(hud.combo)
 	if hud.reward_text != "":
 		_draw_reward(hud.reward_text, hud.reward_timer)
-	if hud.game_over:
+	if hud.level_complete:
+		_draw_level_complete(hud)
+	elif hud.death_screen:
+		_draw_death_screen(hud)
+	elif hud.game_over:
 		_draw_game_over()
 
 
@@ -152,3 +156,83 @@ func _draw_game_over() -> void:
 	var hint_size := _font.get_string_size(hint, HORIZONTAL_ALIGNMENT_CENTER, -1, 8)
 	var hint_x := (viewport_size.x - hint_size.x) / 2.0
 	draw_string(_font, Vector2(hint_x, go_y + 20), hint, HORIZONTAL_ALIGNMENT_CENTER, -1, 8, Color(0.7, 0.7, 0.7))
+
+
+func _draw_death_screen(hud: CanvasLayer) -> void:
+	var viewport_size := get_viewport_rect().size
+	var cx := viewport_size.x / 2.0
+	var cy := viewport_size.y / 2.0
+
+	# Darker overlay
+	draw_rect(Rect2(Vector2.ZERO, viewport_size), Color(0, 0, 0, 0.75))
+
+	# Title: "GAME OVER" in red
+	var title := "GAME OVER"
+	var title_size := _font.get_string_size(title, HORIZONTAL_ALIGNMENT_CENTER, -1, 16)
+	var title_x := (viewport_size.x - title_size.x) / 2.0
+	draw_string(_font, Vector2(title_x + 1, cy - 60 + 1), title, HORIZONTAL_ALIGNMENT_CENTER, -1, 16, Color(0, 0, 0, 0.8))
+	draw_string(_font, Vector2(title_x, cy - 60), title, HORIZONTAL_ALIGNMENT_CENTER, -1, 16, Color(0.9, 0.2, 0.2, 1.0))
+
+	# Stats — label on left, value on right, centered as a block
+	var stats: Array[Dictionary] = [
+		{label = "Depth:", value = str(hud.ds_depth) + "m", color = Color(0.6, 0.7, 0.9, 1.0)},
+		{label = "Kills:", value = str(hud.ds_kills), color = Color(0.85, 0.85, 0.85, 1.0)},
+		{label = "Money:", value = "$" + str(hud.ds_money), color = Color(0.9, 0.8, 0.2, 1.0)},
+		{label = "Max Combo:", value = "x" + str(hud.ds_max_combo), color = Color(1.0, 0.6, 0.2, 1.0)},
+	]
+	var stat_y_start := cy - 30.0
+	var label_x := cx - 60.0
+	var value_x := cx + 10.0
+	for i in range(stats.size()):
+		var sy := stat_y_start + i * 18.0
+		# Label (left-aligned)
+		draw_string(_font, Vector2(label_x + 1, sy + 1), stats[i].label, HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color(0, 0, 0, 0.6))
+		draw_string(_font, Vector2(label_x, sy), stats[i].label, HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color(0.6, 0.6, 0.6, 1.0))
+		# Value (left-aligned, colored)
+		draw_string(_font, Vector2(value_x + 1, sy + 1), stats[i].value, HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color(0, 0, 0, 0.6))
+		draw_string(_font, Vector2(value_x, sy), stats[i].value, HORIZONTAL_ALIGNMENT_LEFT, -1, 10, stats[i].color)
+
+	# Restart hint — pulsing
+	var hint := "JUMP to restart"
+	var hint_size := _font.get_string_size(hint, HORIZONTAL_ALIGNMENT_CENTER, -1, 8)
+	var hint_x := (viewport_size.x - hint_size.x) / 2.0
+	draw_string(_font, Vector2(hint_x, cy + 56), hint, HORIZONTAL_ALIGNMENT_CENTER, -1, 8, Color(0.6, 0.6, 0.6, 0.8 + 0.2 * sin(Time.get_ticks_msec() / 300.0)))
+
+
+func _draw_level_complete(hud: CanvasLayer) -> void:
+	var viewport_size := get_viewport_rect().size
+	var cx := viewport_size.x / 2.0
+	var cy := viewport_size.y / 2.0
+
+	# Dim overlay
+	draw_rect(Rect2(Vector2.ZERO, viewport_size), Color(0, 0, 0, 0.7))
+
+	# Title: "LEVEL X COMPLETE"
+	var title := "LEVEL " + str(hud.lc_level) + " COMPLETE"
+	var title_size := _font.get_string_size(title, HORIZONTAL_ALIGNMENT_CENTER, -1, 14)
+	var title_x := (viewport_size.x - title_size.x) / 2.0
+	draw_string(_font, Vector2(title_x + 1, cy - 60 + 1), title, HORIZONTAL_ALIGNMENT_CENTER, -1, 14, Color(0, 0, 0, 0.8))
+	draw_string(_font, Vector2(title_x, cy - 60), title, HORIZONTAL_ALIGNMENT_CENTER, -1, 14, Color(0.2, 1.0, 0.4, 1.0))
+
+	# Stats
+	var stats: Array[String] = [
+		"Kills: " + str(hud.lc_kills),
+		"Money: $" + str(hud.lc_money_earned),
+		"Max Combo: x" + str(hud.lc_max_combo),
+		"Depth: " + str(hud.lc_depth) + "m",
+	]
+	var stat_color := Color(0.85, 0.85, 0.85, 1.0)
+	var stat_y_start := cy - 30.0
+	for i in range(stats.size()):
+		var stat_text := stats[i]
+		var stat_size := _font.get_string_size(stat_text, HORIZONTAL_ALIGNMENT_CENTER, -1, 10)
+		var stat_x := (viewport_size.x - stat_size.x) / 2.0
+		var sy := stat_y_start + i * 18.0
+		draw_string(_font, Vector2(stat_x + 1, sy + 1), stat_text, HORIZONTAL_ALIGNMENT_CENTER, -1, 10, Color(0, 0, 0, 0.6))
+		draw_string(_font, Vector2(stat_x, sy), stat_text, HORIZONTAL_ALIGNMENT_CENTER, -1, 10, stat_color)
+
+	# Continue hint
+	var hint := "JUMP to continue"
+	var hint_size := _font.get_string_size(hint, HORIZONTAL_ALIGNMENT_CENTER, -1, 8)
+	var hint_x := (viewport_size.x - hint_size.x) / 2.0
+	draw_string(_font, Vector2(hint_x, cy + 56), hint, HORIZONTAL_ALIGNMENT_CENTER, -1, 8, Color(0.6, 0.6, 0.6, 0.8 + 0.2 * sin(Time.get_ticks_msec() / 300.0)))

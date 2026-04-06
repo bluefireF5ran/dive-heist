@@ -6,6 +6,7 @@ signal died
 
 const GRAVITY = 800.0
 const MONEY_SCENE := preload("res://Scenes/Collectibles/money.tscn")
+const DEATH_EXPLOSION := preload("res://Scenes/VFX/death_explosion.tscn")
 
 @export var speed := 15.0
 @export var hp := 6
@@ -87,6 +88,7 @@ func _die() -> void:
 	velocity = Vector2.ZERO
 	sprite.play("Death")
 	SFX.play_death_floor_drone()
+	_spawn_death_explosion("nuclear")
 	_spawn_money(5)
 	set_physics_process(false)
 	hitbox.set_deferred("monitoring", false)
@@ -96,6 +98,13 @@ func _die() -> void:
 	died.emit()
 	await sprite.animation_finished
 	queue_free()
+
+
+func _spawn_death_explosion(type: String) -> void:
+	var fx := DEATH_EXPLOSION.instantiate()
+	fx.explosion_type = type
+	fx.global_position = global_position
+	get_tree().current_scene.call_deferred("add_child", fx)
 
 
 func _spawn_money(value: int) -> void:

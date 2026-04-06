@@ -1,7 +1,7 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene format=3 uid="uid://bav1ebwufyise"]
 
-[ext_resource type="Script" path="res://Scenes/Rooms/room_door.gd" id="1_script"]
-[ext_resource type="Texture2D" path="res://Sprites/Scraper/Cyberpunk_Assets/Tilesets/Prison/4 Animated objects/Door1.png" id="2_door"]
+[ext_resource type="Script" uid="uid://dup54s8pxff42" path="res://Scenes/Rooms/room_door.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://kicvkkpdb7qr" path="res://Sprites/Scraper/Cyberpunk_Assets/Tilesets/Prison/4 Animated objects/Door1.png" id="2_door"]
 
 [sub_resource type="AtlasTexture" id="door_frame"]
 atlas = ExtResource("2_door")
@@ -10,19 +10,20 @@ region = Rect2(0, 0, 48, 48)
 [sub_resource type="RectangleShape2D" id="door_shape"]
 size = Vector2(24, 40)
 
-[node name="RoomDoor" type="Area2D"]
+[node name="RoomDoor" type="Area2D" unique_id=1045198319]
 script = ExtResource("1_script")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1397936027]
+position = Vector2(8, -4)
 texture = SubResource("door_frame")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=297490359]
 shape = SubResource("door_shape")
 
-[node name="Label" type="Label" parent="."]
+[node name="Label" type="Label" parent="." unique_id=1251937039]
 offset_left = -20.0
 offset_top = -36.0
 offset_right = 20.0
 offset_bottom = -24.0
-horizontal_alignment = 1
 text = "[S]"
+horizontal_alignment = 1

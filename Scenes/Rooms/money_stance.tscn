@@ -1,0 +1,72 @@
+[gd_scene format=3 uid="uid://dhu1sdvgmrgkj"]
+
+[ext_resource type="Script" uid="uid://bwf5u71wp1oj7" path="res://Scenes/Rooms/money_stance.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://dm3bfbeys7ped" path="res://Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/1 Tiles/Tile_02.png" id="2_plattile"]
+[ext_resource type="Texture2D" uid="uid://c12quuxxe6qw0" path="res://Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/1 Tiles/Tile_11.png" id="3_walledge_r"]
+[ext_resource type="Texture2D" uid="uid://cnyr3crfx4o2t" path="res://Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/1 Tiles/Tile_09.png" id="4_walledge_l"]
+[ext_resource type="PackedScene" path="res://Scenes/Collectibles/gem_crate.tscn" id="5_crate"]
+[ext_resource type="PackedScene" uid="uid://bav1ebwufyise" path="res://Scenes/Rooms/room_door.tscn" id="6_door"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_floor"]
+size = Vector2(352, 16)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wall"]
+size = Vector2(32, 216)
+
+[node name="MoneyStance" type="Node2D" unique_id=1812242648]
+script = ExtResource("1_script")
+
+[node name="Floor" type="StaticBody2D" parent="." unique_id=80758433]
+position = Vector2(160, 0)
+
+[node name="Visual" type="Sprite2D" parent="Floor" unique_id=773834276]
+texture_repeat = 2
+texture = ExtResource("2_plattile")
+region_enabled = true
+region_rect = Rect2(0, 0, 352, 16)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Floor" unique_id=874431645]
+shape = SubResource("RectangleShape2D_floor")
+
+[node name="Ceiling" type="StaticBody2D" parent="." unique_id=383042790]
+position = Vector2(160, -200)
+
+[node name="Visual" type="Sprite2D" parent="Ceiling" unique_id=718313172]
+texture_repeat = 2
+texture = ExtResource("2_plattile")
+region_enabled = true
+region_rect = Rect2(0, 0, 352, 16)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Ceiling" unique_id=1963762039]
+shape = SubResource("RectangleShape2D_floor")
+
+[node name="LeftWall" type="StaticBody2D" parent="." unique_id=327980523]
+position = Vector2(-16, -100)
+
+[node name="Visual" type="Sprite2D" parent="LeftWall" unique_id=615722978]
+texture_repeat = 2
+texture = ExtResource("3_walledge_r")
+region_enabled = true
+region_rect = Rect2(0, 0, 32, 216)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="LeftWall" unique_id=340846278]
+shape = SubResource("RectangleShape2D_wall")
+
+[node name="RightWall" type="StaticBody2D" parent="." unique_id=1202937474]
+position = Vector2(336, -100)
+
+[node name="Visual" type="Sprite2D" parent="RightWall" unique_id=1251594658]
+texture_repeat = 2
+texture = ExtResource("4_walledge_l")
+region_enabled = true
+region_rect = Rect2(0, 0, 32, 216)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RightWall" unique_id=1309538110]
+shape = SubResource("RectangleShape2D_wall")
+
+[node name="GemCrate" parent="." unique_id=566202185 instance=ExtResource("5_crate")]
+position = Vector2(161, -23)
+
+[node name="ExitDoor" parent="." unique_id=29314474 instance=ExtResource("6_door")]
+position = Vector2(300, -24)
+is_exit = true
