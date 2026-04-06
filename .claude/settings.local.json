@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(where godot:*)",
+      "Bash(where godot4:*)",
+      "Bash(pip show:*)",
+      "Bash(pip3 show:*)",
+      "Bash(where gdformat:*)",
+      "Bash(where gdlint:*)",
+      "Bash(where python:*)",
+      "Bash(where python3:*)",
+      "Bash(pip install:*)",
+      "Bash(export PATH=\"$PATH:/c/Users/Francisco/AppData/Local/Python/pythoncore-3.14-64/Scripts\")",
+      "Bash(gdformat --version)",
+      "Bash(gdlint --version)",
+      "Bash(powershell:*)",
+      "Bash(export PATH=\"$PATH:/f/Personal_Fran/Programas/Softwares/Godot\")",
+      "Bash(\"GODOT_V4.6.1-STABLE_WIN64.EXE\" --version)",
+      "Bash(\"Godot_v4.6.1-stable_win64.exe\" --version)",
+      "Bash(gdlint Scenes/)"
+    ]
+  }
+}

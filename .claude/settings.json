@@ -1,0 +1,30 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gdformat:*)",
+      "Bash(gdlint:*)",
+      "Bash(gdparse:*)",
+      "Bash(python:*)",
+      "Bash(pip:*)",
+      "Bash(ls:*)",
+      "Bash(cat:*)",
+      "Bash(find:*)",
+      "Bash(git:*)",
+      "Bash(where:*)",
+      "Bash(powershell:*)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"$PROJECT_DIR\" && export PATH=\"$PATH:/c/Users/Francisco/AppData/Local/Python/pythoncore-3.14-64/Scripts\" && gdformat --diff $FILEPATH 2>&1 | head -50"
+          }
+        ]
+      }
+    ]
+  }
+}
