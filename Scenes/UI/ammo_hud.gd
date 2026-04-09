@@ -45,7 +45,7 @@ func _process(delta: float) -> void:
 
 
 func set_ammo(value: int) -> void:
-	current_ammo = clampi(value, 0, max_ammo)
+	current_ammo = maxi(value, 0)
 	bar_container.queue_redraw()
 
 
@@ -77,6 +77,10 @@ func set_combo(value: int) -> void:
 func set_money(value: int) -> void:
 	money = value
 	bar_container.queue_redraw()
+
+
+func set_weapon(weapon_name: String, color: Color) -> void:
+	bar_container.set_weapon(weapon_name, color)
 
 
 func show_combo_reward(tier: int, combo_val: int) -> void:

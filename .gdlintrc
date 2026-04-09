@@ -1,5 +1,0 @@
-[gdformat]
-max_line_length = 120
-
-[gdlint]
-max-line-length = 120

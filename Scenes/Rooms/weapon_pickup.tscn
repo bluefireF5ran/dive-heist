@@ -12,6 +12,7 @@ font_size = 8
 script = ExtResource("1_script")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(2, 2)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("pickup_shape")

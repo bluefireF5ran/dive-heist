@@ -17,13 +17,7 @@ var _bg_tiles: Array[Texture2D] = [
 	preload("res://Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/1 Tiles/Tile_56.png"),
 ]
 
-var _deco_textures: Array[Texture2D] = [
-	preload("res://Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/3 Objects/3 Stuff/16.png"),
-	preload("res://Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/3 Objects/3 Stuff/17.png"),
-	preload("res://Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/3 Objects/3 Stuff/33.png"),
-	preload("res://Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/3 Objects/3 Stuff/34.png"),
-	preload("res://Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/3 Objects/3 Stuff/20.png"),
-]
+var _deco_textures: Array[Texture2D] = []
 
 @onready var exit_door: Area2D = $ExitDoor
 
@@ -58,6 +52,8 @@ func _fill_background() -> void:
 
 
 func _add_decorations() -> void:
+	if _deco_textures.is_empty():
+		return
 	var shuffled: Array = _deco_textures.duplicate()
 	for i in range(shuffled.size() - 1, 0, -1):
 		var j := _rng.randi_range(0, i)

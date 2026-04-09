@@ -1,0 +1,33 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://Scenes/Rooms/weapon_card.gd" id="1_script"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_card"]
+size = Vector2(80, 64)
+
+[node name="WeaponCard" type="Area2D"]
+script = ExtResource("1_script")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_card")
+
+[node name="GunSprite" type="Sprite2D" parent="."]
+position = Vector2(0, -8)
+scale = Vector2(2, 2)
+
+[node name="NameLabel" type="Label" parent="."]
+offset_left = -40
+offset_top = -40
+offset_right = 40
+offset_bottom = -24
+text = "WEAPON"
+horizontal_alignment = 1
+
+[node name="PromptLabel" type="Label" parent="."]
+offset_left = -40
+offset_top = 20
+offset_right = 40
+offset_bottom = 36
+text = "INTERACT"
+horizontal_alignment = 1
+modulate = Color(0.7, 0.7, 0.7, 1)

@@ -8,25 +8,25 @@ const CONFIGS := {
 		path = "res://Sprites/Craftpix/Free Pixel Art Explosions/PNG/Explosion/Explosion%d.png",
 		frames = 10,
 		fps = 15,
-		scale = 1.0,
+		scale = 0.4,
 	},
 	"blue_oval": {
 		path = "res://Sprites/Craftpix/Free Pixel Art Explosions/PNG/Explosion_blue_oval/Explosion_blue_oval%d.png",
 		frames = 10,
 		fps = 15,
-		scale = 1.0,
+		scale = 0.4,
 	},
 	"nuclear": {
 		path = "res://Sprites/Craftpix/Free Pixel Art Explosions/PNG/Nuclear_explosion/Nuclear_explosion%d.png",
 		frames = 10,
 		fps = 12,
-		scale = 1.5,
+		scale = 0.6,
 	},
 	"lightning": {
 		path = "res://Sprites/Craftpix/Free Pixel Art Explosions/PNG/Lightning/Lightning_spot%d.png",
 		frames = 4,
 		fps = 12,
-		scale = 1.2,
+		scale = 0.5,
 	},
 }
 

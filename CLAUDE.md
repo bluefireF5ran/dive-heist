@@ -77,6 +77,14 @@ ChunkGenerator spawns stance rooms at x=600 (off-screen), accessed via teleport 
 - **Style bonus** — alternating stomp/shoot kills gives +1 combo per kill
 - **`world.gd`** uses `process_mode = PROCESS_MODE_ALWAYS` so hitstop timers work while tree is paused
 
+## Notification on Task Complete
+
+After finishing a task or when waiting for user input, run a Windows toast notification with sound:
+
+```bash
+powershell -c "Add-Type -AssemblyName System.Windows.Forms; [System.Media.SystemSounds]::Asterisk.Play(); \$n=New-Object System.Windows.Forms.NotifyIcon; \$n.Icon=[System.Drawing.SystemIcons]::Information; \$n.BalloonTipTitle='Claude Code'; \$n.BalloonTipText='Waiting for your input'; \$n.Visible=\$true; \$n.ShowBalloonTip(3000); Start-Sleep 4; \$n.Dispose()"
+```
+
 ## Adding New Content
 
 See `ARCHITECTURE.md` §6 for step-by-step guides on adding: enemy types, shop items, weapons/pickups, SFX, phases/tilesets, and HUD elements.

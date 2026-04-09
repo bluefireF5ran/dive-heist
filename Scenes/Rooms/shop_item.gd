@@ -7,6 +7,15 @@ signal purchased(item_id: String)
 const TEXT_POPUP := preload("res://Scenes/VFX/text_popup.tscn")
 const PURCHASE_PARTICLES := preload("res://Scenes/VFX/purchase_particles.tscn")
 
+const ITEM_ICONS := {
+	"heal":
+	"res://Sprites/Scraper/Cyberpunk_Assets/Icons/Weapons_Ammo/1 Icons/Icon1_09.png",
+	"ammo_up":
+	"res://Sprites/Scraper/Cyberpunk_Assets/Icons/Weapons_Ammo/1 Icons/Icon1_01.png",
+	"armor":
+	"res://Sprites/Scraper/Cyberpunk_Assets/Icons/Armor_Cyberpunk/1 Icons/Icon16_01.png",
+}
+
 @export var item_id := "heal"
 @export var price := 5
 @export var description := ""
@@ -23,6 +32,7 @@ func _ready() -> void:
 	body_entered.connect(_on_body_entered)
 	body_exited.connect(_on_body_exited)
 	_update_price_label()
+	_update_icon()
 
 
 var _player_in_range := false
@@ -32,6 +42,11 @@ var _player_ref: Node2D = null
 func _update_price_label() -> void:
 	if price_label:
 		price_label.text = "$" + str(price)
+
+
+func _update_icon() -> void:
+	if sprite and ITEM_ICONS.has(item_id):
+		sprite.texture = load(ITEM_ICONS[item_id])
 
 
 func _process(_delta: float) -> void:

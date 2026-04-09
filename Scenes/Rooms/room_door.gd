@@ -29,6 +29,7 @@ func _teleport() -> void:
 	_used = true
 	_player_ref.global_position = target_position
 	_player_ref.velocity = Vector2.ZERO
+	_player_ref._in_safe_zone = true  # Preserve combo through door transitions
 	# Move camera immediately
 	var world := get_tree().current_scene
 	if world.has_node("Camera2D"):
