@@ -80,9 +80,9 @@ func play(stream: AudioStream, volume_db: float = 0.0, pitch: float = 1.0) -> Au
 	return p
 
 
-## Play shoot sound with slight pitch variation.
-func play_shoot() -> void:
-	play(shoot_base, -8.0, randf_range(0.9, 1.1))
+## Play shoot sound with weapon-specific pitch variation.
+func play_shoot(pitch_min: float = 0.9, pitch_max: float = 1.1) -> void:
+	play(shoot_base, -8.0, randf_range(pitch_min, pitch_max))
 
 
 ## Play a random jump sound.

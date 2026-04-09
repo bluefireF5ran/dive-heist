@@ -1,13 +1,13 @@
-[gd_scene load_steps=11 format=3]
+[gd_scene format=3 uid="uid://chrnnrjb4fkr3"]
 
-[ext_resource type="Script" path="res://Scenes/Rooms/shop_stance.gd" id="1_script"]
-[ext_resource type="Texture2D" path="res://Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/1 Tiles/Tile_02.png" id="2_plattile"]
-[ext_resource type="Texture2D" path="res://Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/1 Tiles/Tile_11.png" id="3_walledge_r"]
-[ext_resource type="Texture2D" path="res://Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/1 Tiles/Tile_09.png" id="4_walledge_l"]
+[ext_resource type="Script" uid="uid://c7lme2fni5y2b" path="res://Scenes/Rooms/shop_stance.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://dm3bfbeys7ped" path="res://Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/1 Tiles/Tile_02.png" id="2_plattile"]
+[ext_resource type="Texture2D" uid="uid://c12quuxxe6qw0" path="res://Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/1 Tiles/Tile_11.png" id="3_walledge_r"]
+[ext_resource type="Texture2D" uid="uid://cnyr3crfx4o2t" path="res://Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/1 Tiles/Tile_09.png" id="4_walledge_l"]
 [ext_resource type="PackedScene" path="res://Scenes/Rooms/shop_item.tscn" id="5_shop"]
-[ext_resource type="PackedScene" path="res://Scenes/Rooms/room_door.tscn" id="6_door"]
-[ext_resource type="Texture2D" path="res://Sprites/Craftpix/1.Personajes/trader-cyberpunk-pixel-art-pack/3 Arms dealer/Idle.png" id="7_npc_idle"]
-[ext_resource type="Texture2D" path="res://Sprites/Craftpix/1.Personajes/trader-cyberpunk-pixel-art-pack/3 Arms dealer/Trade.png" id="8_npc_trade"]
+[ext_resource type="PackedScene" uid="uid://bav1ebwufyise" path="res://Scenes/Rooms/room_door.tscn" id="6_door"]
+[ext_resource type="Texture2D" uid="uid://cglos3soaybc0" path="res://Sprites/Craftpix/1.Personajes/trader-cyberpunk-pixel-art-pack/3 Arms dealer/Idle.png" id="7_npc_idle"]
+[ext_resource type="Texture2D" uid="uid://6vroik8ihtpk" path="res://Sprites/Craftpix/1.Personajes/trader-cyberpunk-pixel-art-pack/3 Arms dealer/Trade.png" id="8_npc_trade"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_floor"]
 size = Vector2(352, 16)
@@ -15,11 +15,60 @@ size = Vector2(352, 16)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wall"]
 size = Vector2(32, 216)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_npc_idle_0"]
+atlas = ExtResource("7_npc_idle")
+region = Rect2(0, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_npc_idle_1"]
+atlas = ExtResource("7_npc_idle")
+region = Rect2(48, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_npc_idle_2"]
+atlas = ExtResource("7_npc_idle")
+region = Rect2(96, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_npc_idle_3"]
+atlas = ExtResource("7_npc_idle")
+region = Rect2(144, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_npc_trade_0"]
+atlas = ExtResource("8_npc_trade")
+region = Rect2(0, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_npc_trade_1"]
+atlas = ExtResource("8_npc_trade")
+region = Rect2(48, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_npc_trade_2"]
+atlas = ExtResource("8_npc_trade")
+region = Rect2(96, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_npc_trade_3"]
+atlas = ExtResource("8_npc_trade")
+region = Rect2(144, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_npc_trade_4"]
+atlas = ExtResource("8_npc_trade")
+region = Rect2(192, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_npc_trade_5"]
+atlas = ExtResource("8_npc_trade")
+region = Rect2(240, 0, 48, 48)
+
 [sub_resource type="SpriteFrames" id="SpriteFrames_npc"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("7_npc_idle")
+"texture": SubResource("AtlasTexture_npc_idle_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_npc_idle_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_npc_idle_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_npc_idle_3")
 }],
 "loop": true,
 "name": &"idle",
@@ -27,86 +76,101 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("8_npc_trade")
+"texture": SubResource("AtlasTexture_npc_trade_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_npc_trade_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_npc_trade_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_npc_trade_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_npc_trade_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_npc_trade_5")
 }],
 "loop": false,
 "name": &"trade",
 "speed": 5.0
 }]
 
-[node name="ShopStance" type="Node2D"]
+[node name="ShopStance" type="Node2D" unique_id=2099763407]
 script = ExtResource("1_script")
 
-[node name="Floor" type="StaticBody2D" parent="."]
+[node name="Floor" type="StaticBody2D" parent="." unique_id=481389768]
 position = Vector2(160, 0)
 
-[node name="Visual" type="Sprite2D" parent="Floor"]
-texture = ExtResource("2_plattile")
+[node name="Visual" type="Sprite2D" parent="Floor" unique_id=281676622]
 texture_repeat = 2
+texture = ExtResource("2_plattile")
 region_enabled = true
 region_rect = Rect2(0, 0, 352, 16)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Floor"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Floor" unique_id=262982356]
 shape = SubResource("RectangleShape2D_floor")
 
-[node name="Ceiling" type="StaticBody2D" parent="."]
+[node name="Ceiling" type="StaticBody2D" parent="." unique_id=834694135]
 position = Vector2(160, -200)
 
-[node name="Visual" type="Sprite2D" parent="Ceiling"]
-texture = ExtResource("2_plattile")
+[node name="Visual" type="Sprite2D" parent="Ceiling" unique_id=363280137]
 texture_repeat = 2
+texture = ExtResource("2_plattile")
 region_enabled = true
 region_rect = Rect2(0, 0, 352, 16)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Ceiling"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Ceiling" unique_id=561043478]
 shape = SubResource("RectangleShape2D_floor")
 
-[node name="LeftWall" type="StaticBody2D" parent="."]
+[node name="LeftWall" type="StaticBody2D" parent="." unique_id=655775311]
 position = Vector2(-16, -100)
 
-[node name="Visual" type="Sprite2D" parent="LeftWall"]
-texture = ExtResource("3_walledge_r")
+[node name="Visual" type="Sprite2D" parent="LeftWall" unique_id=1552454515]
 texture_repeat = 2
+texture = ExtResource("3_walledge_r")
 region_enabled = true
 region_rect = Rect2(0, 0, 32, 216)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="LeftWall"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="LeftWall" unique_id=1847310007]
 shape = SubResource("RectangleShape2D_wall")
 
-[node name="RightWall" type="StaticBody2D" parent="."]
+[node name="RightWall" type="StaticBody2D" parent="." unique_id=2048721405]
 position = Vector2(336, -100)
 
-[node name="Visual" type="Sprite2D" parent="RightWall"]
-texture = ExtResource("4_walledge_l")
+[node name="Visual" type="Sprite2D" parent="RightWall" unique_id=1576196840]
 texture_repeat = 2
+texture = ExtResource("4_walledge_l")
 region_enabled = true
 region_rect = Rect2(0, 0, 32, 216)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="RightWall"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RightWall" unique_id=1851449629]
 shape = SubResource("RectangleShape2D_wall")
 
-[node name="NPC" type="Node2D" parent="."]
+[node name="NPC" type="Node2D" parent="." unique_id=1284877816]
 position = Vector2(60, -28)
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="NPC"]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="NPC" unique_id=1138847781]
+position = Vector2(78, -3)
 sprite_frames = SubResource("SpriteFrames_npc")
 animation = &"idle"
+flip_h = true
 
-[node name="ShopSlot1" parent="." instance=ExtResource("5_shop")]
-position = Vector2(140, -28)
-item_id = "heal"
+[node name="ShopSlot1" parent="." unique_id=1106493288 instance=ExtResource("5_shop")]
+position = Vector2(185, -27)
 price = 3
 
-[node name="ShopSlot2" parent="." instance=ExtResource("5_shop")]
-position = Vector2(180, -28)
+[node name="ShopSlot2" parent="." unique_id=1166622589 instance=ExtResource("5_shop")]
+position = Vector2(225, -27)
 item_id = "ammo_up"
-price = 5
 
-[node name="ShopSlot3" parent="." instance=ExtResource("5_shop")]
-position = Vector2(220, -28)
+[node name="ShopSlot3" parent="." unique_id=2140583064 instance=ExtResource("5_shop")]
+position = Vector2(265, -27)
 item_id = "armor"
 price = 8
 
-[node name="ExitDoor" parent="." instance=ExtResource("6_door")]
-position = Vector2(300, -24)
+[node name="ExitDoor" parent="." unique_id=1281403295 instance=ExtResource("6_door")]
+position = Vector2(27, -29)
 is_exit = true

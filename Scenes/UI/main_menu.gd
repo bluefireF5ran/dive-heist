@@ -29,8 +29,7 @@ func _ready() -> void:
 	panel_style.bg_color = Color(0.1, 0.09, 0.13, 0.95)
 	panel_style.border_color = Color(0.5, 0.45, 0.6, 0.8)
 	panel_style.set_border_width_all(2)
-	panel_style.set_corner_radius_all(2)
-	panel_style.set_content_margin_all(8)
+	panel_style.set_corner_radius_all(3)
 	_options_panel.add_theme_stylebox_override("panel", panel_style)
 
 	# Connect button signals

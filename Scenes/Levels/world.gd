@@ -44,6 +44,7 @@ func _ready() -> void:
 	player.combo_changed.connect(_on_combo_changed)
 	player.combo_reward.connect(_on_combo_reward)
 	player.money_changed.connect(_on_money_changed)
+	player.weapon_changed.connect(_on_weapon_changed)
 	ammo_hud.set_max_ammo(player.MAX_AIR_AMMO)
 	ammo_hud.set_ammo(player.MAX_AIR_AMMO)
 	ammo_hud.set_max_hp(player.MAX_HP)
@@ -99,9 +100,11 @@ func _physics_process(delta: float) -> void:
 
 	# Pass depth to chunk generator for difficulty scaling
 	chunk_gen.current_depth = depth
+	chunk_gen.current_level = _current_level
 
 
 func _on_ammo_changed(current: int, _max_val: int) -> void:
+	ammo_hud.set_max_ammo(_max_val)
 	ammo_hud.set_ammo(current)
 
 
@@ -134,6 +137,10 @@ func _on_money_changed(current: int) -> void:
 		_level_money_earned += current - _last_money
 		_total_money_earned += current - _last_money
 	_last_money = current
+
+
+func _on_weapon_changed(weapon_name: String, color: Color) -> void:
+	ammo_hud.set_weapon(weapon_name, color)
 
 
 ## Screen shake — call from anywhere via get_tree().current_scene.screen_shake()
