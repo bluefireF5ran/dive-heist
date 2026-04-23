@@ -65,8 +65,8 @@ region_rect = Rect2(0, 0, 32, 216)
 shape = SubResource("RectangleShape2D_wall")
 
 [node name="GemCrate" parent="." unique_id=566202185 instance=ExtResource("5_crate")]
-position = Vector2(161, -23)
+position = Vector2(162, -23)
 
 [node name="ExitDoor" parent="." unique_id=29314474 instance=ExtResource("6_door")]
-position = Vector2(300, -24)
+position = Vector2(301, -28)
 is_exit = true

@@ -490,7 +490,7 @@ func _add_platform_body(
 	w: float,
 	h: float,
 	one_way: bool,
-	modulate: Variant,
+	plat_modulate: Variant,
 	visual_name: String
 ) -> StaticBody2D:
 	var body := StaticBody2D.new()
@@ -513,8 +513,8 @@ func _add_platform_body(
 		visual.texture_repeat = CanvasItem.TEXTURE_REPEAT_ENABLED
 		visual.region_enabled = true
 		visual.region_rect = Rect2(0, 0, w, h)
-		if modulate != null:
-			visual.modulate = modulate
+		if plat_modulate != null:
+			visual.modulate = plat_modulate
 		body.add_child(visual)
 
 	return body

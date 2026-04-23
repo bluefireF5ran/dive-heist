@@ -172,5 +172,5 @@ item_id = "armor"
 price = 8
 
 [node name="ExitDoor" parent="." unique_id=1281403295 instance=ExtResource("6_door")]
-position = Vector2(27, -29)
+position = Vector2(27, -28)
 is_exit = true

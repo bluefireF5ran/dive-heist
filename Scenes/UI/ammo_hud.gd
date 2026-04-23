@@ -101,12 +101,12 @@ func show_game_over() -> void:
 	bar_container.queue_redraw()
 
 
-func show_death_screen(depth: int, kills: int, money: int, max_combo: int) -> void:
+func show_death_screen(depth_val: int, kills: int, money_val: int, max_combo: int) -> void:
 	game_over = true
 	death_screen = true
-	ds_depth = depth
+	ds_depth = depth_val
 	ds_kills = kills
-	ds_money = money
+	ds_money = money_val
 	ds_max_combo = max_combo
 	bar_container.queue_redraw()
 

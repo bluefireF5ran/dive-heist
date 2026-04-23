@@ -8,7 +8,6 @@ const FONT_PATH := "res://Sprites/Scraper/Cyberpunk_Assets/Game_UI/UI_Main/10 Fo
 
 var _font: Font
 var _transitioning := false
-var _time := 0.0
 
 @onready var _start_button: Button = $VBoxContainer/StartButton
 @onready var _options_button: Button = $VBoxContainer/OptionsButton
@@ -59,11 +58,10 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
-	_time += delta
-	# Fade in from black on boot
 	if _fade_rect.color.a > 0.0 and not _transitioning:
 		_fade_rect.color.a = maxf(_fade_rect.color.a - delta * 2.0, 0.0)
-	queue_redraw()
+	if _font != null:
+		queue_redraw()
 
 
 func _input(event: InputEvent) -> void:
@@ -85,33 +83,6 @@ func _draw() -> void:
 	# Subtle horizontal scan lines for atmosphere
 	for y in range(0, int(vp.y), 4):
 		draw_line(Vector2(0, y), Vector2(vp.x, y), Color(1, 1, 1, 0.015))
-
-	# Title: "DIVE HEIST" with glow + shadow
-	var title := "DIVE HEIST"
-	var title_font_size := 22
-	var ts := _font.get_string_size(title, HORIZONTAL_ALIGNMENT_CENTER, -1, title_font_size)
-	var tx := (vp.x - ts.x) / 2.0
-	var ty := 100.0
-
-	# Pulsing glow behind title
-	var glow_a := 0.12 + 0.06 * sin(_time * 2.0)
-	draw_string(_font, Vector2(tx - 1, ty - 1), title, HORIZONTAL_ALIGNMENT_CENTER, -1, title_font_size, Color(0.9, 0.2, 0.9, glow_a))
-	draw_string(_font, Vector2(tx + 1, ty + 1), title, HORIZONTAL_ALIGNMENT_CENTER, -1, title_font_size, Color(0.9, 0.2, 0.9, glow_a))
-	# Drop shadow
-	draw_string(_font, Vector2(tx + 1, ty + 1), title, HORIZONTAL_ALIGNMENT_CENTER, -1, title_font_size, Color(0, 0, 0, 0.6))
-	# Main title text — gold
-	draw_string(_font, Vector2(tx, ty), title, HORIZONTAL_ALIGNMENT_CENTER, -1, title_font_size, Color(0.95, 0.9, 0.3, 1.0))
-
-	# Subtitle
-	var sub := "A VERTICAL ROGUELIKE"
-	var sub_size := 6
-	var ss := _font.get_string_size(sub, HORIZONTAL_ALIGNMENT_CENTER, -1, sub_size)
-	var sx := (vp.x - ss.x) / 2.0
-	draw_string(_font, Vector2(sx, ty + 16), sub, HORIZONTAL_ALIGNMENT_CENTER, -1, sub_size, Color(0.5, 0.5, 0.6, 0.7))
-
-	# Decorative line under title
-	var line_y := ty + 24.0
-	draw_line(Vector2(cx - 60, line_y), Vector2(cx + 60, line_y), Color(0.9, 0.8, 0.2, 0.3), 1.0)
 
 	# Version text at bottom
 	var ver := "v0.2"

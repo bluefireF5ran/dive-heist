@@ -339,7 +339,6 @@ func _draw_death_screen(hud: CanvasLayer) -> void:
 
 func _draw_level_complete(hud: CanvasLayer) -> void:
 	var viewport_size := get_viewport_rect().size
-	var cx := viewport_size.x / 2.0
 	var cy := viewport_size.y / 2.0
 
 	# Dim overlay

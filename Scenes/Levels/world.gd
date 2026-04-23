@@ -64,16 +64,14 @@ func _physics_process(delta: float) -> void:
 	if _is_game_over:
 		return
 
-	if _is_level_complete:
-		# Still update camera to follow player during level complete
-		_max_camera_y = maxf(_max_camera_y, player.position.y)
-		var target_y := lerpf(camera.position.y, _max_camera_y, CAMERA_SMOOTH * delta)
-		camera.position = Vector2(CAMERA_X, target_y)
-		return
-
 	# Camera only scrolls down — never follows player upward (Downwell style)
 	_max_camera_y = maxf(_max_camera_y, player.position.y)
 	var target_y := lerpf(camera.position.y, _max_camera_y, CAMERA_SMOOTH * delta)
+
+	if _is_level_complete:
+		# Still update camera to follow player during level complete
+		camera.position = Vector2(CAMERA_X, target_y)
+		return
 
 	# Camera X: centered in well normally, follows player in rooms
 	var target_x := CAMERA_X

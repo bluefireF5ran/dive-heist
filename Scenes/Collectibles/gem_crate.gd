@@ -43,4 +43,4 @@ func _break() -> void:
 	if sprite.sprite_frames and sprite.sprite_frames.has_animation("Open"):
 		sprite.play("Open")
 		await sprite.animation_finished
-	queue_free()
+	call_deferred("queue_free")
