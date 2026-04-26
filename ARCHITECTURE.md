@@ -523,13 +523,6 @@ Change weapon stance room. Contains a weapon pickup that heals or increases max 
 
 ---
 
-### 3.15d `Scenes/Rooms/rest_room.gd` (legacy)
-**Extends:** `Node2D` | **Lines:** 83
-
-Legacy rest zone room (still exists but no longer spawned by chunk_generator). Replaced by the 3 stance rooms above.
-
----
-
 ### 3.16 `Scenes/Rooms/room_door.gd`
 **Extends:** `Area2D` | **Lines:** 58
 
@@ -798,7 +791,7 @@ var difficulty := clampf(current_depth / 3000.0, 0.0, 1.0)
 
 ### 6.2 Add a New Shop Item
 
-1. **Duplicate** an existing `ShopItem` node in `rest_room.tscn` (or add via code).
+1. **Duplicate** an existing `ShopItem` node in `shop_stance.tscn` (or add via code).
 2. **Set exports:** `item_id`, `price`, `description`.
 3. **Add effect** in [`shop_item.gd`](Scenes/Rooms/shop_item.gd) `_apply_item()`:
    ```gdscript

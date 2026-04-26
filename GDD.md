@@ -299,9 +299,12 @@ Una historia de usuario está **Done** cuando:
 |----------|---------|-----------|
 | ~~Input "interact" hardcodeado~~ | ~~Dificulta remapeo~~ | ✅ Resuelto |
 | ~~`character_body_2d.tscn` en raíz sin uso~~ | ~~Archivo huérfano~~ | ✅ Resuelto |
-| weapon_pickup no cambia arma realmente | Feature incompleta | Alta |
-| Shop items sin sprite visual del ítem | UX pobre | Media |
-| Combo reward text usa Label default | Inconsistencia visual | Baja |
+| ~~weapon_pickup no cambia arma realmente~~ | ~~Feature incompleta~~ | ✅ Resuelto — sistema de 7 armas funcional vía weapon_stance + weapon_card + `equip_weapon()` |
+| ~~Shop items sin sprite visual del ítem~~ | ~~UX pobre~~ | ✅ Resuelto — ITEM_ICONS en shop_item.gd con sprites cyberpunk |
+| ~~Combo reward text usa Label default~~ | ~~Inconsistencia visual~~ | ✅ Resuelto — fuente CyberpunkCraftpixPixel.otf en ammo_bar.gd |
+| `rest_room.tscn` huérfano (reemplazado por sistema de 3 stances) | Archivo sin uso en el pipeline actual | Baja |
+| Música: solo existe Prison1.5.mp3, sin tracks por fase | Sin variedad auditiva entre fases | Media |
+| No existe sistema de boss | Sin climax al final de cada fase | Alta |
 
 ---
 
