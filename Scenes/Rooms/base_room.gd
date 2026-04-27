@@ -2,11 +2,15 @@ extends Node2D
 ## Base script for all stance rooms in the level system.
 ## Provides shared background tiling and decoration logic.
 ## Each stance room script extends this script.
+##
+## Tiles are set via setup_room_tiles() called by chunk_generator before _ready().
+## If setup_room_tiles() is never called, defaults to Prison tiles.
 
 const ROOM_WIDTH := 320.0
 const ROOM_HEIGHT := 200.0
 const TILE_SIZE := 32.0
 
+# Default Prison tiles (used if setup_room_tiles() not called)
 var _bg_tiles: Array[Texture2D] = [
 	preload("res://Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/1 Tiles/Tile_50.png"),
 	preload("res://Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/1 Tiles/Tile_51.png"),
@@ -16,12 +20,22 @@ var _bg_tiles: Array[Texture2D] = [
 	preload("res://Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/1 Tiles/Tile_55.png"),
 	preload("res://Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/1 Tiles/Tile_56.png"),
 ]
-
+var _bg_tint := Color(0.55, 0.5, 0.7, 1.0)
+var _tiles_configured := false
 var _deco_textures: Array[Texture2D] = []
+var _rng := RandomNumberGenerator.new()
 
 @onready var exit_door: Area2D = $ExitDoor
 
-var _rng := RandomNumberGenerator.new()
+
+## Called by chunk_generator to pass era-specific tiles before _ready() builds the room.
+func setup_room_tiles(tiles: Array, tint: Color) -> void:
+	if not tiles.is_empty():
+		var typed: Array[Texture2D] = []
+		typed.assign(tiles)
+		_bg_tiles = typed
+	_bg_tint = tint
+	_tiles_configured = true
 
 
 func _ready() -> void:
@@ -47,7 +61,7 @@ func _fill_background() -> void:
 			spr.centered = false
 			spr.position = Vector2(col * TILE_SIZE, -ROOM_HEIGHT + row * TILE_SIZE)
 			spr.z_index = -1
-			spr.modulate = Color(0.55, 0.5, 0.7, 1.0)
+			spr.modulate = _bg_tint
 			add_child(spr)
 
 

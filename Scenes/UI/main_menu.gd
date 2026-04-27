@@ -21,6 +21,7 @@ var _transitioning := false
 
 func _ready() -> void:
 	_font = load(FONT_PATH)
+	queue_redraw()
 	_apply_theme(self)
 
 	# Style the options panel
@@ -60,8 +61,6 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	if _fade_rect.color.a > 0.0 and not _transitioning:
 		_fade_rect.color.a = maxf(_fade_rect.color.a - delta * 2.0, 0.0)
-	if _font != null:
-		queue_redraw()
 
 
 func _input(event: InputEvent) -> void:
@@ -78,16 +77,16 @@ func _input(event: InputEvent) -> void:
 
 func _draw() -> void:
 	var vp := get_viewport_rect().size
-	var cx := vp.x / 2.0
 
-	# Subtle horizontal scan lines for atmosphere
 	for y in range(0, int(vp.y), 4):
 		draw_line(Vector2(0, y), Vector2(vp.x, y), Color(1, 1, 1, 0.015))
 
 	# Version text at bottom
 	var ver := "v0.2"
 	var vs := _font.get_string_size(ver, HORIZONTAL_ALIGNMENT_CENTER, -1, 6)
-	draw_string(_font, Vector2((vp.x - vs.x) / 2.0, vp.y - 8), ver, HORIZONTAL_ALIGNMENT_CENTER, -1, 6, Color(0.4, 0.4, 0.4, 0.5))
+	var vx := vp.y - 8
+	var ver_color := Color(0.4, 0.4, 0.4, 0.5)
+	draw_string(_font, Vector2((vp.x - vs.x) / 2.0, vx), ver, HORIZONTAL_ALIGNMENT_CENTER, -1, 6, ver_color)
 
 
 func _on_start_pressed() -> void:

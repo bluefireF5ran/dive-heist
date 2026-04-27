@@ -9,12 +9,14 @@ const MONEY_SCENE := preload("res://Scenes/Collectibles/money.tscn")
 @export var hp := 3
 
 var _is_broken := false
+var _world: Node2D
 
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
 
 
 func _ready() -> void:
-	collision_layer = 4  # Same as enemies so bullets hit it
+	_world = get_tree().current_scene as Node2D
+	collision_layer = 4
 	collision_mask = 0
 
 
@@ -38,7 +40,7 @@ func _break() -> void:
 		var money := MONEY_SCENE.instantiate()
 		money.value = money_value
 		money.global_position = global_position + Vector2(0, -8)
-		get_tree().current_scene.add_child(money)
+		_world.add_child(money)
 	# Play open animation if available, otherwise just remove
 	if sprite.sprite_frames and sprite.sprite_frames.has_animation("Open"):
 		sprite.play("Open")

@@ -19,14 +19,15 @@ const DEATH_EXPLOSION := preload("res://Scenes/VFX/death_explosion.tscn")
 var _is_dead := false
 var _time := 0.0
 var _sprite_base_x: float
+var _world: Node2D
+var _player: CharacterBody2D
 
 
 func _ready() -> void:
+	_world = get_tree().current_scene as Node2D
 	_sprite_base_x = sprite.position.x
-	# Collision: body on layer 4, only mask world (1) for wall bouncing
 	collision_layer = 4
 	collision_mask = 1
-	# Areas detect player on layer 2
 	stomp_area.collision_layer = 0
 	stomp_area.collision_mask = 2
 	hitbox.collision_layer = 0
@@ -41,10 +42,10 @@ func _physics_process(delta: float) -> void:
 
 	_time += delta
 
-	# Find player
-	var player := get_tree().get_first_node_in_group("player") as CharacterBody2D
-	if player:
-		var dir: Vector2 = (player.global_position - global_position).normalized()
+	if not _player:
+		_player = get_tree().get_first_node_in_group("player") as CharacterBody2D
+	if _player:
+		var dir: Vector2 = (_player.global_position - global_position).normalized()
 		velocity = dir * chase_speed
 	else:
 		velocity = Vector2.ZERO
@@ -99,14 +100,18 @@ func _spawn_death_explosion(type: String) -> void:
 	var fx := DEATH_EXPLOSION.instantiate()
 	fx.explosion_type = type
 	fx.global_position = global_position
-	get_tree().current_scene.call_deferred("add_child", fx)
+	_world.call_deferred("add_child", fx)
 
 
 func _spawn_money(value: int) -> void:
 	var money := MONEY_SCENE.instantiate()
 	money.value = value
 	money.global_position = global_position
-	get_tree().current_scene.call_deferred("add_child", money)
+	_world.call_deferred("add_child", money)
+
+
+func _has_world_method(method_name: String) -> bool:
+	return _world and _world.has_method(method_name)
 
 
 func _on_stomp_area_body_entered(body: Node2D) -> void:
@@ -115,12 +120,11 @@ func _on_stomp_area_body_entered(body: Node2D) -> void:
 	if body is CharacterBody2D and body.has_method("refill_ammo"):
 		take_damage(6)
 		if not _is_dead:
-			return  # Enemy survived — don't refill/bounce
-		var world := get_tree().current_scene
-		if world.has_method("screen_shake"):
-			world.screen_shake(3.0)
-		if world.has_method("hitstop"):
-			world.hitstop(0.05)
+			return
+		if _has_world_method("screen_shake"):
+			_world.screen_shake(3.0)
+		if _has_world_method("hitstop"):
+			_world.hitstop(0.05)
 		SFX.play_stomp_material()
 		body.refill_ammo()
 		body.velocity.y = -250.0

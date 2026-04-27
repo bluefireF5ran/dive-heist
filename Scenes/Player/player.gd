@@ -23,6 +23,40 @@ const INVINCIBLE_TIME = 1.0  # Seconds of invincibility after taking damage
 ##   sfx_pitch_min, sfx_pitch_max, is_laser, is_burst, is_shotgun,
 ##   is_piercer, is_ricochet, burst_count, burst_interval,
 ##   laser_damage_interval, laser_ammo_interval, max_bounces
+const BULLET_TEX := {
+	"pistol":
+	preload("res://Sprites/Craftpix/free-guns-pack-2-for-main-characters-pixel-art/5 Bullets/1.png"),
+	"spread":
+	preload("res://Sprites/Craftpix/free-guns-pack-2-for-main-characters-pixel-art/5 Bullets/2.png"),
+	"laser":
+	preload("res://Sprites/Craftpix/free-guns-pack-2-for-main-characters-pixel-art/5 Bullets/5.png"),
+	"machinegun":
+	preload("res://Sprites/Craftpix/free-guns-pack-2-for-main-characters-pixel-art/5 Bullets/3.png"),
+	"shotgun":
+	preload("res://Sprites/Craftpix/free-guns-pack-2-for-main-characters-pixel-art/5 Bullets/4.png"),
+	"piercer":
+	preload("res://Sprites/Craftpix/free-guns-pack-2-for-main-characters-pixel-art/5 Bullets/6.png"),
+	"ricochet":
+	preload("res://Sprites/Craftpix/free-guns-pack-2-for-main-characters-pixel-art/5 Bullets/9.png"),
+}
+
+const GUN_TEX := {
+	"pistol":
+	preload("res://Sprites/Craftpix/free-guns-pack-2-for-main-characters-pixel-art/2 Guns/1_1.png"),
+	"spread":
+	preload("res://Sprites/Craftpix/free-guns-pack-2-for-main-characters-pixel-art/2 Guns/4_1.png"),
+	"laser":
+	preload("res://Sprites/Craftpix/free-guns-pack-2-for-main-characters-pixel-art/2 Guns/7_1.png"),
+	"machinegun":
+	preload("res://Sprites/Craftpix/free-guns-pack-2-for-main-characters-pixel-art/2 Guns/6_1.png"),
+	"shotgun":
+	preload("res://Sprites/Craftpix/free-guns-pack-2-for-main-characters-pixel-art/2 Guns/8_1.png"),
+	"piercer":
+	preload("res://Sprites/Craftpix/free-guns-pack-2-for-main-characters-pixel-art/2 Guns/3_1.png"),
+	"ricochet":
+	preload("res://Sprites/Craftpix/free-guns-pack-2-for-main-characters-pixel-art/2 Guns/9_1.png"),
+}
+
 const WEAPON_DATA := {
 	"pistol":
 	{
@@ -257,6 +291,7 @@ var _laser_tick := 0  # Tick counter for laser damage/ammo intervals
 var _burst_queue := 0  # Remaining bullets in a machinegun burst
 var _burst_timer := 0.0  # Timer between burst bullets
 var _burst_angle_offsets: Array[float] = []  # Pre-rolled angles for current burst
+var _world: Node2D
 
 # Per-animation shoulder offset adjustments relative to Idle base position.
 var _anim_offsets := {
@@ -268,10 +303,11 @@ var _anim_offsets := {
 
 func _ready() -> void:
 	add_to_group("player")
-	collision_layer = 2  # Player on layer 2 (separate from world)
-	collision_mask = 1  # Collide with world (layer 1)
+	collision_layer = 2
+	collision_mask = 1
 	_gun_pivot_base = gun_pivot.position
 	_sprite_base_x = sprite.position.x
+	_world = get_tree().current_scene as Node2D
 
 
 func _physics_process(delta: float) -> void:
@@ -450,7 +486,6 @@ func _spawn_bullet(wd: Dictionary, angle_deg: float, bullet_damage: int) -> void
 	bullet.direction = Vector2.DOWN.rotated(deg_to_rad(angle_deg))
 	bullet.damage = bullet_damage
 	bullet.lifetime = wd["bullet_lifetime"]
-	bullet.weapon_color = wd["hud_color"]
 	bullet.global_position = muzzle_point.global_position
 	# Weapon behavior flags
 	bullet.is_piercer = bool(wd.get("is_piercer", false))
@@ -459,15 +494,14 @@ func _spawn_bullet(wd: Dictionary, angle_deg: float, bullet_damage: int) -> void
 	# Ricochet needs to detect world geometry (layer 1)
 	if bullet.is_ricochet:
 		bullet.collision_mask = 5  # Layers 1 + 4
-	# Swap bullet texture
 	var bullet_sprite: Sprite2D = bullet.get_node_or_null("Sprite2D")
 	if bullet_sprite:
-		bullet_sprite.texture = load(wd["bullet_texture"])
+		bullet_sprite.texture = BULLET_TEX.get(current_weapon)
 	# Adjust collision radius
 	var col: CollisionShape2D = bullet.get_node_or_null("CollisionShape2D")
 	if col and col.shape is CircleShape2D:
 		col.shape.radius = wd["collision_radius"]
-	get_tree().current_scene.add_child(bullet)
+		_world.add_child(bullet)
 
 
 func _spawn_burst_bullet() -> void:
@@ -481,7 +515,7 @@ func _spawn_burst_bullet() -> void:
 		var flash := muzzle_flash_scene.instantiate()
 		flash.global_position = muzzle_point.global_position + Vector2(0, 2)
 		flash.rotation = deg_to_rad(90.0)
-		get_tree().current_scene.add_child(flash)
+		_world.add_child(flash)
 
 
 func _spawn_muzzle_flash() -> void:
@@ -489,7 +523,7 @@ func _spawn_muzzle_flash() -> void:
 		var flash := muzzle_flash_scene.instantiate()
 		flash.global_position = muzzle_point.global_position + Vector2(0, 2)
 		flash.rotation = deg_to_rad(90.0)
-		get_tree().current_scene.add_child(flash)
+		_world.add_child(flash)
 
 
 ## Equip a new weapon, swapping gun sprite and emitting HUD update.
@@ -497,9 +531,8 @@ func equip_weapon(weapon_name: String) -> void:
 	if not WEAPON_DATA.has(weapon_name):
 		return
 	current_weapon = weapon_name
-	var wd: Dictionary = WEAPON_DATA[weapon_name]
-	gun_sprite.texture = load(wd["gun_texture"])
-	weapon_changed.emit(weapon_name, wd["hud_color"])
+	gun_sprite.texture = GUN_TEX.get(weapon_name)
+	weapon_changed.emit(weapon_name, WEAPON_DATA[weapon_name]["hud_color"])
 	# Reset weapon-specific state
 	_laser_tick = 0
 	_burst_queue = 0

@@ -1,6 +1,4 @@
 extends CharacterBody2D
-## Heavy floor drone. Stomp-only enemy — bullets deal no damage.
-## Slow, walks on platforms. Only stomping kills it.
 
 signal died
 
@@ -8,20 +6,26 @@ const GRAVITY = 800.0
 const MONEY_SCENE := preload("res://Scenes/Collectibles/money.tscn")
 const DEATH_EXPLOSION := preload("res://Scenes/VFX/death_explosion.tscn")
 
-@export var speed := 15.0
-@export var hp := 6
-@export var walk_range := 60.0
+@export var hp := 3
+@export var jump_velocity := -280.0
+@export var jump_horizontal := 70.0
+@export var windup_min := 1.5
+@export var windup_max := 3.0
+@export var patrol_speed := 25.0
 
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var stomp_area: Area2D = $StompArea
 @onready var hitbox: Area2D = $Hitbox
 @onready var edge_ray: RayCast2D = $EdgeDetector
 
-var _start_x: float
-var _direction := 1.0
 var _is_dead := false
-var _sprite_base_x: float
 var _world: Node2D
+var _direction := 1.0
+var _windup_timer := 0.0
+var _winding_up := false
+var _jumping := false
+var _sprite_base_x: float
+var _start_x: float
 
 
 func _ready() -> void:
@@ -36,49 +40,94 @@ func _ready() -> void:
 	hitbox.collision_mask = 2
 	stomp_area.body_entered.connect(_on_stomp_area_body_entered)
 	hitbox.body_entered.connect(_on_hitbox_body_entered)
+	edge_ray.position.x = _direction * 10.0
+	_reset_windup()
+
+
+func _reset_windup() -> void:
+	_windup_timer = randf_range(windup_min, windup_max)
+	_winding_up = false
+	_jumping = false
+	sprite.play("Idle")
 
 
 func _physics_process(delta: float) -> void:
 	if _is_dead:
 		return
 
-	if not is_on_floor():
+	if _jumping:
 		velocity.y += GRAVITY * delta
 	else:
-		velocity.y = 0
+		if not is_on_floor():
+			velocity.y += GRAVITY * delta
+		else:
+			velocity.y = 0
 
-	velocity.x = _direction * speed
-	move_and_slide()
+	if is_on_floor() and not _jumping:
+		if not _winding_up:
+			_windup_timer -= delta
+			if _windup_timer <= 0.0:
+				_start_windup()
 
-	var at_edge := is_on_floor() and not edge_ray.is_colliding()
-	if is_on_wall() or at_edge:
-		_direction *= -1
-
-	edge_ray.position.x = _direction * 7.0
-
-	if _direction < 0:
-		sprite.flip_h = true
-		sprite.position.x = -_sprite_base_x
+		if not _winding_up:
+			velocity.x = _direction * patrol_speed * 0.3
+			move_and_slide()
+			var at_edge := is_on_floor() and not edge_ray.is_colliding()
+			if is_on_wall() or at_edge:
+				_direction *= -1
+				edge_ray.position.x = _direction * 10.0
+			_flip_sprite()
+		else:
+			velocity.x = 0
+			move_and_slide()
 	else:
-		sprite.flip_h = false
-		sprite.position.x = _sprite_base_x
-
-	sprite.play("Walk")
-
-
-## Bullets do nothing — stomp-only enemy
-func take_damage(_amount: int = 1) -> void:
-	SFX.play_ricochet()
+		move_and_slide()
+		if _jumping and is_on_floor():
+			_reset_windup()
+		_flip_to_player()
 
 
-## Only stomps can kill this enemy
-func stomp_damage(amount: int = 6) -> void:
+func _start_windup() -> void:
+	_winding_up = true
+	sprite.play("Attack")
+	await sprite.animation_finished
+	if _is_dead:
+		return
+	_do_jump()
+
+
+func _do_jump() -> void:
+	if not is_on_floor():
+		return
+	_jumping = true
+	_winding_up = false
+	_direction = -1.0 if sprite.flip_h else 1.0
+	velocity.y = jump_velocity
+	velocity.x = _direction * jump_horizontal
+	sprite.play("Run")
+
+
+func _flip_sprite() -> void:
+	sprite.flip_h = _direction < 0
+	sprite.position.x = -_sprite_base_x if _direction < 0 else _sprite_base_x
+
+
+func _flip_to_player() -> void:
+	var player := get_tree().get_first_node_in_group("player") as CharacterBody2D
+	if player:
+		var facing_left := player.global_position.x < global_position.x
+		sprite.flip_h = facing_left
+		sprite.position.x = -_sprite_base_x if facing_left else _sprite_base_x
+
+
+func take_damage(amount: int = 1) -> void:
 	if _is_dead:
 		return
 	hp -= amount
 	if hp <= 0:
 		_die()
 	else:
+		_reset_windup()
 		sprite.play("Hurt")
 		modulate = Color(2, 2, 2, 1)
 		var tween := create_tween()
@@ -89,9 +138,9 @@ func _die() -> void:
 	_is_dead = true
 	velocity = Vector2.ZERO
 	sprite.play("Death")
-	SFX.play_death_floor_drone()
-	_spawn_death_explosion("nuclear")
-	_spawn_money(5)
+	SFX.play_death_prisoner()
+	_spawn_death_explosion("explosion")
+	_spawn_money(3)
 	set_physics_process(false)
 	hitbox.set_deferred("monitoring", false)
 	stomp_area.set_deferred("monitoring", false)
@@ -116,29 +165,23 @@ func _spawn_money(value: int) -> void:
 	_world.call_deferred("add_child", money)
 
 
-func _has_world_method(method_name: String) -> bool:
-	return _world and _world.has_method(method_name)
-
-
-## Stomped — the only way to kill it
 func _on_stomp_area_body_entered(body: Node2D) -> void:
 	if _is_dead:
 		return
 	if body is CharacterBody2D and body.has_method("refill_ammo"):
 		if body.velocity.y > 0:
-			stomp_damage(6)
+			take_damage(6)
 			if not _is_dead:
 				return
-			if _has_world_method("screen_shake"):
-				_world.screen_shake(4.0)
-			if _has_world_method("hitstop"):
-				_world.hitstop(0.06)
-			SFX.play_stomp_material()
+			if _world and _world.has_method("screen_shake"):
+				_world.screen_shake(2.0)
+			if _world and _world.has_method("hitstop"):
+				_world.hitstop(0.03)
+			SFX.play_stomp_bones()
 			body.refill_ammo()
 			body.velocity.y = -250.0
 
 
-## Body contact damages player
 func _on_hitbox_body_entered(body: Node2D) -> void:
 	if _is_dead:
 		return

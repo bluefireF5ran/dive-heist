@@ -9,11 +9,13 @@ extends Area2D
 var _player_in_range := false
 var _player_ref: CharacterBody2D = null
 var _used := false
+var _world: Node2D
 
 
 func _ready() -> void:
+	_world = get_tree().current_scene as Node2D
 	collision_layer = 0
-	collision_mask = 2  # Detect player
+	collision_mask = 2
 	body_entered.connect(_on_body_entered)
 	body_exited.connect(_on_body_exited)
 
@@ -30,15 +32,12 @@ func _teleport() -> void:
 	_player_ref.global_position = target_position
 	_player_ref.velocity = Vector2.ZERO
 	_player_ref._in_safe_zone = true  # Preserve combo through door transitions
-	# Move camera immediately
-	var world := get_tree().current_scene
-	if world.has_node("Camera2D"):
-		var cam: Camera2D = world.get_node("Camera2D")
+	if _world and _world.has_node("Camera2D"):
+		var cam: Camera2D = _world.get_node("Camera2D")
 		cam.position.x = target_position.x
 		cam.position.y = target_position.y
-		# Reset max camera Y so it doesn't jump weirdly
-		if world.has_method("_reset_camera_to"):
-			world._reset_camera_to(target_position)
+		if _world.has_method("_reset_camera_to"):
+			_world._reset_camera_to(target_position)
 	# Brief visual feedback
 	SFX.play(SFX.landing, -8.0)
 	# Re-enable after a short delay to prevent double-triggering

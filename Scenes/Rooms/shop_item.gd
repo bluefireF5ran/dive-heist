@@ -9,11 +9,11 @@ const PURCHASE_PARTICLES := preload("res://Scenes/VFX/purchase_particles.tscn")
 
 const ITEM_ICONS := {
 	"heal":
-	"res://Sprites/Scraper/Cyberpunk_Assets/Icons/Weapons_Ammo/1 Icons/Icon1_09.png",
+	preload("res://Sprites/Scraper/Cyberpunk_Assets/Icons/Weapons_Ammo/1 Icons/Icon1_09.png"),
 	"ammo_up":
-	"res://Sprites/Scraper/Cyberpunk_Assets/Icons/Weapons_Ammo/1 Icons/Icon1_01.png",
+	preload("res://Sprites/Scraper/Cyberpunk_Assets/Icons/Weapons_Ammo/1 Icons/Icon1_01.png"),
 	"armor":
-	"res://Sprites/Scraper/Cyberpunk_Assets/Icons/Armor_Cyberpunk/1 Icons/Icon16_01.png",
+	preload("res://Sprites/Scraper/Cyberpunk_Assets/Icons/Armor_Cyberpunk/1 Icons/Icon16_01.png"),
 }
 
 @export var item_id := "heal"
@@ -21,22 +21,24 @@ const ITEM_ICONS := {
 @export var description := ""
 
 var _sold := false
+var _world: Node2D
 
 @onready var sprite: Sprite2D = $Sprite2D
 @onready var price_label: Label = $PriceLabel
 
 
+var _player_in_range := false
+var _player_ref: Node2D = null
+
+
 func _ready() -> void:
+	_world = get_tree().current_scene as Node2D
 	collision_layer = 0
 	collision_mask = 2
 	body_entered.connect(_on_body_entered)
 	body_exited.connect(_on_body_exited)
 	_update_price_label()
 	_update_icon()
-
-
-var _player_in_range := false
-var _player_ref: Node2D = null
 
 
 func _update_price_label() -> void:
@@ -46,7 +48,7 @@ func _update_price_label() -> void:
 
 func _update_icon() -> void:
 	if sprite and ITEM_ICONS.has(item_id):
-		sprite.texture = load(ITEM_ICONS[item_id])
+		sprite.texture = ITEM_ICONS[item_id]
 
 
 func _process(_delta: float) -> void:
@@ -91,12 +93,11 @@ func _spawn_purchase_vfx() -> void:
 	# Gold particle burst
 	var particles := PURCHASE_PARTICLES.instantiate()
 	particles.global_position = global_position
-	get_tree().current_scene.call_deferred("add_child", particles)
-	# Floating "SOLD!" text
+	_world.call_deferred("add_child", particles)
 	var popup := TEXT_POPUP.instantiate()
 	popup.popup_text = "SOLD!"
 	popup.global_position = global_position - Vector2(0, 12)
-	get_tree().current_scene.call_deferred("add_child", popup)
+	_world.call_deferred("add_child", popup)
 
 
 func _on_body_entered(body: Node2D) -> void:

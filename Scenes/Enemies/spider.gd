@@ -16,12 +16,14 @@ const DEATH_EXPLOSION := preload("res://Scenes/VFX/death_explosion.tscn")
 @onready var hitbox: Area2D = $Hitbox
 
 var _start_y: float
-var _direction := 1.0  # 1 = down, -1 = up
+var _direction := 1.0
 var _is_dead := false
 var _on_left_wall := true
+var _world: Node2D
 
 
 func _ready() -> void:
+	_world = get_tree().current_scene as Node2D
 	_start_y = global_position.y
 	collision_layer = 4
 	collision_mask = 1
@@ -97,14 +99,14 @@ func _spawn_death_explosion(type: String) -> void:
 	var fx := DEATH_EXPLOSION.instantiate()
 	fx.explosion_type = type
 	fx.global_position = global_position
-	get_tree().current_scene.call_deferred("add_child", fx)
+	_world.call_deferred("add_child", fx)
 
 
 func _spawn_money(value: int) -> void:
 	var money := MONEY_SCENE.instantiate()
 	money.value = value
 	money.global_position = global_position
-	get_tree().current_scene.call_deferred("add_child", money)
+	_world.call_deferred("add_child", money)
 
 
 ## Stomping this spider HURTS the player — it's shoot-only!

@@ -118,7 +118,7 @@ func play_death_spider() -> void:
 
 
 func play_death_floor_drone() -> void:
-	play(death_heavy_drone, -4.0, randf_range(0.9, 1.05))
+	play(death_heavy_drone, -14.0, randf_range(0.9, 1.05))
 
 
 ## Bullet hit

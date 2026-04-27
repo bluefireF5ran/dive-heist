@@ -7,26 +7,29 @@
 [ext_resource type="PackedScene" path="res://Scenes/Collectibles/gem_crate.tscn" id="5_crate"]
 [ext_resource type="PackedScene" uid="uid://bav1ebwufyise" path="res://Scenes/Rooms/room_door.tscn" id="6_door"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_floor"]
-size = Vector2(352, 16)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_plat"]
+size = Vector2(48, 16)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wall"]
 size = Vector2(32, 216)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_plat2"]
+size = Vector2(40, 16)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_plat3"]
+size = Vector2(40, 16)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_plat4"]
+size = Vector2(40, 16)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_plat5"]
+size = Vector2(48, 16)
+
+[sub_resource type="RectangleShape2D" id="spike_shape"]
+size = Vector2(320, 8)
+
 [node name="MoneyStance" type="Node2D" unique_id=1812242648]
 script = ExtResource("1_script")
-
-[node name="Floor" type="StaticBody2D" parent="." unique_id=80758433]
-position = Vector2(160, 0)
-
-[node name="Visual" type="Sprite2D" parent="Floor" unique_id=773834276]
-texture_repeat = 2
-texture = ExtResource("2_plattile")
-region_enabled = true
-region_rect = Rect2(0, 0, 352, 16)
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Floor" unique_id=874431645]
-shape = SubResource("RectangleShape2D_floor")
 
 [node name="Ceiling" type="StaticBody2D" parent="." unique_id=383042790]
 position = Vector2(160, -200)
@@ -38,7 +41,10 @@ region_enabled = true
 region_rect = Rect2(0, 0, 352, 16)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Ceiling" unique_id=1963762039]
-shape = SubResource("RectangleShape2D_floor")
+shape = SubResource("RectangleShape2D_plat")
+
+[node name="SpawnPoint" type="Marker2D" parent="." unique_id=1673665426]
+position = Vector2(36, -45)
 
 [node name="LeftWall" type="StaticBody2D" parent="." unique_id=327980523]
 position = Vector2(-16, -100)
@@ -64,9 +70,90 @@ region_rect = Rect2(0, 0, 32, 216)
 [node name="CollisionShape2D" type="CollisionShape2D" parent="RightWall" unique_id=1309538110]
 shape = SubResource("RectangleShape2D_wall")
 
+[node name="Plat1" type="StaticBody2D" parent="." unique_id=80758433]
+position = Vector2(36, -16)
+
+[node name="Visual" type="Sprite2D" parent="Plat1" unique_id=1091252997]
+texture_repeat = 2
+texture = ExtResource("2_plattile")
+region_enabled = true
+region_rect = Rect2(0, 0, 48, 16)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Plat1" unique_id=296663104]
+shape = SubResource("RectangleShape2D_plat")
+one_way_collision = true
+
+[node name="Plat2" type="StaticBody2D" parent="." unique_id=854203237]
+position = Vector2(90, -68)
+
+[node name="Visual" type="Sprite2D" parent="Plat2" unique_id=1126946502]
+texture_repeat = 2
+texture = ExtResource("2_plattile")
+region_enabled = true
+region_rect = Rect2(0, 0, 40, 16)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Plat2" unique_id=1620918197]
+shape = SubResource("RectangleShape2D_plat2")
+one_way_collision = true
+
+[node name="Plat3" type="StaticBody2D" parent="." unique_id=1286389389]
+position = Vector2(156, -108)
+
+[node name="Visual" type="Sprite2D" parent="Plat3" unique_id=586908773]
+texture_repeat = 2
+texture = ExtResource("2_plattile")
+region_enabled = true
+region_rect = Rect2(0, 0, 40, 16)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Plat3" unique_id=350395138]
+shape = SubResource("RectangleShape2D_plat3")
+one_way_collision = true
+
+[node name="Plat4" type="StaticBody2D" parent="." unique_id=1445562020]
+position = Vector2(220, -60)
+
+[node name="Visual" type="Sprite2D" parent="Plat4" unique_id=450457048]
+texture_repeat = 2
+texture = ExtResource("2_plattile")
+region_enabled = true
+region_rect = Rect2(0, 0, 40, 16)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Plat4" unique_id=1941949713]
+shape = SubResource("RectangleShape2D_plat4")
+one_way_collision = true
+
+[node name="Plat5" type="StaticBody2D" parent="." unique_id=193768366]
+position = Vector2(280, -20)
+
+[node name="Visual" type="Sprite2D" parent="Plat5" unique_id=2001849682]
+texture_repeat = 2
+texture = ExtResource("2_plattile")
+region_enabled = true
+region_rect = Rect2(0, 0, 48, 16)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Plat5" unique_id=1870846011]
+shape = SubResource("RectangleShape2D_plat5")
+one_way_collision = true
+
 [node name="GemCrate" parent="." unique_id=566202185 instance=ExtResource("5_crate")]
-position = Vector2(162, -23)
+position = Vector2(158, -131)
 
 [node name="ExitDoor" parent="." unique_id=29314474 instance=ExtResource("6_door")]
-position = Vector2(301, -28)
+position = Vector2(290, -47)
 is_exit = true
+
+[node name="SpikeFloor" type="Area2D" parent="." unique_id=864362669]
+collision_layer = 0
+collision_mask = 2
+
+[node name="Shape" type="CollisionShape2D" parent="SpikeFloor" unique_id=1222385285]
+position = Vector2(160, 4)
+shape = SubResource("spike_shape")
+
+[node name="Visual" type="Sprite2D" parent="SpikeFloor" unique_id=1792850152]
+modulate = Color(0.8, 0.1, 0.05, 0.6)
+texture_repeat = 2
+position = Vector2(162, 4)
+texture = ExtResource("2_plattile")
+region_enabled = true
+region_rect = Rect2(0, 0, 320, 8)
