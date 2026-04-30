@@ -63,6 +63,21 @@ func set_era(era: String) -> void:
 		child.queue_free()
 	_build_layers(era)
 
+## Smooth era transition with crossfade.
+func set_era_smooth(era: String, fade_duration: float) -> void:
+	var old_layers: Array[Node] = get_children()
+	_build_layers(era)
+	for child in old_layers:
+		var tween := create_tween()
+		tween.tween_property(child, "modulate:a", 0.0, fade_duration)
+		tween.tween_callback(child.queue_free)
+	for child in get_children():
+		if child in old_layers:
+			continue
+		child.modulate.a = 0.0
+		var tween := create_tween()
+		tween.tween_property(child, "modulate:a", 1.0, fade_duration)
+
 
 func _build_layers(era: String) -> void:
 	var cfg: Dictionary = ERA_LAYERS.get(era, ERA_LAYERS["prison"])

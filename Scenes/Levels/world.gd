@@ -5,6 +5,7 @@ const CAMERA_SMOOTH := 4.0
 const START_PLATFORM_W := 120.0
 const START_PLATFORM_H := 16.0
 const VOID_GAP := 100.0
+const TRANSITION_FADE := 0.35
 
 var _start_y: float
 var _max_camera_y: float
@@ -14,6 +15,7 @@ var _shake_intensity := 0.0
 var _shake_decay := 8.0
 var _music_player: AudioStreamPlayer
 var _start_platform: StaticBody2D
+var _fade_overlay: ColorRect
 
 var _current_level := 1
 var _level_kills := 0
@@ -60,6 +62,14 @@ func _ready() -> void:
 	_music_player.autoplay = true
 	_music_player.process_mode = Node.PROCESS_MODE_ALWAYS
 	add_child(_music_player)
+
+	_fade_overlay = ColorRect.new()
+	_fade_overlay.color = Color(0, 0, 0, 0)
+	_fade_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_fade_overlay.z_index = 100
+	_fade_overlay.process_mode = Node.PROCESS_MODE_ALWAYS
+	_fade_overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	add_child(_fade_overlay)
 
 
 func _update_era_clear_color(era: String) -> void:
@@ -183,6 +193,8 @@ func _on_level_complete() -> void:
 
 	player.velocity = Vector2.ZERO
 	player.set_physics_process(false)
+	player._in_safe_zone = true
+	player._invincible_timer = 0.5
 
 	_freeze_enemies()
 
@@ -190,6 +202,8 @@ func _on_level_complete() -> void:
 	ammo_hud.show_level_complete(_current_level, _level_kills, _level_money_earned, _level_max_combo, depth)
 	SFX.play(SFX.combo_increase, -4.0)
 	screen_shake(3.0)
+
+	_fade_out(TRANSITION_FADE)
 
 
 func _freeze_enemies() -> void:
@@ -216,6 +230,14 @@ func _get_era(level: int) -> String:
 			return "escape"
 
 
+func _fade_out(duration: float) -> void:
+	var tween := create_tween()
+	tween.tween_property(_fade_overlay, "color:a", 0.6, duration)
+
+func _fade_in(duration: float) -> void:
+	var tween := create_tween()
+	tween.tween_property(_fade_overlay, "color:a", 0.0, duration)
+
 func _continue_to_next_level() -> void:
 	_is_level_complete = false
 	var old_era := _get_era(_current_level)
@@ -225,23 +247,32 @@ func _continue_to_next_level() -> void:
 	_level_money_earned = 0
 	ammo_hud.hide_level_complete()
 
-	_start_y = chunk_gen._next_chunk_y
+	chunk_gen.clear_all_chunks()
 	chunk_gen._next_chunk_y += VOID_GAP
 	chunk_gen.reshuffle_stances()
-	var spawn_y := _start_y - 300.0
+	var spawn_y: float = chunk_gen._next_chunk_y - 400.0
 	player.global_position = Vector2(CAMERA_X, spawn_y)
 	player.velocity = Vector2.ZERO
 	_max_camera_y = spawn_y
 	camera.position = Vector2(CAMERA_X, spawn_y)
 
-	_spawn_start_platform(_start_y + VOID_GAP)
+	_spawn_start_platform(chunk_gen._next_chunk_y)
 
+	player._invincible_timer = 2.0
+	player._stomp_invincible = 0.5
+	player._in_safe_zone = true
 	player.set_physics_process(true)
 
 	var new_era := _get_era(_current_level)
+	chunk_gen.spawn_void_chunk(chunk_gen._next_chunk_y - VOID_GAP, VOID_GAP)
 	if new_era != old_era:
-		parallax.set_era(new_era)
+		parallax.set_era_smooth(new_era, TRANSITION_FADE)
 		_update_era_clear_color(new_era)
+
+	_fade_in(TRANSITION_FADE)
+	get_tree().create_timer(1.5).timeout.connect(
+		func(): player._in_safe_zone = false
+	)
 
 
 func _spawn_start_platform(y: float) -> void:

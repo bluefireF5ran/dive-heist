@@ -310,6 +310,12 @@ func setup(start_y: float) -> void:
 func reshuffle_stances() -> void:
 	_shuffle_stances()
 
+## Remove all spawned chunks for a clean level transition.
+func clear_all_chunks() -> void:
+	for chunk in _chunks:
+		chunk.queue_free()
+	_chunks.clear()
+
 func _shuffle_stances() -> void:
 	_stance_order.clear()
 	for i in range(STANCE_SCENES.size()):
@@ -400,12 +406,9 @@ func _get_phase(phase_progress: float) -> String:
 
 func _is_near_rest_zone(y: float) -> bool:
 	var buffer_dist := CHUNK_HEIGHT * REST_ZONE_BUFFER
-	var zone_y := _start_y + LEVEL_LENGTH
-	while zone_y < y + buffer_dist:
-		if absf(y - zone_y) < buffer_dist:
-			return true
-		zone_y += LEVEL_LENGTH
-	return false
+	var dist_from_start := y - _start_y
+	var remainder := fmod(dist_from_start, LEVEL_LENGTH)
+	return remainder < buffer_dist or LEVEL_LENGTH - remainder < buffer_dist
 
 
 func _spawn_chunk(y: float) -> void:
@@ -948,6 +951,36 @@ func _add_room_platform(parent: Node2D, cx: float, cy: float, w: float) -> void:
 	visual.region_enabled = true
 	visual.region_rect = Rect2(0, 0, w, PLATFORM_H)
 	body.add_child(visual)
+
+## Spawn a background-only chunk to fill the void gap between levels.
+func spawn_void_chunk(y: float, gap: float) -> void:
+	var zone := Node2D.new()
+	zone.global_position = Vector2(0, y)
+	add_child(zone)
+	_chunks.append(zone)
+	var tiles: Array[Texture2D] = _get_era_bg_tiles()
+	if tiles.is_empty():
+		return
+	var rows := ceili(gap / TILE_SIZE)
+	var base_count := tiles.size() - 1
+	for row in range(rows):
+		var base_idx := _rng.randi() % base_count
+		var tex: Texture2D
+		if _rng.randf() < 0.02:
+			tex = tiles[tiles.size() - 1]
+		elif _rng.randf() < 0.15:
+			tex = tiles[_rng.randi() % base_count]
+		else:
+			tex = tiles[base_idx]
+		var spr := Sprite2D.new()
+		spr.texture = tex
+		spr.centered = false
+		spr.texture_repeat = CanvasItem.TEXTURE_REPEAT_ENABLED
+		spr.region_enabled = true
+		spr.region_rect = Rect2(0, 0, WELL_RIGHT, TILE_SIZE)
+		spr.position = Vector2(0, row * TILE_SIZE)
+		spr.z_index = -1
+		zone.add_child(spr)
 
 func _fill_background(chunk: Node2D) -> void:
 	var tiles: Array[Texture2D] = _get_era_bg_tiles()
