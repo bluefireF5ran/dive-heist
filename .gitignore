@@ -1,3 +1,9 @@
+# macOS metadata
+__MACOSX
+
+# Scratch
+test.txt
+
 # Godot 4+ specific ignores
 .godot/
 /android/
@@ -18,6 +24,7 @@ Sprites/Craftpix/*
 !Sprites/Craftpix/2. Escenarios/
 !Sprites/Craftpix/3. Backgrounds/
 !Sprites/Craftpix/Free Pixel Art Explosions/
+!Sprites/Craftpix/free-guns-pack-2-for-main-characters-pixel-art/
 
 # --- Craftpix > 1.Personajes ---
 Sprites/Craftpix/1.Personajes/*
@@ -45,6 +52,7 @@ Sprites/Scraper/Cyberpunk_Assets/*
 !Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/
 !Sprites/Scraper/Cyberpunk_Assets/Tilesets/
 !Sprites/Scraper/Cyberpunk_Assets/Game_UI/
+!Sprites/Scraper/Cyberpunk_Assets/Icons/
 
 # --- Scraper > Characters_Sprites ---
 Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/*
