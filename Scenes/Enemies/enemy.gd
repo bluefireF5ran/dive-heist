@@ -19,6 +19,7 @@ const DEATH_EXPLOSION := preload("res://Scenes/VFX/death_explosion.tscn")
 var _start_x: float
 var _direction := 1.0
 var _is_dead := false
+var _hurt_timer := 0.0
 var _sprite_base_x: float
 var _world: Node2D
 
@@ -42,6 +43,7 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	if _is_dead:
 		return
+	_hurt_timer -= delta
 
 	# Gravity
 	if not is_on_floor():
@@ -70,7 +72,7 @@ func _physics_process(delta: float) -> void:
 		sprite.flip_h = false
 		sprite.position.x = _sprite_base_x
 
-	if not _is_dead:
+	if not _is_dead and _hurt_timer <= 0.0:
 		sprite.play("Walk")
 
 
@@ -82,6 +84,7 @@ func take_damage(amount: int = 1) -> void:
 		_die()
 	else:
 		sprite.play("Hurt")
+		_hurt_timer = 0.2
 		# Brief knockback flash
 		modulate = Color(2, 2, 2, 1)
 		var tween := create_tween()

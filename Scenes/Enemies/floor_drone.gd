@@ -20,6 +20,7 @@ const DEATH_EXPLOSION := preload("res://Scenes/VFX/death_explosion.tscn")
 var _start_x: float
 var _direction := 1.0
 var _is_dead := false
+var _hurt_timer := 0.0
 var _sprite_base_x: float
 var _world: Node2D
 
@@ -42,6 +43,8 @@ func _physics_process(delta: float) -> void:
 	if _is_dead:
 		return
 
+	_hurt_timer -= delta
+
 	if not is_on_floor():
 		velocity.y += GRAVITY * delta
 	else:
@@ -63,7 +66,8 @@ func _physics_process(delta: float) -> void:
 		sprite.flip_h = false
 		sprite.position.x = _sprite_base_x
 
-	sprite.play("Walk")
+	if _hurt_timer <= 0.0:
+		sprite.play("Walk")
 
 
 ## Bullets do nothing — stomp-only enemy
@@ -80,6 +84,7 @@ func stomp_damage(amount: int = 6) -> void:
 		_die()
 	else:
 		sprite.play("Hurt")
+		_hurt_timer = 0.2
 		modulate = Color(2, 2, 2, 1)
 		var tween := create_tween()
 		tween.tween_property(self, "modulate", Color.WHITE, 0.15)

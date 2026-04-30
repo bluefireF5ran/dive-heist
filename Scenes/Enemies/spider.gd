@@ -18,6 +18,7 @@ const DEATH_EXPLOSION := preload("res://Scenes/VFX/death_explosion.tscn")
 var _start_y: float
 var _direction := 1.0
 var _is_dead := false
+var _hurt_timer := 0.0
 var _on_left_wall := true
 var _world: Node2D
 
@@ -40,6 +41,8 @@ func _physics_process(_delta: float) -> void:
 	if _is_dead:
 		return
 
+	_hurt_timer -= _delta
+
 	# Patrol vertically
 	velocity = Vector2(0, _direction * speed)
 	move_and_slide()
@@ -51,7 +54,8 @@ func _physics_process(_delta: float) -> void:
 		_direction = 1.0
 
 	# Play walk animation — reverse speed when going up so legs animate correctly
-	sprite.play("Walk")
+	if _hurt_timer <= 0.0:
+		sprite.play("Walk")
 	sprite.speed_scale = 1.0 if _direction > 0 else -1.0
 
 	# Rotation: on left wall face right (90°), on right wall face left (-90°)
@@ -73,6 +77,7 @@ func take_damage(amount: int = 1) -> void:
 		_die()
 	else:
 		sprite.play("Hurt")
+		_hurt_timer = 0.2
 		modulate = Color(2, 2, 2, 1)
 		var tween := create_tween()
 		tween.tween_property(self, "modulate", Color.WHITE, 0.15)

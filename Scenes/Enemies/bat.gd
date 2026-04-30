@@ -16,6 +16,7 @@ const DEATH_EXPLOSION := preload("res://Scenes/VFX/death_explosion.tscn")
 @onready var hitbox: Area2D = $Hitbox
 
 var _is_dead := false
+var _hurt_timer := 0.0
 var _world: Node2D
 var _player: CharacterBody2D
 var _start_pos: Vector2
@@ -41,6 +42,8 @@ func _physics_process(delta: float) -> void:
 	if _is_dead:
 		return
 
+	_hurt_timer -= delta
+
 	if not _player:
 		_player = get_tree().get_first_node_in_group("player") as CharacterBody2D
 	if not _player:
@@ -49,30 +52,33 @@ func _physics_process(delta: float) -> void:
 	var dy := _player.global_position.y - global_position.y
 	var dx := _player.global_position.x - global_position.x
 
-	if not _diving and dy > 0 and absf(dy) < detection_range:
-		_diving = true
-		_dive_timer = 1.5
-		sprite.play("Forward")
+	if _hurt_timer <= 0.0:
+		if not _diving and dy > 0 and absf(dy) < detection_range:
+			_diving = true
+			_dive_timer = 1.5
+			sprite.play("Forward")
 
-	if _diving:
-		_dive_timer -= delta
-		var dir := (_player.global_position - global_position).normalized()
-		velocity.x = dir.x * dive_speed_h
-		velocity.y = dir.y * dive_speed_v
-		if _dive_timer <= 0.0 or (dy < 30.0 and dy > -30.0 and absf(dx) < 30.0):
+		if _diving:
+			_dive_timer -= delta
+			var dir := (_player.global_position - global_position).normalized()
+			velocity.x = dir.x * dive_speed_h
+			velocity.y = dir.y * dive_speed_v
+			if _dive_timer <= 0.0 or (dy < 30.0 and dy > -30.0 and absf(dx) < 30.0):
+				_diving = false
+				sprite.play("Idle")
+		else:
+			var return_dir := (_start_pos - global_position).normalized()
+			velocity = return_dir * return_speed
+			if global_position.distance_squared_to(_start_pos) < 400.0:
+				velocity = Vector2.ZERO
+
+		move_and_slide()
+		if _diving and get_last_slide_collision():
 			_diving = false
+			_dive_timer = 0.0
 			sprite.play("Idle")
 	else:
-		var return_dir := (_start_pos - global_position).normalized()
-		velocity = return_dir * return_speed
-		if global_position.distance_squared_to(_start_pos) < 400.0:
-			velocity = Vector2.ZERO
-
-	move_and_slide()
-	if _diving and get_last_slide_collision():
-		_diving = false
-		_dive_timer = 0.0
-		sprite.play("Idle")
+		move_and_slide()
 	_flip_toward_player()
 
 
@@ -89,6 +95,7 @@ func take_damage(amount: int = 1) -> void:
 		_die()
 	else:
 		sprite.play("Hurt")
+		_hurt_timer = 0.2
 		modulate = Color(2, 2, 2, 1)
 		var tween := create_tween()
 		tween.tween_property(self, "modulate", Color.WHITE, 0.15)

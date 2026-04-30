@@ -17,6 +17,7 @@ const DEATH_EXPLOSION := preload("res://Scenes/VFX/death_explosion.tscn")
 @onready var hitbox: Area2D = $Hitbox
 
 var _is_dead := false
+var _hurt_timer := 0.0
 var _time := 0.0
 var _sprite_base_x: float
 var _world: Node2D
@@ -40,6 +41,7 @@ func _physics_process(delta: float) -> void:
 	if _is_dead:
 		return
 
+	_hurt_timer -= delta
 	_time += delta
 
 	if not _player:
@@ -63,7 +65,8 @@ func _physics_process(delta: float) -> void:
 		sprite.flip_h = false
 		sprite.position.x = _sprite_base_x
 
-	sprite.play("Walk")
+	if _hurt_timer <= 0.0:
+		sprite.play("Walk")
 
 
 func take_damage(amount: int = 1) -> void:
@@ -74,6 +77,7 @@ func take_damage(amount: int = 1) -> void:
 		_die()
 	else:
 		sprite.play("Hurt")
+		_hurt_timer = 0.2
 		modulate = Color(2, 2, 2, 1)
 		var tween := create_tween()
 		tween.tween_property(self, "modulate", Color.WHITE, 0.15)

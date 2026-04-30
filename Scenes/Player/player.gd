@@ -491,9 +491,6 @@ func _spawn_bullet(wd: Dictionary, angle_deg: float, bullet_damage: int) -> void
 	bullet.is_piercer = bool(wd.get("is_piercer", false))
 	bullet.is_ricochet = bool(wd.get("is_ricochet", false))
 	bullet.max_bounces = int(wd.get("max_bounces", 0))
-	# Ricochet needs to detect world geometry (layer 1)
-	if bullet.is_ricochet:
-		bullet.collision_mask = 5  # Layers 1 + 4
 	var bullet_sprite: Sprite2D = bullet.get_node_or_null("Sprite2D")
 	if bullet_sprite:
 		bullet_sprite.texture = BULLET_TEX.get(current_weapon)

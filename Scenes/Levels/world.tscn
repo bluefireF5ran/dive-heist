@@ -25,6 +25,7 @@
 [ext_resource type="Script" path="res://Scenes/Levels/breakable_platform.gd" id="23_breakable"]
 [ext_resource type="PackedScene" path="res://Scenes/Enemies/bat.tscn" id="24_bat"]
 [ext_resource type="PackedScene" path="res://Scenes/Enemies/frog.tscn" id="25_frog"]
+[ext_resource type="Script" path="res://Scenes/Levels/moving_platform.gd" id="26_movingplat"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wall"]
 size = Vector2(32, 20000)
@@ -90,6 +91,7 @@ platform_tile = ExtResource("9_plattile")
 bg_tiles = Array[Texture2D]([ExtResource("12_bg50"), ExtResource("13_bg51"), ExtResource("14_bg52"), ExtResource("15_bg53"), ExtResource("16_bg54"), ExtResource("17_bg55"), ExtResource("18_bg56")])
 heated_platform_script = ExtResource("22_heated")
 breakable_platform_script = ExtResource("23_breakable")
+moving_platform_script = ExtResource("26_movingplat")
 
 [node name="AmmoHUD" parent="." instance=ExtResource("2_hud")]
 

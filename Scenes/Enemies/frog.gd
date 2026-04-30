@@ -19,6 +19,7 @@ const DEATH_EXPLOSION := preload("res://Scenes/VFX/death_explosion.tscn")
 @onready var edge_ray: RayCast2D = $EdgeDetector
 
 var _is_dead := false
+var _hurt_timer := 0.0
 var _world: Node2D
 var _direction := 1.0
 var _windup_timer := 0.0
@@ -53,6 +54,13 @@ func _reset_windup() -> void:
 
 func _physics_process(delta: float) -> void:
 	if _is_dead:
+		return
+
+	_hurt_timer -= delta
+	if _hurt_timer > 0.0:
+		if _jumping:
+			velocity.y += GRAVITY * delta
+		move_and_slide()
 		return
 
 	if _jumping:
@@ -129,6 +137,7 @@ func take_damage(amount: int = 1) -> void:
 	else:
 		_reset_windup()
 		sprite.play("Hurt")
+		_hurt_timer = 0.2
 		modulate = Color(2, 2, 2, 1)
 		var tween := create_tween()
 		tween.tween_property(self, "modulate", Color.WHITE, 0.15)
