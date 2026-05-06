@@ -4,6 +4,10 @@ __MACOSX
 # Scratch
 test.txt
 
+# Claude AI tooling
+.claude/
+CLAUDE.md
+
 # Godot 4+ specific ignores
 .godot/
 /android/
