@@ -29,7 +29,7 @@ func take_damage(_amount: int = 1) -> void:
 	var tween := create_tween()
 	tween.tween_property(self, "modulate", Color.WHITE, 0.1)
 	if hp <= 0:
-		_break()
+		call_deferred("_break")
 
 
 func _break() -> void:

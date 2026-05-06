@@ -11,7 +11,7 @@
 size = Vector2(48, 16)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wall"]
-size = Vector2(32, 216)
+size = Vector2(32, 353.1875)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_plat2"]
 size = Vector2(40, 16)
@@ -36,7 +36,9 @@ position = Vector2(160, -200)
 
 [node name="Visual" type="Sprite2D" parent="Ceiling" unique_id=718313172]
 texture_repeat = 2
+position = Vector2(172, 110)
 texture = ExtResource("2_plattile")
+offset = Vector2(-172, -110)
 region_enabled = true
 region_rect = Rect2(0, 0, 352, 16)
 
@@ -58,16 +60,36 @@ region_rect = Rect2(0, 0, 32, 216)
 [node name="CollisionShape2D" type="CollisionShape2D" parent="LeftWall" unique_id=340846278]
 shape = SubResource("RectangleShape2D_wall")
 
+[node name="BottomWall" type="StaticBody2D" parent="LeftWall" unique_id=916464575]
+position = Vector2(-16, -100)
+
+[node name="Visual" type="Sprite2D" parent="LeftWall/BottomWall" unique_id=73195214]
+texture_repeat = 2
+position = Vector2(207.99399, 222)
+rotation = -1.5707964
+scale = Vector2(1, 1.6365305)
+texture = ExtResource("3_walledge_r")
+region_enabled = true
+region_rect = Rect2(0, 0, 32, 216)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="LeftWall/BottomWall" unique_id=1982391551]
+position = Vector2(207.40625, 221)
+rotation = -1.5707964
+shape = SubResource("RectangleShape2D_wall")
+
 [node name="RightWall" type="StaticBody2D" parent="." unique_id=1202937474]
 position = Vector2(336, -100)
 
 [node name="Visual" type="Sprite2D" parent="RightWall" unique_id=1251594658]
 texture_repeat = 2
+position = Vector2(0, 1)
+scale = Vector2(1, 1.0092592)
 texture = ExtResource("4_walledge_l")
 region_enabled = true
 region_rect = Rect2(0, 0, 32, 216)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="RightWall" unique_id=1309538110]
+position = Vector2(4, -32.0625)
 shape = SubResource("RectangleShape2D_wall")
 
 [node name="Plat1" type="StaticBody2D" parent="." unique_id=80758433]

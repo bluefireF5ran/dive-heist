@@ -2,11 +2,12 @@ extends CanvasLayer
 
 var max_ammo := 8
 var current_ammo := 8
-var max_hp := 3
-var current_hp := 3
+var max_hp := 4
+var current_hp := 4
 var depth := 0
 var combo := 0
 var money := 0
+var score := 0
 var game_over := false
 var reward_text := ""
 var reward_timer := 0.0
@@ -81,6 +82,11 @@ func set_money(value: int) -> void:
 
 func set_weapon(weapon_name: String, color: Color) -> void:
 	bar_container.set_weapon(weapon_name, color)
+
+
+func set_score(value: int) -> void:
+	score = value
+	bar_container.queue_redraw()
 
 
 func show_combo_reward(tier: int, combo_val: int) -> void:

@@ -26,6 +26,7 @@ var _last_money := 0
 var _total_kills := 0
 var _total_money_earned := 0
 var _overall_max_combo := 0
+var _total_score := 0
 
 var _level_end_y := 0.0
 
@@ -50,6 +51,7 @@ func _ready() -> void:
 	player.combo_reward.connect(_on_combo_reward)
 	player.money_changed.connect(_on_money_changed)
 	player.weapon_changed.connect(_on_weapon_changed)
+	player.score_changed.connect(_on_score_changed)
 	ammo_hud.set_max_ammo(player.MAX_AIR_AMMO)
 	ammo_hud.set_ammo(player.MAX_AIR_AMMO)
 	ammo_hud.set_max_hp(player.MAX_HP)
@@ -126,8 +128,25 @@ func _on_ammo_changed(current: int, _max_val: int) -> void:
 	ammo_hud.set_ammo(current)
 
 
+var _last_hp := 4
+
 func _on_hp_changed(current: int, _max_val: int) -> void:
 	ammo_hud.set_hp(current)
+	if current < _last_hp:
+		_do_damage_flash()
+	_last_hp = current
+
+
+func _do_damage_flash() -> void:
+	var flash := ColorRect.new()
+	flash.color = Color(1, 0, 0, 0.3)
+	flash.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	flash.z_index = 90
+	flash.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	add_child(flash)
+	var tween := create_tween()
+	tween.tween_property(flash, "color:a", 0.0, 0.15)
+	tween.tween_callback(flash.queue_free)
 
 
 func _on_combo_changed(combo: int) -> void:
@@ -139,6 +158,11 @@ func _on_combo_changed(combo: int) -> void:
 	if combo > 0:
 		_level_kills += 1
 		_total_kills += 1
+
+
+func _on_score_changed(score: int) -> void:
+	ammo_hud.set_score(score)
+	_total_score = score
 
 
 func _on_combo_reward(tier: int, combo: int) -> void:
@@ -168,7 +192,7 @@ func _reset_camera_to(pos: Vector2) -> void:
 	_max_camera_y = pos.y
 
 
-func hitstop(duration: float = 0.04) -> void:
+func hitstop(duration: float = 0.08) -> void:
 	get_tree().paused = true
 	await get_tree().create_timer(duration, true, false, true).timeout
 	get_tree().paused = false
@@ -262,6 +286,7 @@ func _continue_to_next_level() -> void:
 	player._stomp_invincible = 0.5
 	player._in_safe_zone = true
 	player.set_physics_process(true)
+	player.heal(1)
 
 	var new_era := _get_era(_current_level)
 	chunk_gen.spawn_void_chunk(chunk_gen._next_chunk_y - VOID_GAP, VOID_GAP)

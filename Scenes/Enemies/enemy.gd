@@ -100,7 +100,7 @@ func _die() -> void:
 	else:
 		SFX.play_death_prisoner()
 	_spawn_death_explosion("explosion")
-	_spawn_money(2 if is_warden else 1)
+	_spawn_money(3 if is_warden else 2)
 	# Disable all collision
 	set_physics_process(false)
 	hitbox.set_deferred("monitoring", false)

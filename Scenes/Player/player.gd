@@ -4,17 +4,18 @@ signal ammo_changed(current: int, max_val: int)
 signal hp_changed(current: int, max_val: int)
 signal player_died
 signal combo_changed(combo: int)
-signal combo_reward(tier: int, combo: int)  # Emitted on landing with rewards
+signal combo_reward(tier: int, combo: int)
 signal money_changed(current: int)
 signal weapon_changed(weapon_name: String, color: Color)
+signal score_changed(score: int)
 
 const SPEED = 130.0
 const JUMP_VELOCITY = -280.0
 const GRAVITY = 800.0
-const SHOOT_MAX_UPWARD = -180.0  # Max upward speed from shooting (prevents flying)
-var MAX_AIR_AMMO := 8  # Shots before needing to land (can increase)
-const MAX_HP = 3
-const INVINCIBLE_TIME = 1.0  # Seconds of invincibility after taking damage
+const SHOOT_MAX_UPWARD = -180.0
+var MAX_AIR_AMMO := 8
+const MAX_HP = 4
+const INVINCIBLE_TIME = 1.0
 
 ## Weapon definitions: stats per weapon type.
 ## Keys: fire_cooldown, ammo_cost, bullet_speed, damage, bullet_count,
@@ -284,6 +285,7 @@ var _in_safe_zone := false  # Preserves combo through rest zones and rooms
 var _was_on_floor := true
 var _last_kill_was_stomp := false  # For style bonus tracking
 var _money := 0
+var _score := 0
 
 # Weapon state
 var current_weapon := "pistol"
@@ -552,12 +554,13 @@ func add_combo() -> void:
 
 ## Internal: add a kill to the combo chain with style bonus tracking.
 func _add_combo_kill(is_stomp: bool) -> void:
-	# Style bonus: alternating stomp/shoot gives +1 extra
 	if _combo > 0 and is_stomp != _last_kill_was_stomp:
-		_combo += 2  # 1 base + 1 style bonus
+		_combo += 2
 	else:
 		_combo += 1
 	_last_kill_was_stomp = is_stomp
+	_score += 10 * maxi(_combo, 1)
+	score_changed.emit(_score)
 	combo_changed.emit(_combo)
 
 
@@ -571,18 +574,20 @@ func _cash_in_combo() -> void:
 	elif _combo >= 8:
 		tier = 1
 
-	# Tier 1+: heal 1 HP
+	_score += _combo * 50
+	score_changed.emit(_score)
+
 	if tier >= 1 and _hp < MAX_HP:
 		_hp += 1
 		hp_changed.emit(_hp, MAX_HP)
 
-	# Tier 2+: bonus ammo above max (3 extra shots for next jump)
 	if tier >= 2:
 		_air_ammo = MAX_AIR_AMMO + 3
 		ammo_changed.emit(_air_ammo, MAX_AIR_AMMO)
 
-	# Tier 3: brief invincibility
 	if tier >= 3:
+		_air_ammo = MAX_AIR_AMMO + 3
+		ammo_changed.emit(_air_ammo, MAX_AIR_AMMO)
 		_invincible_timer = 2.0
 		SFX.play(SFX.invincibility, -10.0)
 

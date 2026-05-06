@@ -23,6 +23,9 @@ const ROOM_PLATFORM_TEX := preload(
 	"res://Sprites/Scraper/Cyberpunk_Assets/Tilesets/Prison/1 Tiles/room_platform.png"
 )
 const LEVEL_END_TRIGGER_SCRIPT := preload("res://Scenes/Levels/level_end_trigger.gd")
+const MOVING_PLATFORM_SCRIPT := preload("res://Scenes/Levels/moving_platform.gd")
+const BREAKABLE_PLATFORM_SCRIPT := preload("res://Scenes/Levels/breakable_platform.gd")
+const HEATED_PLATFORM_SCRIPT := preload("res://Scenes/Levels/heated_platform.gd")
 
 const STANCE_SCENES: Array[PackedScene] = [
 	preload("res://Scenes/Rooms/shop_stance.tscn"),
@@ -190,8 +193,8 @@ const PLATFORM_TYPE_WEIGHTS := {
 	"solid": {"min_level": 99, "weight": 3},
 	"thin": {"min_level": 99, "weight": 2},
 	"moving": {"min_level": 99, "weight": 2},
-	"breakable": {"min_level": 1, "weight": 5},
-	"heated": {"min_level": 2, "weight": 5},
+	"breakable": {"min_level": 1, "weight": 3},
+	"heated": {"min_level": 99, "weight": 2},
 }
 
 # Each phase = 3 levels. Prison=1-3, Factory=4-6, Lab=7-9, Bank=10-12, Escape=13-15
@@ -265,6 +268,13 @@ const PLATFORM_TYPE_CONFIG := {
 	},
 }
 
+const ZONE_CHANCE := 0.30
+const ZONE_MIN_GAP := 5
+const ZONE_MAX_GAP := 10
+const ZONE_CHUNKS := 3
+const ZONE_HEIGHT := CHUNK_HEIGHT * ZONE_CHUNKS
+
+const ZONE_TYPES := ["corridor", "chamber", "staircase", "bottleneck", "cascade", "crossfire"]
 
 @export var prisoner_scene: PackedScene
 @export var warden_scene: PackedScene
@@ -276,9 +286,6 @@ const PLATFORM_TYPE_CONFIG := {
 @export var platform_tile: Texture2D
 @export var bg_tiles: Array[Texture2D] = []
 @export var spike_texture: Texture2D
-@export var moving_platform_script: GDScript
-@export var breakable_platform_script: GDScript
-@export var heated_platform_script: GDScript
 
 
 var current_depth := 0
@@ -295,6 +302,8 @@ var _player: CharacterBody2D
 var _camera: Camera2D
 var _level_end_y := 0.0
 var _stance_order: Array[int] = []
+var _next_zone_y: float = 0.0
+var _zone_blocked_until: float = 0.0
 
 
 func _ready() -> void:
@@ -305,6 +314,8 @@ func setup(start_y: float) -> void:
 	_level_start_y = start_y
 	_next_chunk_y = start_y + CHUNK_HEIGHT
 	_next_rest_zone_y = start_y + LEVEL_LENGTH
+	_next_zone_y = start_y + LEVEL_LENGTH * 0.3
+	_zone_blocked_until = start_y + CHUNK_HEIGHT * 3
 	_shuffle_stances()
 
 func reshuffle_stances() -> void:
@@ -339,6 +350,14 @@ func _physics_process(_delta: float) -> void:
 			_spawn_rest_zone(_next_chunk_y)
 			_next_chunk_y += CHUNK_HEIGHT
 			_next_rest_zone_y += LEVEL_LENGTH
+			_zone_blocked_until = _next_chunk_y + CHUNK_HEIGHT * 3
+		elif _next_chunk_y >= _next_zone_y and _next_chunk_y >= _zone_blocked_until:
+			if _rng.randf() < ZONE_CHANCE:
+				_spawn_zone(_next_chunk_y)
+				_next_chunk_y += ZONE_HEIGHT
+				_next_zone_y = _next_chunk_y + _rng.randi_range(ZONE_MIN_GAP, ZONE_MAX_GAP) * CHUNK_HEIGHT
+			else:
+				_next_zone_y = _next_chunk_y + CHUNK_HEIGHT * 2
 		else:
 			_spawn_chunk(_next_chunk_y)
 			_next_chunk_y += CHUNK_HEIGHT
@@ -549,10 +568,9 @@ func _add_moving_platform(parent: Node2D, cx: float, cy: float, w: float) -> voi
 	var body := _add_platform_body(
 		parent, cx, cy, w, PLATFORM_H, cfg["one_way"], cfg["modulate"], ""
 	)
-	if moving_platform_script:
-		body.set_script(moving_platform_script)
-		body.move_range = cfg["move_range"]
-		body.move_speed = cfg["move_speed"]
+	body.set_script(MOVING_PLATFORM_SCRIPT)
+	body.move_range = cfg["move_range"]
+	body.move_speed = cfg["move_speed"]
 
 func _add_breakable_platform(parent: Node2D, cx: float, cy: float, w: float) -> void:
 	var cfg: Dictionary = PLATFORM_TYPE_CONFIG["breakable"]
@@ -560,19 +578,17 @@ func _add_breakable_platform(parent: Node2D, cx: float, cy: float, w: float) -> 
 		parent, cx, cy, w, PLATFORM_H, cfg["one_way"], cfg["modulate"], "Visual"
 	)
 	body.collision_layer = 5
-	if breakable_platform_script:
-		body.set_script(breakable_platform_script)
-		body.collapse_delay = cfg["collapse_delay"]
+	body.set_script(BREAKABLE_PLATFORM_SCRIPT)
+	body.collapse_delay = cfg["collapse_delay"]
 
 func _add_heated_platform(parent: Node2D, cx: float, cy: float, w: float) -> void:
 	var cfg: Dictionary = PLATFORM_TYPE_CONFIG["heated"]
 	var body := _add_platform_body(
 		parent, cx, cy, w, PLATFORM_H, cfg["one_way"], cfg["modulate"], "Visual"
 	)
-	if heated_platform_script:
-		body.set_script(heated_platform_script)
-		body.damage_interval = cfg["damage_interval"]
-		body.warmup_time = cfg["warmup_time"]
+	body.set_script(HEATED_PLATFORM_SCRIPT)
+	body.damage_interval = cfg["damage_interval"]
+	body.warmup_time = cfg["warmup_time"]
 
 func _add_platform_body(
 	parent: Node2D,
@@ -646,6 +662,225 @@ func _add_spike_hazard(parent: Node2D, x: float, y: float, facing_left: bool) ->
 		spr.flip_h = facing_left
 		spike.add_child(spr)
 	parent.add_child(spike)
+
+
+# Zone Templates — Multi-chunk structural sections for variety
+
+## Spawn a random zone template at the given Y position.
+## Zones replace 3 normal chunks with themed platform layouts.
+## No custom wall sprites — we work within the well walls (x=0, x=256).
+func _spawn_zone(y: float) -> void:
+	var zone_type: String = ZONE_TYPES[_rng.randi() % ZONE_TYPES.size()]
+	var zone := Node2D.new()
+	zone.global_position = Vector2(0, y)
+	add_child(zone)
+	_chunks.append(zone)
+
+	var zone_bg := Node2D.new()
+	_fill_background_zone(zone_bg, ZONE_CHUNKS)
+	zone.add_child(zone_bg)
+
+	match zone_type:
+		"corridor":
+			_zone_corridor(zone, y)
+		"chamber":
+			_zone_chamber(zone, y)
+		"staircase":
+			_zone_staircase(zone, y)
+		"bottleneck":
+			_zone_bottleneck(zone, y)
+		"cascade":
+			_zone_cascade(zone, y)
+		"crossfire":
+			_zone_crossfire(zone, y)
+
+
+## Create a solid column with prison tile visuals.
+## Blocks the player (StaticBody2D collision) and looks like prison architecture.
+func _add_column(parent: Node2D, x: float, top_y: float, w: float, h: float) -> void:
+	var body := StaticBody2D.new()
+	body.position = Vector2(x, top_y + h / 2.0)
+	parent.add_child(body)
+
+	var shape := RectangleShape2D.new()
+	shape.size = Vector2(w, h)
+	var col := CollisionShape2D.new()
+	col.shape = shape
+	body.add_child(col)
+
+	var tile: Texture2D = _get_era_platform_tile()
+	if not tile:
+		return
+	var cols := maxi(1, ceili(w / TILE_SIZE))
+	var rows := maxi(1, ceili(h / TILE_SIZE))
+	var x_start := -w / 2.0
+	for ry in range(rows):
+		for rx in range(cols):
+			var spr := Sprite2D.new()
+			spr.texture = tile
+			spr.texture_repeat = CanvasItem.TEXTURE_REPEAT_ENABLED
+			spr.region_enabled = true
+			spr.region_rect = Rect2(0, 0, TILE_SIZE, TILE_SIZE)
+			spr.position = Vector2(x_start + rx * TILE_SIZE + TILE_SIZE / 2.0, -h / 2.0 + ry * TILE_SIZE + TILE_SIZE / 2.0)
+			spr.modulate = Color(0.45, 0.35, 0.45, 1.0)
+			body.add_child(spr)
+
+
+## Corridor — all platforms in the center 128px, spider-lined walls, visual columns
+func _zone_corridor(zone: Node2D, y: float) -> void:
+	var gap := 128.0
+	var left_edge := (WELL_RIGHT - gap) / 2.0
+	var right_edge := left_edge + gap
+	var cfg := _zone_get_cfg(y)
+
+	for row in range(ZONE_CHUNKS):
+		var row_y := row * CHUNK_HEIGHT
+		_add_column(zone, left_edge / 2.0, row_y - CHUNK_HEIGHT / 2.0, left_edge, CHUNK_HEIGHT)
+		_add_column(zone, right_edge + (WELL_RIGHT - right_edge) / 2.0, row_y - CHUNK_HEIGHT / 2.0, WELL_RIGHT - right_edge, CHUNK_HEIGHT)
+
+		var plat_w := _rng.randf_range(36.0, 56.0)
+		var plat_x := _rng.randf_range(left_edge + plat_w / 2.0 + 4.0, right_edge - plat_w / 2.0 - 4.0)
+		_add_platform_body(zone, plat_x, row_y - 16.0, plat_w, PLATFORM_H, true, null, "")
+
+		if _rng.randf() < 0.50:
+			_add_spider(zone, left_edge + 8.0, row_y - _rng.randf_range(5.0, 25.0), true)
+		if _rng.randf() < 0.50:
+			_add_spider(zone, right_edge - 8.0, row_y - _rng.randf_range(5.0, 25.0), false)
+
+		if _rng.randf() < cfg["enemy_chance"] * 0.7:
+			_add_enemy(zone, plat_x, row_y - 24.0, "prisoner")
+
+
+## Chamber — wider platform spread, extra air enemies
+func _zone_chamber(zone: Node2D, y: float) -> void:
+	var cfg := _zone_get_cfg(y)
+	for row in range(ZONE_CHUNKS):
+		var row_y := row * CHUNK_HEIGHT
+		for _p in range(_rng.randi_range(3, 5)):
+			var w := _rng.randf_range(24.0, 44.0)
+			var cx := _rng.randf_range(WELL_LEFT + w / 2.0 + 4.0, WELL_RIGHT - w / 2.0 - 4.0)
+			_add_platform_body(zone, cx, row_y - _rng.randf_range(6.0, 22.0), w, PLATFORM_H, true, null, "")
+
+		if _rng.randf() < 0.65:
+			_add_drone(zone, _rng.randf_range(20.0, 236.0), row_y - _rng.randf_range(10.0, 35.0))
+		if _rng.randf() < 0.40:
+			_add_bat(zone, _rng.randf_range(10.0, 246.0), row_y - _rng.randf_range(30.0, 45.0))
+		if _rng.randf() < cfg["enemy_chance"] * 0.5:
+			_add_spider(zone, 16.0, row_y - _rng.randf_range(5.0, 25.0), true)
+			_add_spider(zone, 240.0, row_y - _rng.randf_range(5.0, 25.0), false)
+
+
+## Staircase — zigzag platforms left to right
+func _zone_staircase(zone: Node2D, y: float) -> void:
+	var cfg := _zone_get_cfg(y)
+	var side := -1.0
+	var margin := 16.0
+	var plat_w := 44.0
+	var step_h := CHUNK_HEIGHT / 3.0
+
+	for i in range(ZONE_CHUNKS * 2):
+		var row_y := i * step_h - CHUNK_HEIGHT * 0.25
+		side *= -1.0
+		var cx := margin + plat_w / 2.0 if side < 0 else WELL_RIGHT - margin - plat_w / 2.0
+		_add_platform_body(zone, cx, row_y - 12.0, plat_w, PLATFORM_H, true, null, "")
+		if _rng.randf() < cfg["enemy_chance"] * 0.5:
+			_add_enemy(zone, cx, row_y - 24.0, "prisoner")
+		if _rng.randf() < 0.30:
+			_add_bat(zone, cx + side * 30.0, row_y - 40.0)
+
+
+## Bottleneck — platforms converge toward center; visual columns widen
+func _zone_bottleneck(zone: Node2D, y: float) -> void:
+	var cfg := _zone_get_cfg(y)
+	for row in range(ZONE_CHUNKS):
+		var row_y := row * CHUNK_HEIGHT
+		var t := float(row) / float(ZONE_CHUNKS - 1)
+		var gap := lerpf(192.0, 64.0, t)
+		var left_edge := (WELL_RIGHT - gap) / 2.0
+		var right_edge := left_edge + gap
+
+		_add_column(zone, left_edge / 2.0, row_y - CHUNK_HEIGHT / 2.0, left_edge, CHUNK_HEIGHT)
+		_add_column(zone, right_edge + (WELL_RIGHT - right_edge) / 2.0, row_y - CHUNK_HEIGHT / 2.0, WELL_RIGHT - right_edge, CHUNK_HEIGHT)
+
+		if row < ZONE_CHUNKS - 1:
+			var plat_w := _rng.randf_range(28.0, gap * 0.5)
+			var plat_x := _rng.randf_range(left_edge + plat_w / 2.0 + 4.0, right_edge - plat_w / 2.0 - 4.0)
+			_add_platform_body(zone, plat_x, row_y - 16.0, plat_w, PLATFORM_H, true, null, "")
+
+		if _rng.randf() < cfg["enemy_chance"] * 0.6:
+			_add_drone(zone, 128.0, row_y - 25.0)
+
+
+## Cascade — platforms step downward like a waterfall; heavy enemies below
+func _zone_cascade(zone: Node2D, y: float) -> void:
+	var base_y := -CHUNK_HEIGHT * 0.3
+	var step_x := WELL_RIGHT / 4.0
+	for i in range(ZONE_CHUNKS * 3):
+		var col := i % 3
+		var row := i / 3
+		var cy := base_y + row * CHUNK_HEIGHT * 0.5 + col * 12.0
+		var cx := step_x + col * step_x
+		var w := _rng.randf_range(20.0, 36.0)
+		_add_platform_body(zone, cx, cy - 12.0, w, PLATFORM_H, true, null, "")
+		if _rng.randf() < 0.35:
+			_add_frog(zone, cx, cy - 24.0)
+		if _rng.randf() < 0.25:
+			_add_floor_drone(zone, cx, cy - 20.0)
+
+	_add_column(zone, 8.0, -CHUNK_HEIGHT / 2.0, 16.0, ZONE_CHUNKS * CHUNK_HEIGHT)
+	_add_column(zone, 248.0, -CHUNK_HEIGHT / 2.0, 16.0, ZONE_CHUNKS * CHUNK_HEIGHT)
+
+
+## Crossfire — high-density combat zone, all enemy types
+func _zone_crossfire(zone: Node2D, y: float) -> void:
+	for row in range(ZONE_CHUNKS):
+		var row_y := row * CHUNK_HEIGHT
+		var plat_w := _rng.randf_range(20.0, 36.0)
+		var plat_x := _rng.randf_range(WELL_LEFT + plat_w / 2.0 + 4.0, WELL_RIGHT - plat_w / 2.0 - 4.0)
+		_add_platform_body(zone, plat_x, row_y - 16.0, plat_w, PLATFORM_H, true, null, "")
+
+		var types := ["prisoner", "warden", "drone", "spider", "frog"]
+		var etype: String = types[_rng.randi() % types.size()]
+		match etype:
+			"spider":
+				_add_spider(zone, 16.0, row_y - 20.0, true)
+				_add_spider(zone, 240.0, row_y - 30.0, false)
+			"drone":
+				_add_drone(zone, 128.0, row_y - 25.0)
+			"frog":
+				_add_frog(zone, plat_x, row_y - 24.0)
+			_:
+				_add_enemy(zone, plat_x, row_y - 24.0, etype)
+
+
+## Helper: get phase config for zone Y position
+func _zone_get_cfg(y: float) -> Dictionary:
+	var phase_progress := clampf((y - _level_start_y) / LEVEL_LENGTH, 0.0, 1.0)
+	var phase := _get_phase(phase_progress)
+	return PHASE_CONFIG[phase]
+
+
+## Fill background across a zone + extra overlap for seamless transitions.
+func _fill_background_zone(parent: Node2D, rows: int) -> void:
+	var tiles: Array[Texture2D] = _get_era_bg_tiles()
+	if tiles.is_empty():
+		return
+	var tile_count := tiles.size()
+	var total_h := (rows + 2) * CHUNK_HEIGHT
+	var y_off := -rows * CHUNK_HEIGHT / 2.0 - CHUNK_HEIGHT
+	var total_rows := ceili(total_h / TILE_SIZE)
+	for r in range(total_rows):
+		var tex := tiles[_rng.randi() % tile_count]
+		var spr := Sprite2D.new()
+		spr.texture = tex
+		spr.centered = false
+		spr.texture_repeat = CanvasItem.TEXTURE_REPEAT_ENABLED
+		spr.region_enabled = true
+		spr.region_rect = Rect2(0, 0, WELL_RIGHT, TILE_SIZE)
+		spr.position = Vector2(0, y_off + r * TILE_SIZE)
+		spr.z_index = -1
+		parent.add_child(spr)
+
 
 # Enemy Population
 
@@ -962,16 +1197,16 @@ func spawn_void_chunk(y: float, gap: float) -> void:
 	if tiles.is_empty():
 		return
 	var rows := ceili(gap / TILE_SIZE)
-	var base_count := tiles.size() - 1
+	var tile_count := tiles.size()
 	for row in range(rows):
-		var base_idx := _rng.randi() % base_count
 		var tex: Texture2D
-		if _rng.randf() < 0.02:
-			tex = tiles[tiles.size() - 1]
-		elif _rng.randf() < 0.15:
-			tex = tiles[_rng.randi() % base_count]
+		var roll := _rng.randf()
+		if roll < 0.02:
+			tex = tiles[tile_count - 1]
+		elif roll < 0.17:
+			tex = tiles[_rng.randi() % tile_count]
 		else:
-			tex = tiles[base_idx]
+			tex = tiles[_rng.randi() % tile_count]
 		var spr := Sprite2D.new()
 		spr.texture = tex
 		spr.centered = false
@@ -987,16 +1222,16 @@ func _fill_background(chunk: Node2D) -> void:
 	if tiles.is_empty():
 		return
 	var rows := ceili(CHUNK_HEIGHT / TILE_SIZE)
-	var base_count := tiles.size() - 1
+	var tile_count := tiles.size()
 	for row in range(rows):
-		var base_idx := _rng.randi() % base_count
 		var tex: Texture2D
-		if _rng.randf() < 0.02:
-			tex = tiles[tiles.size() - 1]
-		elif _rng.randf() < 0.15:
-			tex = tiles[_rng.randi() % base_count]
+		var roll := _rng.randf()
+		if roll < 0.02:
+			tex = tiles[tile_count - 1]
+		elif roll < 0.17:
+			tex = tiles[_rng.randi() % tile_count]
 		else:
-			tex = tiles[base_idx]
+			tex = tiles[_rng.randi() % tile_count]
 		var spr := Sprite2D.new()
 		spr.texture = tex
 		spr.centered = false

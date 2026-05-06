@@ -44,6 +44,7 @@ func _draw() -> void:
 	_draw_weapon_name()
 	_draw_hp(hud.max_hp, hud.current_hp)
 	_draw_money(hud.money)
+	_draw_score(hud.score)
 	_draw_depth(hud.depth)
 	_draw_combo(hud.combo)
 	if hud.reward_text != "":
@@ -113,6 +114,18 @@ func _draw_hp(max_hp: int, current_hp: int) -> void:
 			draw_rect(rect, HP_EMPTY)
 
 		draw_rect(rect, HP_BORDER, false, 1.0)
+
+
+func _draw_score(amount: int) -> void:
+	if amount <= 0:
+		return
+	var text := str(amount)
+	var color := Color(0.5, 0.7, 1.0, 1.0)
+	var font_size := 8
+	var x := HP_MARGIN_LEFT
+	var y := HP_MARGIN_TOP + HP_SIZE + 24.0
+	draw_string(_font, Vector2(x + 1, y + 1), text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, Color(0, 0, 0, 0.7))
+	draw_string(_font, Vector2(x, y), text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, color)
 
 
 func _draw_money(amount: int) -> void:
