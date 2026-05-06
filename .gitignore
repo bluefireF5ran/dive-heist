@@ -18,6 +18,9 @@ Sprites/*
 !Sprites/Craftpix/
 !Sprites/Scraper/
 
+# --- Sprites/title (main menu background) ---
+!Sprites/title/
+
 # --- Craftpix Level 1 ---
 Sprites/Craftpix/*
 !Sprites/Craftpix/1.Personajes/
@@ -39,7 +42,10 @@ Sprites/Craftpix/1.Personajes/trader-cyberpunk-pixel-art-pack/*
 # --- Craftpix > 2. Escenarios ---
 Sprites/Craftpix/2. Escenarios/*
 !Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/
+!Sprites/Craftpix/2. Escenarios/factory-pixel-art-32x32-tileset-for-cyberpunk/
 Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/*
+Sprites/Craftpix/2. Escenarios/factory-pixel-art-32x32-tileset-for-cyberpunk/*
+!Sprites/Craftpix/2. Escenarios/factory-pixel-art-32x32-tileset-for-cyberpunk/1 Tiles/
 !Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/1 Tiles/
 !Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/3 Objects/
 Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/3 Objects/*
@@ -96,6 +102,18 @@ Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/NPCs_Prison_Wardens/*
 # Enemies_Power_Station: only variant 6 (Spider)
 Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/Enemies_Power_Station/*
 !Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/Enemies_Power_Station/6/
+
+# Drones_2: only 3_Drone_Helicopter (Bat enemy)
+!Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/Drones_2/
+Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/Drones_2/*
+!Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/Drones_2/1 Drones/
+Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/Drones_2/1 Drones/*
+!Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/Drones_2/1 Drones/3_Drone_Helicopter/
+
+# Enemies_Industrial: only 3 Heaver (Frog enemy)
+!Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/Enemies_Industrial/
+Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/Enemies_Industrial/*
+!Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/Enemies_Industrial/3 Heaver/
 
 # --- Scraper > Tilesets ---
 Sprites/Scraper/Cyberpunk_Assets/Tilesets/*
