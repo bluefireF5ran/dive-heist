@@ -1623,22 +1623,22 @@ func _try_spawn_single(
 				var fx := clampf(plat.position.x + plat.size.x * 0.5, WELL_LEFT + 12.0, WELL_RIGHT - 12.0)
 				_add_frog(chunk, fx, -24.0)
 
-			"hammer":
-				if platforms.is_empty():
-					return
-				var hplat: Rect2 = platforms[_rng.randi() % platforms.size()]
-				var hx := _rng.randf_range(hplat.position.x + 14, hplat.position.x + hplat.size.x - 14)
-				_add_hammer(chunk, hx, -16.0)
-			"alarmobot":
-				if platforms.is_empty():
-					return
-				var aplat: Rect2 = platforms[_rng.randi() % platforms.size()]
-				var ax := _rng.randf_range(aplat.position.x + 12, aplat.position.x + aplat.size.x - 12)
-				_add_alarmobot(chunk, ax, -16.0)
-			"copter":
-				var ccx := _rng.randf_range(WELL_LEFT + 16, WELL_RIGHT - 16)
-				var ccy := _rng.randf_range(-48.0, -22.0)
-				_add_copter(chunk, ccx, ccy)
+		"hammer":
+			if platforms.is_empty():
+				return
+			var hplat: Rect2 = platforms[_rng.randi() % platforms.size()]
+			var hx := _rng.randf_range(hplat.position.x + 14, hplat.position.x + hplat.size.x - 14)
+			_add_hammer(chunk, hx, -16.0)
+		"alarmobot":
+			if platforms.is_empty():
+				return
+			var aplat: Rect2 = platforms[_rng.randi() % platforms.size()]
+			var ax := _rng.randf_range(aplat.position.x + 12, aplat.position.x + aplat.size.x - 12)
+			_add_alarmobot(chunk, ax, -16.0)
+		"copter":
+			var ccx := _rng.randf_range(WELL_LEFT + 16, WELL_RIGHT - 16)
+			var ccy := _rng.randf_range(-48.0, -22.0)
+			_add_copter(chunk, ccx, ccy)
 
 # Enemy Spawn Helpers
 
