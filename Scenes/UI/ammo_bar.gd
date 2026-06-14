@@ -25,10 +25,10 @@ var _font: Font
 var weapon_color := Color(0.9, 0.8, 0.2, 1.0)
 var weapon_name := "pistol"
 
-
+ 
 func _ready() -> void:
 	_font = load(
-		"res://Sprites/Scraper/Cyberpunk_Assets/Game_UI/UI_Main/10 Font/CyberpunkCraftpixPixel.otf"
+		"res://Sprites/Active_Sprites/ui/font/CyberpunkCraftpixPixel.otf"
 	)
 
 
@@ -83,7 +83,7 @@ func _draw_ammo_bar(max_ammo: int, current_ammo: int) -> void:
 
 
 func _draw_weapon_name() -> void:
-	var text := weapon_name.to_upper()
+	var text := weapon_name.to_upper().replace("_", " ")
 	var font_size := 8
 	var text_size := _font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size)
 	var viewport_size := get_viewport_rect().size
@@ -363,7 +363,7 @@ func _draw_level_complete(hud: CanvasLayer) -> void:
 	var title_x := (viewport_size.x - title_size.x) / 2.0
 	draw_string(
 		_font,
-		Vector2(title_x + 1, cy - 60 + 1),
+		Vector2(title_x + 1, cy - 90 + 1),
 		title,
 		HORIZONTAL_ALIGNMENT_CENTER,
 		-1,
@@ -372,7 +372,7 @@ func _draw_level_complete(hud: CanvasLayer) -> void:
 	)
 	draw_string(
 		_font,
-		Vector2(title_x, cy - 60),
+		Vector2(title_x, cy - 90),
 		title,
 		HORIZONTAL_ALIGNMENT_CENTER,
 		-1,
@@ -380,7 +380,7 @@ func _draw_level_complete(hud: CanvasLayer) -> void:
 		Color(0.2, 1.0, 0.4, 1.0)
 	)
 
-	# Stats
+	# Stats — kept in the upper half so they clear the perk-selection cards below.
 	var stats: Array[String] = [
 		"Kills: " + str(hud.lc_kills),
 		"Money: $" + str(hud.lc_money_earned),
@@ -388,12 +388,12 @@ func _draw_level_complete(hud: CanvasLayer) -> void:
 		"Depth: " + str(hud.lc_depth) + "m",
 	]
 	var stat_color := Color(0.85, 0.85, 0.85, 1.0)
-	var stat_y_start := cy - 30.0
+	var stat_y_start := cy - 62.0
 	for i in range(stats.size()):
 		var stat_text := stats[i]
 		var stat_size := _font.get_string_size(stat_text, HORIZONTAL_ALIGNMENT_CENTER, -1, 10)
 		var stat_x := (viewport_size.x - stat_size.x) / 2.0
-		var sy := stat_y_start + i * 18.0
+		var sy := stat_y_start + i * 16.0
 		draw_string(
 			_font,
 			Vector2(stat_x + 1, sy + 1),
@@ -407,7 +407,9 @@ func _draw_level_complete(hud: CanvasLayer) -> void:
 			_font, Vector2(stat_x, sy), stat_text, HORIZONTAL_ALIGNMENT_CENTER, -1, 10, stat_color
 		)
 
-	# Continue hint
+	# Continue hint — hidden while the perk-selection cards are showing.
+	if hud.lc_perk_pending:
+		return
 	var hint := "JUMP to continue"
 	var hint_size := _font.get_string_size(hint, HORIZONTAL_ALIGNMENT_CENTER, -1, 8)
 	var hint_x := (viewport_size.x - hint_size.x) / 2.0

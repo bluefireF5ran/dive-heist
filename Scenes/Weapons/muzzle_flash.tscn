@@ -1,6 +1,6 @@
 [gd_scene load_steps=10 format=3]
 
-[ext_resource type="Texture2D" path="res://Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/Weapons_Guns_1/4 Shoot_effects/1_1.png" id="1_effect"]
+[ext_resource type="Texture2D" path="res://Sprites/Active_Sprites/weapons/muzzle_flash/1_1.png" id="1_effect"]
 [ext_resource type="Script" path="res://Scenes/Weapons/muzzle_flash.gd" id="2_script"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_f0"]

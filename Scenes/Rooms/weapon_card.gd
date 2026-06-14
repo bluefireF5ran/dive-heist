@@ -5,6 +5,7 @@ extends Area2D
 signal weapon_selected(weapon_name: String)
 
 @export var weapon_name := ""
+@export var price := 0  # 0 = free swap; >0 costs money to equip
 
 var _player_nearby := false
 var _selected := false
@@ -32,7 +33,7 @@ func _process(_delta: float) -> void:
 
 
 const PIXEL_FONT := preload(
-	"res://Sprites/Scraper/Cyberpunk_Assets/Game_UI/UI_Main/10 Font/CyberpunkCraftpixPixel.otf"
+	"res://Sprites/Active_Sprites/ui/font/CyberpunkCraftpixPixel.otf"
 )
 
 
@@ -49,36 +50,53 @@ func _setup_display() -> void:
 
 	# Name label — small pixel font so text fits between cards
 	if name_label:
-		name_label.text = weapon_name.to_upper()
+		name_label.text = weapon_name.to_upper().replace("_", " ")
 		name_label.add_theme_font_override("font", PIXEL_FONT)
 		name_label.add_theme_font_size_override("font_size", 6)
 		if weapon_data.has("hud_color"):
 			name_label.modulate = weapon_data["hud_color"]
 
-	# Hide prompt until player is nearby
+	# Price/free tag — always visible so the player can compare before stepping up.
 	if prompt_label:
 		prompt_label.add_theme_font_override("font", PIXEL_FONT)
-		prompt_label.add_theme_font_size_override("font_size", 5)
-		prompt_label.visible = false
+		prompt_label.add_theme_font_size_override("font_size", 6)
+		prompt_label.visible = true
+		_update_price_label()
+
+
+## Show FREE / $price, coloured by affordability.
+func _update_price_label() -> void:
+	if not prompt_label:
+		return
+	if price <= 0:
+		prompt_label.text = "FREE"
+		prompt_label.modulate = Color(0.4, 0.9, 0.4)
+		return
+	prompt_label.text = "$" + str(price)
+	var player := get_tree().get_first_node_in_group("player") as CharacterBody2D
+	var can_afford: bool = player != null and int(player._money) >= price
+	prompt_label.modulate = Color(0.95, 0.8, 0.2) if can_afford else Color(0.9, 0.35, 0.3)
 
 
 func _on_body_entered(body: Node2D) -> void:
 	if body.is_in_group("player"):
 		_player_nearby = true
-		if prompt_label:
-			prompt_label.visible = true
+		_update_price_label()  # refresh affordability colour
 
 
 func _on_body_exited(body: Node2D) -> void:
 	if body.is_in_group("player"):
 		_player_nearby = false
-		if prompt_label:
-			prompt_label.visible = false
 
 
 func _select() -> void:
-	_selected = true
 	var player := get_tree().get_first_node_in_group("player") as CharacterBody2D
+	# Paid weapons require money; deny if the player can't afford it.
+	if price > 0:
+		if player == null or not player.has_method("spend_money") or not player.spend_money(price):
+			SFX.play(SFX.empty_click, -6.0)
+			return
+	_selected = true
 	if player and player.has_method("equip_weapon"):
 		player.equip_weapon(weapon_name)
 	SFX.play(SFX.combo_tier_2, -6.0)

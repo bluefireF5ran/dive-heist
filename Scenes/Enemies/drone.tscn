@@ -1,9 +1,9 @@
 [gd_scene format=3 uid="uid://dpbn0u3cg7uyg"]
 
-[ext_resource type="Texture2D" uid="uid://cqphsjdgyerq2" path="res://Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/NPCs_Police_1/5 Drone/Idle.png" id="1_idle"]
-[ext_resource type="Texture2D" uid="uid://cetdqux6mc64e" path="res://Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/NPCs_Police_1/5 Drone/Walk.png" id="2_walk"]
-[ext_resource type="Texture2D" uid="uid://0fgf23kyvjg5" path="res://Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/NPCs_Police_1/5 Drone/Hurt.png" id="4_hurt"]
-[ext_resource type="Texture2D" uid="uid://dwxmn8gb5shr6" path="res://Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/NPCs_Police_1/5 Drone/Death.png" id="5_death"]
+[ext_resource type="Texture2D" uid="uid://cqphsjdgyerq2" path="res://Sprites/Active_Sprites/enemies/police_drone/Idle.png" id="1_idle"]
+[ext_resource type="Texture2D" uid="uid://cetdqux6mc64e" path="res://Sprites/Active_Sprites/enemies/police_drone/Walk.png" id="2_walk"]
+[ext_resource type="Texture2D" uid="uid://0fgf23kyvjg5" path="res://Sprites/Active_Sprites/enemies/police_drone/Hurt.png" id="4_hurt"]
+[ext_resource type="Texture2D" uid="uid://dwxmn8gb5shr6" path="res://Sprites/Active_Sprites/enemies/police_drone/Death.png" id="5_death"]
 [ext_resource type="Script" uid="uid://drmpcv815hvdr" path="res://Scenes/Enemies/drone.gd" id="6_script"]
 
 [sub_resource type="AtlasTexture" id="death_0"]

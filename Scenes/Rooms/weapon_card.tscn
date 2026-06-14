@@ -25,9 +25,9 @@ horizontal_alignment = 1
 
 [node name="PromptLabel" type="Label" parent="."]
 offset_left = -40
-offset_top = 20
+offset_top = -56
 offset_right = 40
-offset_bottom = 36
-text = "INTERACT"
+offset_bottom = -42
+text = "FREE"
 horizontal_alignment = 1
 modulate = Color(0.7, 0.7, 0.7, 1)

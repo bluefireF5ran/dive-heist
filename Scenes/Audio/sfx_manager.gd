@@ -114,7 +114,7 @@ func play_death_drone() -> void:
 
 
 func play_death_spider() -> void:
-	play(death_robotic, -7.0, randf_range(0.9, 1.1))
+	play(death_robotic, -13.0, randf_range(0.9, 1.1))
 
 
 func play_death_floor_drone() -> void:

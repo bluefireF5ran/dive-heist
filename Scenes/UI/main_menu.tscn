@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://chrcnn7dcqvlk"]
 
 [ext_resource type="Script" uid="uid://b80bnns30o3st" path="res://Scenes/UI/main_menu.gd" id="1_menu"]
-[ext_resource type="Texture2D" uid="uid://guuh5pe4nfqq" path="res://Sprites/title/title_dive_heist.png" id="2_i2xx2"]
+[ext_resource type="Texture2D" uid="uid://guuh5pe4nfqq" path="res://Sprites/Active_Sprites/ui/title_dive_heist.png" id="2_i2xx2"]
 
 [node name="MainMenu" type="Control" unique_id=1823582487]
 layout_mode = 3

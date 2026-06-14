@@ -1,7 +1,7 @@
 [gd_scene load_steps=12 format=3]
 
 [ext_resource type="Script" path="res://Scenes/Collectibles/gem_crate.gd" id="1_script"]
-[ext_resource type="Texture2D" path="res://Sprites/Scraper/Cyberpunk_Assets/Tilesets/Industrial/4 Animated objects/Chest.png" id="2_chest"]
+[ext_resource type="Texture2D" path="res://Sprites/Active_Sprites/objects/animated/Chest.png" id="2_chest"]
 
 [sub_resource type="AtlasTexture" id="f0"]
 atlas = ExtResource("2_chest")

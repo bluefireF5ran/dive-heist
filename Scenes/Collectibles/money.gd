@@ -7,6 +7,7 @@ const MAGNET_RANGE := 36.0
 const MAGNET_RANGE_H := 70.0    # Wide horizontal magnet (~1/4 of well)
 const MAGNET_RANGE_V := 36.0    # Tight vertical magnet (close proximity)
 const MAGNET_SPEED := 120.0
+const MAGNET_BREAK := 110.0     # Release magnet if player gets this far (e.g. teleports)
 const DESPAWN_TIME := 8.0
 const FLOOR_CHECK_DIST := 6.0  # Raycast length to detect platforms below
 
@@ -32,11 +33,19 @@ func _physics_process(delta: float) -> void:
 	var player := get_tree().get_first_node_in_group("player") as CharacterBody2D
 
 	if _magnetized:
-		if player:
+		# Release the magnet if the player vanished or moved far away (e.g. teleported
+		# into a stance room). Otherwise the coin would chase across the whole map.
+		var break_dist := MAGNET_BREAK
+		if player != null and player.get("money_magnet_mult") != null:
+			break_dist = MAGNET_BREAK * float(player.get("money_magnet_mult"))
+		if player == null or global_position.distance_to(player.global_position) > break_dist:
+			_magnetized = false
+			_velocity = Vector2.ZERO
+		else:
 			var dir := (player.global_position - global_position).normalized()
 			_velocity = dir * MAGNET_SPEED
-		global_position += _velocity * delta
-		return
+			global_position += _velocity * delta
+			return
 
 	# Gravity (only if not resting on a platform)
 	if not _on_floor:
@@ -51,11 +60,14 @@ func _physics_process(delta: float) -> void:
 		if not _check_floor():
 			_on_floor = false
 
-	# Check magnet range to player — wide horizontal, tight vertical
-	if player:
+	# Check magnet range to player — wide horizontal, tight vertical.
+	# Skip while the player is in a safe zone / stance room so coins don't
+	# stream toward a teleported or off-well player.
+	if player and not player.get("_in_safe_zone"):
+		var mult: float = player.get("money_magnet_mult") if player.get("money_magnet_mult") != null else 1.0
 		var diff := player.global_position - global_position
-		var close := absf(diff.x) < MAGNET_RANGE_H and absf(diff.y) < MAGNET_RANGE_V
-		var very_close := global_position.distance_to(player.global_position) < MAGNET_RANGE
+		var close := absf(diff.x) < MAGNET_RANGE_H * mult and absf(diff.y) < MAGNET_RANGE_V * mult
+		var very_close := global_position.distance_to(player.global_position) < MAGNET_RANGE * mult
 		if close or very_close:
 			_magnetized = true
 			_on_floor = false

@@ -1,9 +1,9 @@
 [gd_scene format=3 uid="uid://bfcgu8i016sjn"]
 
-[ext_resource type="Texture2D" uid="uid://qlc14ylfyfu4" path="res://Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/Drones_2/1 Drones/3_Drone_Helicopter/Idle.png" id="1_idle"]
-[ext_resource type="Texture2D" uid="uid://17x8vk5te0ci" path="res://Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/Drones_2/1 Drones/3_Drone_Helicopter/Forward.png" id="2_forward"]
-[ext_resource type="Texture2D" uid="uid://4yrf4smf5d11" path="res://Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/Drones_2/1 Drones/3_Drone_Helicopter/Death.png" id="3_death"]
-[ext_resource type="Texture2D" uid="uid://giqv1ot0jtuq" path="res://Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/Drones_2/1 Drones/3_Drone_Helicopter/Back.png" id="4_back"]
+[ext_resource type="Texture2D" uid="uid://qlc14ylfyfu4" path="res://Sprites/Active_Sprites/enemies/drone_helicopter/Idle.png" id="1_idle"]
+[ext_resource type="Texture2D" uid="uid://17x8vk5te0ci" path="res://Sprites/Active_Sprites/enemies/drone_helicopter/Forward.png" id="2_forward"]
+[ext_resource type="Texture2D" uid="uid://4yrf4smf5d11" path="res://Sprites/Active_Sprites/enemies/drone_helicopter/Death.png" id="3_death"]
+[ext_resource type="Texture2D" uid="uid://giqv1ot0jtuq" path="res://Sprites/Active_Sprites/enemies/drone_helicopter/Back.png" id="4_back"]
 [ext_resource type="Script" uid="uid://1dv4q4paen6m" path="res://Scenes/Enemies/bat.gd" id="5_script"]
 
 [sub_resource type="AtlasTexture" id="back_0"]

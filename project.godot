@@ -18,6 +18,7 @@ config/icon="res://icon.svg"
 [autoload]
 
 SFX="*res://Scenes/Audio/sfx_manager.gd"
+Achievements="*res://Scenes/Systems/achievements.gd"
 
 [display]
 

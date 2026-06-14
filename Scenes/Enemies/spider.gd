@@ -43,14 +43,36 @@ func _physics_process(_delta: float) -> void:
 
 	_hurt_timer -= _delta
 
+	var move_speed := speed
+	# Light tracking: when the player is hugging this spider's wall, drift toward
+	# the player's vertical level a bit faster for a more menacing feel.
+	var player := get_tree().get_first_node_in_group("player") as CharacterBody2D
+	if player:
+		var same_wall := (
+			absf(player.global_position.x - global_position.x) < 48.0
+		)
+		if same_wall:
+			_direction = signf(player.global_position.y - global_position.y)
+			if _direction == 0.0:
+				_direction = 1.0
+			move_speed = speed * 1.8
+
+	# Don't crawl off the end of a wall/column: if there's no wall beside the spot
+	# just ahead, turn back toward where the wall still is.
+	if not _wall_ahead(_direction):
+		_direction = -_direction
+
 	# Patrol vertically
-	velocity = Vector2(0, _direction * speed)
+	velocity = Vector2(0, _direction * move_speed)
 	move_and_slide()
 
-	# Reverse at patrol limits
-	if global_position.y > _start_y + patrol_range:
+	# Reverse at patrol limits OR when blocked by a platform above/below.
+	# Spiders move purely vertically, so a platform below registers as floor and
+	# one above as ceiling — reversing here stops them jamming against geometry.
+	var blocked := is_on_floor() or is_on_ceiling()
+	if global_position.y > _start_y + patrol_range or (blocked and _direction > 0.0):
 		_direction = -1.0
-	elif global_position.y < _start_y - patrol_range:
+	elif global_position.y < _start_y - patrol_range or (blocked and _direction < 0.0):
 		_direction = 1.0
 
 	# Play walk animation — reverse speed when going up so legs animate correctly
@@ -67,6 +89,16 @@ func _physics_process(_delta: float) -> void:
 
 func set_wall_side(left: bool) -> void:
 	_on_left_wall = left
+
+
+## True if there's a wall (collision layer 1) beside the point a little ahead of
+## the spider in `dir`, i.e. the wall it clings to continues that way.
+func _wall_ahead(dir: float) -> bool:
+	var ahead := global_position + Vector2(0, dir * 14.0)
+	var wall_dir := -1.0 if _on_left_wall else 1.0
+	var params := PhysicsRayQueryParameters2D.create(ahead, ahead + Vector2(wall_dir * 26.0, 0.0), 1)
+	params.exclude = [self]
+	return not get_world_2d().direct_space_state.intersect_ray(params).is_empty()
 
 
 func take_damage(amount: int = 1) -> void:

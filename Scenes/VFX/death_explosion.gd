@@ -5,25 +5,25 @@ extends Node2D
 ## Configuration for each explosion type: sprite path pattern, frame count, FPS, visual scale.
 const CONFIGS := {
 	"explosion": {
-		path = "res://Sprites/Craftpix/Free Pixel Art Explosions/PNG/Explosion/Explosion%d.png",
+		path = "res://Sprites/Active_Sprites/vfx/explosion/Explosion%d.png",
 		frames = 10,
 		fps = 15,
 		scale = 0.25,
 	},
 	"blue_oval": {
-		path = "res://Sprites/Craftpix/Free Pixel Art Explosions/PNG/Explosion_blue_oval/Explosion_blue_oval%d.png",
+		path = "res://Sprites/Active_Sprites/vfx/explosion_blue_oval/Explosion_blue_oval%d.png",
 		frames = 10,
 		fps = 15,
 		scale = 0.3,
 	},
 	"nuclear": {
-		path = "res://Sprites/Craftpix/Free Pixel Art Explosions/PNG/Nuclear_explosion/Nuclear_explosion%d.png",
+		path = "res://Sprites/Active_Sprites/vfx/nuclear_explosion/Nuclear_explosion%d.png",
 		frames = 10,
 		fps = 12,
 		scale = 0.25,
 	},
 	"lightning": {
-		path = "res://Sprites/Craftpix/Free Pixel Art Explosions/PNG/Lightning/Lightning_spot%d.png",
+		path = "res://Sprites/Active_Sprites/vfx/lightning/Lightning_spot%d.png",
 		frames = 4,
 		fps = 12,
 		scale = 0.3,

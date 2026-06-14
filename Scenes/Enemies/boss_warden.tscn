@@ -1,0 +1,78 @@
+[gd_scene format=3 uid="uid://cbctvcu0ftyus"]
+
+[ext_resource type="Script" uid="uid://qu148kjsw4kb" path="res://Scenes/Enemies/boss_warden.gd" id="1_boss"]
+[ext_resource type="Texture2D" uid="uid://clx7c5u2q7oef" path="res://Sprites/Active_Sprites/enemies/boss_warden/Idle.png" id="2_idle"]
+
+[sub_resource type="AtlasTexture" id="idle_0"]
+atlas = ExtResource("2_idle")
+region = Rect2(0, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="idle_1"]
+atlas = ExtResource("2_idle")
+region = Rect2(96, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="idle_2"]
+atlas = ExtResource("2_idle")
+region = Rect2(192, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="idle_3"]
+atlas = ExtResource("2_idle")
+region = Rect2(288, 0, 96, 96)
+
+[sub_resource type="SpriteFrames" id="frames"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("idle_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("idle_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("idle_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("idle_3")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 6.0
+}]
+
+[sub_resource type="RectangleShape2D" id="body_shape"]
+size = Vector2(19, 35)
+
+[sub_resource type="RectangleShape2D" id="stomp_shape"]
+size = Vector2(28, 11)
+
+[sub_resource type="RectangleShape2D" id="hit_shape"]
+size = Vector2(22.5, 36.5)
+
+[node name="BossWarden" type="CharacterBody2D" unique_id=1848991056]
+collision_layer = 4
+script = ExtResource("1_boss")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=183229691]
+sprite_frames = SubResource("frames")
+animation = &"idle"
+offset = Vector2(24, -40)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1806422540]
+position = Vector2(-3, -10)
+shape = SubResource("body_shape")
+
+[node name="StompArea" type="Area2D" parent="." unique_id=167491839]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StompArea" unique_id=948429348]
+position = Vector2(-5, -24)
+shape = SubResource("stomp_shape")
+
+[node name="Hitbox" type="Area2D" parent="." unique_id=1954165768]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox" unique_id=934656071]
+position = Vector2(-5, -10)
+shape = SubResource("hit_shape")

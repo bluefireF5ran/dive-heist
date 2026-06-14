@@ -48,7 +48,7 @@ func _update_label() -> void:
 			label.modulate = colors.get(weapon_type, Color(1, 1, 1))
 	# Show weapon gun sprite for WEAPON pickups
 	if pickup_type == PickupType.WEAPON and sprite:
-		var gun_path := "res://Sprites/Craftpix/free-guns-pack-2-for-main-characters-pixel-art/2 Guns/"
+		var gun_path := "res://Sprites/Active_Sprites/weapons/rifle_guns/"
 		var gun_files := {
 			"spread": "4_1.png",
 			"laser": "7_1.png",

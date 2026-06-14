@@ -4,10 +4,13 @@ extends Control
 ## Title and decorations drawn via _draw(); buttons/sliders are Control nodes.
 
 const WORLD_SCENE := "res://Scenes/Levels/world.tscn"
-const FONT_PATH := "res://Sprites/Scraper/Cyberpunk_Assets/Game_UI/UI_Main/10 Font/CyberpunkCraftpixPixel.otf"
+const WORLD_SCRIPT := preload("res://Scenes/Levels/world.gd")
+const FONT_PATH := "res://Sprites/Active_Sprites/ui/font/CyberpunkCraftpixPixel.otf"
 
 var _font: Font
 var _transitioning := false
+var _ach_panel: Panel
+var _debug_panel: Panel
 
 @onready var _start_button: Button = $VBoxContainer/StartButton
 @onready var _options_button: Button = $VBoxContainer/OptionsButton
@@ -38,6 +41,25 @@ func _ready() -> void:
 	_quit_button.pressed.connect(_on_quit_pressed)
 	_back_button.pressed.connect(_on_back_pressed)
 
+	# Add an Achievements button (between Options and Quit) + its panel.
+	var ach_button := Button.new()
+	ach_button.text = "Achievements"
+	var vbox := $VBoxContainer
+	vbox.add_child(ach_button)
+	vbox.move_child(ach_button, 2)
+	_apply_theme(ach_button)
+	ach_button.pressed.connect(_on_achievements_pressed)
+	_build_achievements_panel()
+
+	# Add a Debug button (between Achievements and Quit) + its panel.
+	var dbg_button := Button.new()
+	dbg_button.text = "Debug"
+	vbox.add_child(dbg_button)
+	vbox.move_child(dbg_button, 3)
+	_apply_theme(dbg_button)
+	dbg_button.pressed.connect(_on_debug_pressed)
+	_build_debug_panel()
+
 	# Sync sliders with current audio bus volumes
 	_music_slider.value = db_to_linear(AudioServer.get_bus_volume_db(AudioServer.get_bus_index("Music")))
 	_sfx_slider.value = db_to_linear(AudioServer.get_bus_volume_db(AudioServer.get_bus_index("SFX")))
@@ -66,7 +88,15 @@ func _process(delta: float) -> void:
 func _input(event: InputEvent) -> void:
 	if _transitioning:
 		return
-	if _options_panel.visible:
+	if _debug_panel and _debug_panel.visible:
+		if event.is_action_pressed("jump") or event.is_action_pressed("ui_cancel"):
+			_close_debug()
+			get_viewport().set_input_as_handled()
+	elif _ach_panel and _ach_panel.visible:
+		if event.is_action_pressed("jump") or event.is_action_pressed("ui_cancel"):
+			_close_achievements()
+			get_viewport().set_input_as_handled()
+	elif _options_panel.visible:
 		if event.is_action_pressed("jump"):
 			_on_back_pressed()
 			get_viewport().set_input_as_handled()
@@ -90,6 +120,11 @@ func _draw() -> void:
 
 
 func _on_start_pressed() -> void:
+	WORLD_SCRIPT.debug_start_level = 1
+	_begin_transition()
+
+
+func _begin_transition() -> void:
 	if _transitioning:
 		return
 	_transitioning = true
@@ -100,6 +135,94 @@ func _on_start_pressed() -> void:
 	)
 
 
+## Debug: launch the game starting at the given level (with a balanced build).
+func _start_at_level(n: int) -> void:
+	WORLD_SCRIPT.debug_start_level = n
+	_begin_transition()
+
+
+## Debug: drop straight into a chest room (random variant) to test it.
+func _start_chest_room() -> void:
+	WORLD_SCRIPT.debug_start_level = 1
+	WORLD_SCRIPT.debug_chest_room = true
+	_begin_transition()
+
+
+func _on_debug_pressed() -> void:
+	if _debug_panel:
+		_debug_panel.visible = true
+		_debug_panel.move_to_front()
+
+
+func _close_debug() -> void:
+	if _debug_panel:
+		_debug_panel.visible = false
+	_options_button.grab_focus()
+
+
+func _build_debug_panel() -> void:
+	_debug_panel = Panel.new()
+	_debug_panel.size = Vector2(220, 260)
+	_debug_panel.position = Vector2(50, 70)
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0.08, 0.07, 0.11, 0.97)
+	style.border_color = Color(0.5, 0.45, 0.6, 0.8)
+	style.set_border_width_all(2)
+	style.set_corner_radius_all(3)
+	_debug_panel.add_theme_stylebox_override("panel", style)
+	add_child(_debug_panel)
+
+	var title := Label.new()
+	title.text = "DEBUG"
+	title.add_theme_font_override("font", _font)
+	title.add_theme_font_size_override("font_size", 10)
+	title.add_theme_color_override("font_color", Color(0.95, 0.5, 0.5))
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.size = Vector2(220, 16)
+	title.position = Vector2(0, 8)
+	_debug_panel.add_child(title)
+
+	var vbox := VBoxContainer.new()
+	vbox.position = Vector2(30, 30)
+	vbox.custom_minimum_size = Vector2(160, 0)
+	vbox.add_theme_constant_override("separation", 4)
+	_debug_panel.add_child(vbox)
+
+	# Only the key test targets: level 1, the boss (level 3), and a chest room.
+	var b1 := Button.new()
+	b1.text = "Level 1  (Prison)"
+	b1.custom_minimum_size = Vector2(160, 0)
+	vbox.add_child(b1)
+	_apply_theme(b1)
+	b1.pressed.connect(_start_at_level.bind(1))
+
+	var b3 := Button.new()
+	b3.text = "Level 3  (Boss)"
+	b3.custom_minimum_size = Vector2(160, 0)
+	vbox.add_child(b3)
+	_apply_theme(b3)
+	b3.pressed.connect(_start_at_level.bind(3))
+
+	var bc := Button.new()
+	bc.text = "Chest Room"
+	bc.custom_minimum_size = Vector2(160, 0)
+	vbox.add_child(bc)
+	_apply_theme(bc)
+	bc.pressed.connect(_start_chest_room)
+
+	var hint := Label.new()
+	hint.text = "JUMP / ESC to return"
+	hint.add_theme_font_override("font", _font)
+	hint.add_theme_font_size_override("font_size", 6)
+	hint.add_theme_color_override("font_color", Color(0.55, 0.55, 0.6))
+	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	hint.size = Vector2(220, 12)
+	hint.position = Vector2(0, 242)
+	_debug_panel.add_child(hint)
+
+	_debug_panel.visible = false
+
+
 func _on_options_pressed() -> void:
 	_options_panel.visible = true
 	_back_button.grab_focus()
@@ -107,6 +230,105 @@ func _on_options_pressed() -> void:
 
 func _on_quit_pressed() -> void:
 	get_tree().quit()
+
+
+func _on_achievements_pressed() -> void:
+	if _ach_panel:
+		_ach_panel.visible = true
+		_ach_panel.move_to_front()
+
+
+func _close_achievements() -> void:
+	if _ach_panel:
+		_ach_panel.visible = false
+	_options_button.grab_focus()
+
+
+## Build the achievements list panel (hidden until opened).
+func _build_achievements_panel() -> void:
+	_ach_panel = Panel.new()
+	_ach_panel.size = Vector2(300, 410)
+	_ach_panel.position = Vector2(10, 20)
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0.08, 0.07, 0.11, 0.97)
+	style.border_color = Color(0.5, 0.45, 0.6, 0.8)
+	style.set_border_width_all(2)
+	style.set_corner_radius_all(3)
+	_ach_panel.add_theme_stylebox_override("panel", style)
+	add_child(_ach_panel)
+
+	var title := Label.new()
+	title.text = "ACHIEVEMENTS"
+	title.add_theme_font_override("font", _font)
+	title.add_theme_font_size_override("font_size", 12)
+	title.add_theme_color_override("font_color", Color(0.95, 0.8, 0.2))
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.size = Vector2(300, 18)
+	title.position = Vector2(0, 8)
+	_ach_panel.add_child(title)
+
+	# Lifetime stats summary
+	var unlocked_count := 0
+	for id: String in Achievements.ORDER:
+		if Achievements.is_unlocked(id):
+			unlocked_count += 1
+	var stats := Label.new()
+	stats.text = (
+		"%d / %d unlocked   -   Kills %d   Deaths %d   Best %dm"
+		% [
+			unlocked_count,
+			Achievements.ORDER.size(),
+			int(Achievements.get_stat("total_kills")),
+			int(Achievements.get_stat("deaths")),
+			int(Achievements.get_stat("best_depth")),
+		]
+	)
+	stats.add_theme_font_override("font", _font)
+	stats.add_theme_font_size_override("font_size", 6)
+	stats.add_theme_color_override("font_color", Color(0.6, 0.6, 0.7))
+	stats.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	stats.size = Vector2(300, 12)
+	stats.position = Vector2(0, 26)
+	_ach_panel.add_child(stats)
+
+	var scroll := ScrollContainer.new()
+	scroll.position = Vector2(10, 42)
+	scroll.custom_minimum_size = Vector2(280, 340)
+	scroll.size = Vector2(280, 340)
+	_ach_panel.add_child(scroll)
+
+	var list := VBoxContainer.new()
+	list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	list.add_theme_constant_override("separation", 6)
+	scroll.add_child(list)
+
+	for id: String in Achievements.ORDER:
+		var data: Dictionary = Achievements.CATALOG[id]
+		var got := Achievements.is_unlocked(id)
+		var entry := Label.new()
+		var mark := "[*] " if got else "[ ] "
+		entry.text = mark + str(data["title"]) + "\n      " + str(data["desc"])
+		entry.add_theme_font_override("font", _font)
+		entry.add_theme_font_size_override("font_size", 7)
+		entry.add_theme_color_override(
+			"font_color", Color(0.95, 0.85, 0.4) if got else Color(0.45, 0.45, 0.5)
+		)
+		entry.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		entry.custom_minimum_size = Vector2(264, 0)
+		entry.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		list.add_child(entry)
+
+	var hint := Label.new()
+	hint.text = "JUMP / ESC to return"
+	hint.add_theme_font_override("font", _font)
+	hint.add_theme_font_size_override("font_size", 6)
+	hint.add_theme_color_override("font_color", Color(0.55, 0.55, 0.6))
+	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	hint.size = Vector2(300, 12)
+	hint.position = Vector2(0, 392)
+	_ach_panel.add_child(hint)
+
+	_ach_panel.visible = false
 
 
 func _on_back_pressed() -> void:

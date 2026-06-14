@@ -1,10 +1,10 @@
 [gd_scene format=3 uid="uid://b0vr3h4tgln7i"]
 
-[ext_resource type="Texture2D" uid="uid://k4jok2scuy62" path="res://Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/Enemies_Industrial/3 Heaver/Idle.png" id="1_idle"]
-[ext_resource type="Texture2D" uid="uid://ewr84to7x4kp" path="res://Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/Enemies_Industrial/3 Heaver/Run.png" id="2_run"]
-[ext_resource type="Texture2D" uid="uid://5ifbe7wue6fh" path="res://Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/Enemies_Industrial/3 Heaver/Attack.png" id="3_attack"]
-[ext_resource type="Texture2D" uid="uid://bl7ceejw1fdcq" path="res://Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/Enemies_Industrial/3 Heaver/Hurt.png" id="4_hurt"]
-[ext_resource type="Texture2D" uid="uid://jdpcb2d30k3d" path="res://Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/Enemies_Industrial/3 Heaver/Death.png" id="5_death"]
+[ext_resource type="Texture2D" uid="uid://k4jok2scuy62" path="res://Sprites/Active_Sprites/enemies/heaver/Idle.png" id="1_idle"]
+[ext_resource type="Texture2D" uid="uid://ewr84to7x4kp" path="res://Sprites/Active_Sprites/enemies/heaver/Run.png" id="2_run"]
+[ext_resource type="Texture2D" uid="uid://5ifbe7wue6fh" path="res://Sprites/Active_Sprites/enemies/heaver/Attack.png" id="3_attack"]
+[ext_resource type="Texture2D" uid="uid://bl7ceejw1fdcq" path="res://Sprites/Active_Sprites/enemies/heaver/Hurt.png" id="4_hurt"]
+[ext_resource type="Texture2D" uid="uid://jdpcb2d30k3d" path="res://Sprites/Active_Sprites/enemies/heaver/Death.png" id="5_death"]
 [ext_resource type="Script" uid="uid://d0bivp53xsrst" path="res://Scenes/Enemies/frog.gd" id="6_script"]
 
 [sub_resource type="AtlasTexture" id="atk_0"]

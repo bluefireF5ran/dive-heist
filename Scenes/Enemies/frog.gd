@@ -78,19 +78,22 @@ func _physics_process(delta: float) -> void:
 				_start_windup()
 
 		if not _winding_up:
-			velocity.x = _direction * patrol_speed * 0.3
+			# The frog just waits, then jumps — it does not patrol/run. Show the
+			# Idle animation (also clears the red Hurt frame after a hit) and face
+			# the player so its wind-up jump heads toward them.
+			if sprite.animation != "Idle":
+				sprite.play("Idle")
+			velocity.x = 0
 			move_and_slide()
-			var at_edge := is_on_floor() and not edge_ray.is_colliding()
-			if is_on_wall() or at_edge:
-				_direction *= -1
-				edge_ray.position.x = _direction * 10.0
-			_flip_sprite()
+			_flip_to_player()
 		else:
 			velocity.x = 0
 			move_and_slide()
 	else:
 		move_and_slide()
-		if _jumping and is_on_floor():
+		# Only land once descending — otherwise the jump can cancel on its first
+		# frame (still touching the floor) and leave the frog floating in the air.
+		if _jumping and is_on_floor() and velocity.y >= 0.0:
 			_reset_windup()
 		_flip_to_player()
 

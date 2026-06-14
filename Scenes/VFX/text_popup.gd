@@ -12,7 +12,7 @@ var _elapsed := 0.0
 
 
 func _ready() -> void:
-	_font = load("res://Sprites/Scraper/Cyberpunk_Assets/Game_UI/UI_Main/10 Font/CyberpunkCraftpixPixel.otf")
+	_font = load("res://Sprites/Active_Sprites/ui/font/CyberpunkCraftpixPixel.otf")
 
 
 func _process(delta: float) -> void:

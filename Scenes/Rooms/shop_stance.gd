@@ -12,8 +12,12 @@ extends "res://Scenes/Rooms/base_room.gd"
 ]
 
 
+const SHOP_ITEM_SCRIPT := preload("res://Scenes/Rooms/shop_item.gd")
+
+
 func _ready() -> void:
 	super._ready()
+	_randomize_items()
 	# Connect purchase signals to animate the NPC
 	for item in shop_items:
 		if item and item.has_signal("purchased"):
@@ -21,6 +25,16 @@ func _ready() -> void:
 	# Start with idle animation
 	if npc_sprite:
 		npc_sprite.play("idle")
+
+
+## Offer 3 distinct random items from the catalog, each clearly named & priced.
+func _randomize_items() -> void:
+	var ids: Array = SHOP_ITEM_SCRIPT.CATALOG.keys()
+	ids.shuffle()
+	for i in range(shop_items.size()):
+		var item: Node = shop_items[i]
+		if item and item.has_method("configure") and i < ids.size():
+			item.configure(ids[i])
 
 
 func _on_item_purchased(_item_id: String) -> void:

@@ -1,9 +1,9 @@
 [gd_scene format=3 uid="uid://df6okf7stfyqq"]
 
-[ext_resource type="Texture2D" uid="uid://cdwx7jfmoka14" path="res://Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/Enemies_Power_Station/6/Idle.png" id="1_idle"]
-[ext_resource type="Texture2D" uid="uid://ds0emrfm6nc8a" path="res://Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/Enemies_Power_Station/6/Walk.png" id="2_walk"]
-[ext_resource type="Texture2D" uid="uid://sdafe07f2yv7" path="res://Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/Enemies_Power_Station/6/Hurt.png" id="3_hurt"]
-[ext_resource type="Texture2D" uid="uid://ci01cua6en2vf" path="res://Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/Enemies_Power_Station/6/Death.png" id="4_death"]
+[ext_resource type="Texture2D" uid="uid://cdwx7jfmoka14" path="res://Sprites/Active_Sprites/enemies/power_station/Idle.png" id="1_idle"]
+[ext_resource type="Texture2D" uid="uid://ds0emrfm6nc8a" path="res://Sprites/Active_Sprites/enemies/power_station/Walk.png" id="2_walk"]
+[ext_resource type="Texture2D" uid="uid://sdafe07f2yv7" path="res://Sprites/Active_Sprites/enemies/power_station/Hurt.png" id="3_hurt"]
+[ext_resource type="Texture2D" uid="uid://ci01cua6en2vf" path="res://Sprites/Active_Sprites/enemies/power_station/Death.png" id="4_death"]
 [ext_resource type="Script" uid="uid://c6jchuy5ayljl" path="res://Scenes/Enemies/spider.gd" id="5_script"]
 
 [sub_resource type="AtlasTexture" id="death_0"]

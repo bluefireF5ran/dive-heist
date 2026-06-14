@@ -12,13 +12,13 @@ const TILE_SIZE := 32.0
 
 # Default Prison tiles (used if setup_room_tiles() not called)
 var _bg_tiles: Array[Texture2D] = [
-	preload("res://Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/1 Tiles/Tile_50.png"),
-	preload("res://Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/1 Tiles/Tile_51.png"),
-	preload("res://Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/1 Tiles/Tile_52.png"),
-	preload("res://Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/1 Tiles/Tile_53.png"),
-	preload("res://Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/1 Tiles/Tile_54.png"),
-	preload("res://Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/1 Tiles/Tile_55.png"),
-	preload("res://Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/1 Tiles/Tile_56.png"),
+	preload("res://Sprites/Active_Sprites/tiles/prison_ground/Tile_50.png"),
+	preload("res://Sprites/Active_Sprites/tiles/prison_ground/Tile_51.png"),
+	preload("res://Sprites/Active_Sprites/tiles/prison_ground/Tile_52.png"),
+	preload("res://Sprites/Active_Sprites/tiles/prison_ground/Tile_53.png"),
+	preload("res://Sprites/Active_Sprites/tiles/prison_ground/Tile_54.png"),
+	preload("res://Sprites/Active_Sprites/tiles/prison_ground/Tile_55.png"),
+	preload("res://Sprites/Active_Sprites/tiles/prison_ground/Tile_56.png"),
 ]
 var _bg_tint := Color(0.55, 0.5, 0.7, 1.0)
 var _tiles_configured := false
@@ -60,7 +60,7 @@ func _fill_background() -> void:
 				spr.texture = _bg_tiles[base_idx]
 			spr.centered = false
 			spr.position = Vector2(col * TILE_SIZE, -ROOM_HEIGHT + row * TILE_SIZE)
-			spr.z_index = -1
+			spr.z_index = -2  # Behind doors/props (z=-1) which sit behind the player
 			spr.modulate = _bg_tint
 			add_child(spr)
 

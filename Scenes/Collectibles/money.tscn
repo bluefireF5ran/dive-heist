@@ -1,7 +1,7 @@
 [gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://Scenes/Collectibles/money.gd" id="1_script"]
-[ext_resource type="Texture2D" path="res://Sprites/Scraper/Cyberpunk_Assets/Tilesets/Prison/4 Animated objects/Money.png" id="2_sheet"]
+[ext_resource type="Texture2D" path="res://Sprites/Active_Sprites/objects/animated/Money.png" id="2_sheet"]
 
 [sub_resource type="AtlasTexture" id="frame_0"]
 atlas = ExtResource("2_sheet")

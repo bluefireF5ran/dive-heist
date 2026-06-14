@@ -1,34 +1,47 @@
 extends Area2D
 ## Buyable shop item. Player walks over it and presses interact to purchase.
-## If player can't afford it, nothing happens.
+## If player can't afford it, nothing happens. Items are configurable from a
+## catalog so the shop can offer a varied, clearly-priced selection each visit.
 
 signal purchased(item_id: String)
 
 const TEXT_POPUP := preload("res://Scenes/VFX/text_popup.tscn")
 const PURCHASE_PARTICLES := preload("res://Scenes/VFX/purchase_particles.tscn")
+const PIXEL_FONT := preload(
+	"res://Sprites/Active_Sprites/ui/font/CyberpunkCraftpixPixel.otf"
+)
 
-const ITEM_ICONS := {
+const ICON_DIR := "res://Sprites/Active_Sprites/icons/"
+
+## All items the shop can sell: name, price, icon, colour and effect (see _apply_item).
+const CATALOG := {
 	"heal":
-	preload("res://Sprites/Scraper/Cyberpunk_Assets/Icons/Weapons_Ammo/1 Icons/Icon1_09.png"),
-	"ammo_up":
-	preload("res://Sprites/Scraper/Cyberpunk_Assets/Icons/Weapons_Ammo/1 Icons/Icon1_01.png"),
+	{"name": "REPAIR", "price": 4, "icon": "shop_repair.png", "color": Color(0.9, 0.35, 0.35)},
 	"armor":
-	preload("res://Sprites/Scraper/Cyberpunk_Assets/Icons/Armor_Cyberpunk/1 Icons/Icon16_01.png"),
+	{"name": "ARMOR", "price": 9, "icon": "shop_armor.png", "color": Color(0.5, 0.8, 1.0)},
+	"ammo_up":
+	{"name": "AMMO+", "price": 6, "icon": "shop_ammo.png", "color": Color(0.9, 0.8, 0.2)},
+	"max_hp":
+	{"name": "HP+1", "price": 12, "icon": "shop_hp.png", "color": Color(0.85, 0.2, 0.2)},
+	"fire_rate":
+	{"name": "FIRE+", "price": 10, "icon": "shop_fire.png", "color": Color(0.6, 0.9, 0.3)},
+	"damage":
+	{"name": "DMG+1", "price": 11, "icon": "shop_damage.png", "color": Color(0.8, 0.7, 1.0)},
+	"magnet":
+	{"name": "MAGNET", "price": 7, "icon": "shop_magnet.png", "color": Color(0.95, 0.6, 0.15)},
 }
 
 @export var item_id := "heal"
-@export var price := 5
-@export var description := ""
+@export var price := 0  # 0 = use the catalog price
 
 var _sold := false
 var _world: Node2D
+var _player_in_range := false
+var _player_ref: Node2D = null
 
 @onready var sprite: Sprite2D = $Sprite2D
 @onready var price_label: Label = $PriceLabel
-
-
-var _player_in_range := false
-var _player_ref: Node2D = null
+@onready var name_label: Label = get_node_or_null("NameLabel")
 
 
 func _ready() -> void:
@@ -37,8 +50,22 @@ func _ready() -> void:
 	collision_mask = 2
 	body_entered.connect(_on_body_entered)
 	body_exited.connect(_on_body_exited)
+	if price_label:
+		price_label.add_theme_font_override("font", PIXEL_FONT)
+	if name_label:
+		name_label.add_theme_font_override("font", PIXEL_FONT)
+		name_label.add_theme_font_size_override("font_size", 6)
+	configure(item_id, price)
+
+
+## Set the item from the catalog (used by shop_stance to randomize the offering).
+func configure(id: String, override_price: int = 0) -> void:
+	item_id = id
+	var def: Dictionary = CATALOG.get(id, {})
+	price = override_price if override_price > 0 else int(def.get("price", 5))
 	_update_price_label()
-	_update_icon()
+	_update_name_label(def)
+	_update_icon(def)
 
 
 func _update_price_label() -> void:
@@ -46,9 +73,15 @@ func _update_price_label() -> void:
 		price_label.text = "$" + str(price)
 
 
-func _update_icon() -> void:
-	if sprite and ITEM_ICONS.has(item_id):
-		sprite.texture = ITEM_ICONS[item_id]
+func _update_name_label(def: Dictionary) -> void:
+	if name_label:
+		name_label.text = def.get("name", item_id.to_upper())
+		name_label.modulate = def.get("color", Color.WHITE)
+
+
+func _update_icon(def: Dictionary) -> void:
+	if sprite and def.has("icon"):
+		sprite.texture = load(ICON_DIR + def["icon"])
 
 
 func _process(_delta: float) -> void:
@@ -66,14 +99,16 @@ func _try_purchase() -> void:
 	if _player_ref.spend_money(price):
 		_sold = true
 		_apply_item(_player_ref)
+		# Note: shop upgrades are NOT shown in the HUD perk row (only end-of-level
+		# perk picks are); _apply_item still records them in player.perks for gameplay.
 		purchased.emit(item_id)
 		SFX.play(SFX.combo_tier_1, -6.0)
-		# Spawn purchase VFX
 		_spawn_purchase_vfx()
-		# Sold visual — fade out item
 		var tween := create_tween()
 		tween.tween_property(self, "modulate:a", 0.0, 0.3)
 		tween.tween_callback(queue_free)
+	else:
+		SFX.play(SFX.empty_click, -7.0)
 
 
 func _apply_item(player: Node2D) -> void:
@@ -87,10 +122,21 @@ func _apply_item(player: Node2D) -> void:
 		"armor":
 			if player.has_method("heal"):
 				player.heal(player.MAX_HP)  # Full heal
+		"max_hp":
+			if player.has_method("apply_perk"):
+				player.apply_perk("max_hp")
+		"fire_rate":
+			if player.has_method("apply_perk"):
+				player.apply_perk("fire_rate")
+		"damage":
+			if player.has_method("apply_perk"):
+				player.apply_perk("sharpshooter")
+		"magnet":
+			if player.has_method("apply_perk"):
+				player.apply_perk("magnet")
 
 
 func _spawn_purchase_vfx() -> void:
-	# Gold particle burst
 	var particles := PURCHASE_PARTICLES.instantiate()
 	particles.global_position = global_position
 	_world.call_deferred("add_child", particles)

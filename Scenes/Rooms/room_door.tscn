@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://bav1ebwufyise"]
 
 [ext_resource type="Script" uid="uid://dup54s8pxff42" path="res://Scenes/Rooms/room_door.gd" id="1_script"]
-[ext_resource type="Texture2D" uid="uid://kicvkkpdb7qr" path="res://Sprites/Scraper/Cyberpunk_Assets/Tilesets/Prison/4 Animated objects/Door1.png" id="2_door"]
+[ext_resource type="Texture2D" uid="uid://kicvkkpdb7qr" path="res://Sprites/Active_Sprites/objects/animated/Door1.png" id="2_door"]
 
 [sub_resource type="AtlasTexture" id="door_frame"]
 atlas = ExtResource("2_door")

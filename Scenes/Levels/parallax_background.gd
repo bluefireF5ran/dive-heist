@@ -8,20 +8,13 @@ extends ParallaxBackground
 # =============================================================================
 
 # Prison layers — city 4 (dark, industrial)
-const _CITY4_DIR := (
-	"res://Sprites/Craftpix/3. Backgrounds/"
-	+ "craftpix-net-219100-free-futuristic-city-pixel-art-backgrounds/city 4"
-)
+const _CITY4_DIR := "res://Sprites/Active_Sprites/backgrounds/prison_city"
 const _PRISON_FAR: Texture2D = preload(_CITY4_DIR + "/1.png")
 const _PRISON_MID: Texture2D = preload(_CITY4_DIR + "/5.png")
 const _PRISON_NEAR: Texture2D = preload(_CITY4_DIR + "/8.png")
 
 # Factory layers — robot factory background 2
-const _FAC_DIR := (
-	"res://Sprites/Craftpix/3. Backgrounds/"
-	+ "craftpix-net-619885-robot-factory-pixel-game-backgrounds-unity/"
-	+ "Robot Factory Backgrounds Pixel Art/PNG/Background_2"
-)
+const _FAC_DIR := "res://Sprites/Active_Sprites/backgrounds/factory"
 const _FACTORY_FAR: Texture2D = preload(_FAC_DIR + "/Layer_1.png")
 const _FACTORY_MID: Texture2D = preload(_FAC_DIR + "/Layer_4.png")
 const _FACTORY_NEAR: Texture2D = preload(_FAC_DIR + "/Layer_7.png")

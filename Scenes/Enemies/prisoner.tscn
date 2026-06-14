@@ -1,10 +1,10 @@
 [gd_scene format=3 uid="uid://bn6vloxyah174"]
 
-[ext_resource type="Texture2D" uid="uid://cqrckbdf2y3q7" path="res://Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/NPCs_Prisoners/1/Idle.png" id="1_idle"]
-[ext_resource type="Texture2D" uid="uid://cdgt8kuiuustb" path="res://Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/NPCs_Prisoners/1/Walk.png" id="2_walk"]
-[ext_resource type="Texture2D" uid="uid://d14ng0qbqow8p" path="res://Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/NPCs_Prisoners/1/Attack.png" id="3_attack"]
-[ext_resource type="Texture2D" uid="uid://b06mhntmaxp7d" path="res://Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/NPCs_Prisoners/1/Hurt.png" id="4_hurt"]
-[ext_resource type="Texture2D" uid="uid://dpnrxn4kpp3qv" path="res://Sprites/Scraper/Cyberpunk_Assets/Characters_Sprites/NPCs_Prisoners/1/Death.png" id="5_death"]
+[ext_resource type="Texture2D" uid="uid://cqrckbdf2y3q7" path="res://Sprites/Active_Sprites/enemies/prisoner/Idle.png" id="1_idle"]
+[ext_resource type="Texture2D" uid="uid://cdgt8kuiuustb" path="res://Sprites/Active_Sprites/enemies/prisoner/Walk.png" id="2_walk"]
+[ext_resource type="Texture2D" uid="uid://d14ng0qbqow8p" path="res://Sprites/Active_Sprites/enemies/prisoner/Attack.png" id="3_attack"]
+[ext_resource type="Texture2D" uid="uid://b06mhntmaxp7d" path="res://Sprites/Active_Sprites/enemies/prisoner/Hurt.png" id="4_hurt"]
+[ext_resource type="Texture2D" uid="uid://dpnrxn4kpp3qv" path="res://Sprites/Active_Sprites/enemies/prisoner/Death.png" id="5_death"]
 [ext_resource type="Script" uid="uid://c536h8r41os67" path="res://Scenes/Enemies/enemy.gd" id="6_script"]
 
 [sub_resource type="AtlasTexture" id="attack_0"]

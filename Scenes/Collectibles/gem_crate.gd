@@ -7,6 +7,7 @@ const MONEY_SCENE := preload("res://Scenes/Collectibles/money.tscn")
 @export var money_count := 12
 @export var money_value := 1
 @export var hp := 3
+@export var is_mimic := false  # Trap chest: bites the opener instead of dropping loot
 
 var _is_broken := false
 var _world: Node2D
@@ -34,6 +35,15 @@ func take_damage(_amount: int = 1) -> void:
 
 func _break() -> void:
 	_is_broken = true
+	# Mimic: no loot — bite whoever is standing close (stomping is risky; shooting
+	# it from range is safe but wastes the gamble).
+	if is_mimic:
+		SFX.play(SFX.empty_click, -2.0, randf_range(0.7, 0.9))
+		var p := get_tree().get_first_node_in_group("player")
+		if p and p.has_method("take_damage") and p.global_position.distance_to(global_position) < 42.0:
+			p.take_damage(1)
+		call_deferred("queue_free")
+		return
 	SFX.play(SFX.stomp_material, -5.0, randf_range(0.8, 1.0))
 	# Spawn money in a burst
 	for i in range(money_count):

@@ -11,6 +11,8 @@ var score := 0
 var game_over := false
 var reward_text := ""
 var reward_timer := 0.0
+var perks: Array = []  # Acquired perk icon paths, shown as icons top-right
+var _perk_nodes: Array = []  # Live TextureRect nodes for the perk icons
 
 # Level complete screen state
 var level_complete := false
@@ -19,6 +21,7 @@ var lc_kills := 0
 var lc_money_earned := 0
 var lc_max_combo := 0
 var lc_depth := 0
+var lc_perk_pending := false  # Hide the "JUMP to continue" hint while perks show
 
 # Death screen state (cumulative run stats)
 var death_screen := false
@@ -84,6 +87,41 @@ func set_weapon(weapon_name: String, color: Color) -> void:
 	bar_container.set_weapon(weapon_name, color)
 
 
+## Show the acquired perks as a row of icons in the top-right, above the weapon
+## name. `value` is a list of icon resource paths (resolved by world.gd). Uses
+## TextureRect nodes — draw_texture_rect renders these textures as white squares.
+func set_perks(value: Array) -> void:
+	perks = value
+	for n in _perk_nodes:
+		n.queue_free()
+	_perk_nodes.clear()
+	var vp := get_viewport().get_visible_rect().size
+	var sz := 12.0
+	var pad := 2.0
+	var per_row := 8
+	for i in range(value.size()):
+		var path: String = value[i]
+		if path == "":
+			continue
+		var tex: Texture2D = load(path)
+		if not tex:
+			continue
+		var col := i % per_row
+		var row := i / per_row
+		var ic := TextureRect.new()
+		ic.texture = tex
+		ic.size = Vector2(sz, sz)
+		ic.position = Vector2(
+			vp.x - 4.0 - float(col + 1) * (sz + pad), 4.0 + float(row) * (sz + pad)
+		)
+		ic.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		ic.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		ic.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		ic.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		add_child(ic)
+		_perk_nodes.append(ic)
+
+
 func set_score(value: int) -> void:
 	score = value
 	bar_container.queue_redraw()
@@ -129,4 +167,5 @@ func show_level_complete(level: int, kills: int, money_earned: int, max_combo: i
 
 func hide_level_complete() -> void:
 	level_complete = false
+	lc_perk_pending = false
 	bar_container.queue_redraw()

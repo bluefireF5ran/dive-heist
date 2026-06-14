@@ -7,17 +7,17 @@
 [ext_resource type="PackedScene" path="res://Scenes/Enemies/warden.tscn" id="5_warden"]
 [ext_resource type="Script" path="res://Scenes/Levels/chunk_generator.gd" id="6_chunkgen"]
 [ext_resource type="PackedScene" path="res://Scenes/Enemies/drone.tscn" id="7_drone"]
-[ext_resource type="Texture2D" path="res://Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/1 Tiles/Tile_10.png" id="8_walltile"]
-[ext_resource type="Texture2D" path="res://Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/1 Tiles/Tile_02.png" id="9_plattile"]
-[ext_resource type="Texture2D" path="res://Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/1 Tiles/Tile_11.png" id="10_walledge_r"]
-[ext_resource type="Texture2D" path="res://Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/1 Tiles/Tile_09.png" id="11_walledge_l"]
-[ext_resource type="Texture2D" path="res://Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/1 Tiles/Tile_50.png" id="12_bg50"]
-[ext_resource type="Texture2D" path="res://Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/1 Tiles/Tile_51.png" id="13_bg51"]
-[ext_resource type="Texture2D" path="res://Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/1 Tiles/Tile_52.png" id="14_bg52"]
-[ext_resource type="Texture2D" path="res://Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/1 Tiles/Tile_53.png" id="15_bg53"]
-[ext_resource type="Texture2D" path="res://Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/1 Tiles/Tile_54.png" id="16_bg54"]
-[ext_resource type="Texture2D" path="res://Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/1 Tiles/Tile_55.png" id="17_bg55"]
-[ext_resource type="Texture2D" path="res://Sprites/Craftpix/2. Escenarios/prison-tileset-pixel-art-assets/1 Tiles/Tile_56.png" id="18_bg56"]
+[ext_resource type="Texture2D" path="res://Sprites/Active_Sprites/tiles/prison_ground/Tile_10.png" id="8_walltile"]
+[ext_resource type="Texture2D" path="res://Sprites/Active_Sprites/tiles/prison_ground/Tile_02.png" id="9_plattile"]
+[ext_resource type="Texture2D" path="res://Sprites/Active_Sprites/tiles/prison_ground/Tile_11.png" id="10_walledge_r"]
+[ext_resource type="Texture2D" path="res://Sprites/Active_Sprites/tiles/prison_ground/Tile_09.png" id="11_walledge_l"]
+[ext_resource type="Texture2D" path="res://Sprites/Active_Sprites/tiles/prison_ground/Tile_50.png" id="12_bg50"]
+[ext_resource type="Texture2D" path="res://Sprites/Active_Sprites/tiles/prison_ground/Tile_51.png" id="13_bg51"]
+[ext_resource type="Texture2D" path="res://Sprites/Active_Sprites/tiles/prison_ground/Tile_52.png" id="14_bg52"]
+[ext_resource type="Texture2D" path="res://Sprites/Active_Sprites/tiles/prison_ground/Tile_53.png" id="15_bg53"]
+[ext_resource type="Texture2D" path="res://Sprites/Active_Sprites/tiles/prison_ground/Tile_54.png" id="16_bg54"]
+[ext_resource type="Texture2D" path="res://Sprites/Active_Sprites/tiles/prison_ground/Tile_55.png" id="17_bg55"]
+[ext_resource type="Texture2D" path="res://Sprites/Active_Sprites/tiles/prison_ground/Tile_56.png" id="18_bg56"]
 [ext_resource type="PackedScene" path="res://Scenes/Enemies/spider.tscn" id="19_spider"]
 [ext_resource type="PackedScene" path="res://Scenes/Enemies/floor_drone.tscn" id="20_fdrone"]
 [ext_resource type="Script" path="res://Scenes/Levels/parallax_background.gd" id="21_parallax"]
@@ -53,6 +53,7 @@ region_rect = Rect2(0, 0, 120, 16)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StartPlatform"]
 shape = SubResource("RectangleShape2D_start_plat")
+one_way_collision = true
 
 [node name="LeftWall" type="StaticBody2D" parent="." unique_id=333087155]
 position = Vector2(-16, 0)
