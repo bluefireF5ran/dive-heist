@@ -28,6 +28,7 @@ var _start_y: float
 var _max_camera_y: float
 var _is_game_over := false
 var _is_level_complete := false
+var _demo_complete := false  # Factory boss (final demo level) beaten -> victory screen
 var _perk_pending := false  # Waiting for the player to pick an end-of-level perk
 var _hud_perk_ids: Array = []  # Perks shown in the HUD (perk-screen picks only, not shop)
 var _debug_room_active := false  # Debug chest-room test mode: lock camera on the room
@@ -331,6 +332,18 @@ func _on_level_complete() -> void:
 		Achievements.notify_untouchable()
 
 	var depth := int(maxf(0, _level_end_y - _start_y))
+
+	# Final demo content is the factory boss (level 6): show a victory screen and
+	# stop here instead of continuing into the unfinished lab.
+	if _current_level >= 6:
+		_demo_complete = true
+		_music_player.stop()
+		SFX.play(SFX.combo_tier_2, -2.0)
+		screen_shake(4.0)
+		ammo_hud.show_victory(depth, _total_kills, _total_money_earned, _overall_max_combo)
+		set_process_input(true)
+		return
+
 	ammo_hud.show_level_complete(_current_level, _level_kills, _level_money_earned, _level_max_combo, depth)
 	SFX.play(SFX.combo_increase, -4.0)
 	screen_shake(3.0)
@@ -595,7 +608,10 @@ func _spawn_start_platform(y: float) -> void:
 
 
 func _input(event: InputEvent) -> void:
-	if _is_game_over and event.is_action_pressed("jump"):
+	if _demo_complete and event.is_action_pressed("jump"):
+		SFX.play(SFX.restart_menu, -10.0)
+		get_tree().change_scene_to_file("res://Scenes/UI/main_menu.tscn")
+	elif _is_game_over and event.is_action_pressed("jump"):
 		SFX.play(SFX.restart_menu, -10.0)
 		get_tree().change_scene_to_file("res://Scenes/UI/main_menu.tscn")
 	elif _is_level_complete and not _perk_pending and event.is_action_pressed("jump"):

@@ -49,7 +49,9 @@ func _draw() -> void:
 	_draw_combo(hud.combo)
 	if hud.reward_text != "":
 		_draw_reward(hud.reward_text, hud.reward_timer)
-	if hud.level_complete:
+	if hud.victory_screen:
+		_draw_victory_screen(hud)
+	elif hud.level_complete:
 		_draw_level_complete(hud)
 	elif hud.death_screen:
 		_draw_death_screen(hud)
@@ -348,6 +350,42 @@ func _draw_death_screen(hud: CanvasLayer) -> void:
 		8,
 		Color(0.6, 0.6, 0.6, 0.8 + 0.2 * sin(Time.get_ticks_msec() / 300.0))
 	)
+
+
+## Demo-cleared terminal screen (factory boss beaten).
+func _draw_victory_screen(hud: CanvasLayer) -> void:
+	var vp := get_viewport_rect().size
+	var cy := vp.y / 2.0
+	var pulse := 0.7 + 0.3 * sin(Time.get_ticks_msec() / 250.0)
+	draw_rect(Rect2(Vector2.ZERO, vp), Color(0.02, 0.05, 0.03, 0.82))
+
+	var title := "FACTORY CLEARED!"
+	var ts := _font.get_string_size(title, HORIZONTAL_ALIGNMENT_CENTER, -1, 16)
+	var tx := (vp.x - ts.x) / 2.0
+	draw_string(_font, Vector2(tx + 1, cy - 71), title, HORIZONTAL_ALIGNMENT_CENTER, -1, 16, Color(0, 0, 0, 0.8))
+	draw_string(_font, Vector2(tx, cy - 72), title, HORIZONTAL_ALIGNMENT_CENTER, -1, 16, Color(0.3, 1.0, 0.5, pulse))
+
+	var sub := "DEMO COMPLETE"
+	var ss := _font.get_string_size(sub, HORIZONTAL_ALIGNMENT_CENTER, -1, 9)
+	draw_string(_font, Vector2((vp.x - ss.x) / 2.0, cy - 50), sub, HORIZONTAL_ALIGNMENT_CENTER, -1, 9, Color(0.7, 0.9, 0.75, 0.9))
+
+	var stats: Array[String] = [
+		"Depth: " + str(hud.ds_depth) + "m",
+		"Kills: " + str(hud.ds_kills),
+		"Money: $" + str(hud.ds_money),
+		"Max Combo: x" + str(hud.ds_max_combo),
+	]
+	for i in range(stats.size()):
+		var s: String = stats[i]
+		var sz := _font.get_string_size(s, HORIZONTAL_ALIGNMENT_CENTER, -1, 10)
+		var x := (vp.x - sz.x) / 2.0
+		var yy := cy - 24.0 + i * 16.0
+		draw_string(_font, Vector2(x + 1, yy + 1), s, HORIZONTAL_ALIGNMENT_CENTER, -1, 10, Color(0, 0, 0, 0.6))
+		draw_string(_font, Vector2(x, yy), s, HORIZONTAL_ALIGNMENT_CENTER, -1, 10, Color(0.85, 0.9, 0.85, 1.0))
+
+	var hint := "JUMP for menu"
+	var hs := _font.get_string_size(hint, HORIZONTAL_ALIGNMENT_CENTER, -1, 8)
+	draw_string(_font, Vector2((vp.x - hs.x) / 2.0, cy + 58), hint, HORIZONTAL_ALIGNMENT_CENTER, -1, 8, Color(0.6, 0.8, 0.6, pulse))
 
 
 func _draw_level_complete(hud: CanvasLayer) -> void:

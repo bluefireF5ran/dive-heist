@@ -25,6 +25,7 @@ var lc_perk_pending := false  # Hide the "JUMP to continue" hint while perks sho
 
 # Death screen state (cumulative run stats)
 var death_screen := false
+var victory_screen := false  # Demo cleared (factory boss beaten)
 var ds_depth := 0
 var ds_kills := 0
 var ds_money := 0
@@ -44,7 +45,7 @@ func _process(delta: float) -> void:
 			reward_text = ""
 		bar_container.queue_redraw()
 	# Continuous redraw for pulsing text overlays
-	if level_complete or death_screen:
+	if level_complete or death_screen or victory_screen:
 		bar_container.queue_redraw()
 
 
@@ -148,6 +149,17 @@ func show_game_over() -> void:
 func show_death_screen(depth_val: int, kills: int, money_val: int, max_combo: int) -> void:
 	game_over = true
 	death_screen = true
+	ds_depth = depth_val
+	ds_kills = kills
+	ds_money = money_val
+	ds_max_combo = max_combo
+	bar_container.queue_redraw()
+
+
+## Demo cleared (factory boss beaten) — celebratory terminal screen. Reuses the
+## death-screen run stats.
+func show_victory(depth_val: int, kills: int, money_val: int, max_combo: int) -> void:
+	victory_screen = true
 	ds_depth = depth_val
 	ds_kills = kills
 	ds_money = money_val
