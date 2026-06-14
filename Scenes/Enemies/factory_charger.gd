@@ -11,8 +11,8 @@ const DEATH_EXPLOSION := preload("res://Scenes/VFX/death_explosion.tscn")
 
 @export var hp := 3
 @export var speed := 24.0
-@export var charge_speed := 125.0
-@export var detection_range := 150.0
+@export var charge_speed := 115.0
+@export var detection_range := 130.0
 
 enum {PATROL, ALARM, CHARGE, RECOVER}
 

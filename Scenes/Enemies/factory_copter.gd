@@ -10,9 +10,9 @@ const DEATH_EXPLOSION := preload("res://Scenes/VFX/death_explosion.tscn")
 const BOMB_SCRIPT := preload("res://Scenes/Enemies/factory_bomb.gd")
 
 @export var hp := 2
-@export var hover_speed := 52.0
-@export var target_height := 64.0
-@export var bomb_interval := 2.2
+@export var hover_speed := 48.0
+@export var target_height := 72.0
+@export var bomb_interval := 2.8
 
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var stomp_area: Area2D = $StompArea

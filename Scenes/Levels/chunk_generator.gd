@@ -915,15 +915,15 @@ func _furnish_prison_room(room: Node2D, stance_idx: int) -> void:
 
 ## Maybe mount a spiked trap on one of the well walls (factory only).
 func _maybe_place_wall_trap(chunk: Node2D, phase: String) -> void:
-	var chance := 0.30
+	var chance := 0.22
 	if phase == "escalation":
-		chance = 0.45
+		chance = 0.32
 	elif phase == "climax":
-		chance = 0.60
+		chance = 0.42
 	if _rng.randf() >= chance:
 		return
 	var on_left := _rng.randf() < 0.5
-	var h := _rng.randf_range(46.0, 72.0)
+	var h := _rng.randf_range(44.0, 66.0)
 	var cy := _rng.randf_range(-CHUNK_HEIGHT * 0.3, CHUNK_HEIGHT * 0.3)
 	_add_wall_trap(chunk, on_left, cy, h)
 

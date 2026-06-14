@@ -9,10 +9,10 @@ const GRAVITY := 800.0
 const MONEY_SCENE := preload("res://Scenes/Collectibles/money.tscn")
 const DEATH_EXPLOSION := preload("res://Scenes/VFX/death_explosion.tscn")
 
-@export var hp := 4
+@export var hp := 3
 @export var speed := 28.0
-@export var detect_x := 66.0
-@export var lunge_speed := 155.0
+@export var detect_x := 58.0
+@export var lunge_speed := 140.0
 
 enum {PATROL, WINDUP, LUNGE, RECOVER}
 
