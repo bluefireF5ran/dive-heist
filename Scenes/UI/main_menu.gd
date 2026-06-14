@@ -210,6 +210,13 @@ func _build_debug_panel() -> void:
 	_apply_theme(b4)
 	b4.pressed.connect(_start_at_level.bind(4))
 
+	var b6 := Button.new()
+	b6.text = "Level 6  (Fac Boss)"
+	b6.custom_minimum_size = Vector2(160, 0)
+	vbox.add_child(b6)
+	_apply_theme(b6)
+	b6.pressed.connect(_start_at_level.bind(6))
+
 	var bc := Button.new()
 	bc.text = "Chest Room"
 	bc.custom_minimum_size = Vector2(160, 0)

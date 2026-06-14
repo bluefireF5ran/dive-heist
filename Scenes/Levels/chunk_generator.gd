@@ -29,6 +29,7 @@ const BREAKABLE_PLATFORM_SCRIPT := preload("res://Scenes/Levels/breakable_platfo
 const HEATED_PLATFORM_SCRIPT := preload("res://Scenes/Levels/heated_platform.gd")
 const WALL_TRAP_SCRIPT := preload("res://Scenes/Levels/wall_trap.gd")
 const BOSS_SCENE := preload("res://Scenes/Enemies/boss_warden.tscn")
+const FACTORY_BOSS_SCENE := preload("res://Scenes/Enemies/boss_loader.tscn")
 const ELEVATOR_SCRIPT := preload("res://Scenes/Levels/elevator_platform.gd")
 const SAW_TEX := preload("res://Sprites/Active_Sprites/objects/animated/Saw.png")
 
@@ -1751,9 +1752,11 @@ func _spawn_rest_zone(y: float) -> void:
 		_stances_in_level = 0
 		_level_start_y = y + CHUNK_HEIGHT
 		_level_end_y = y
-		# The end of prison level 3 is a boss arena instead of a void gap.
+		# Each era ends in a boss arena: prison L3 = Warden, factory L6 = Loader.
 		if _is_prison() and current_level == 3:
-			_spawn_boss_arena(y)
+			_spawn_boss_arena(y, BOSS_SCENE)
+		elif _is_factory() and current_level == 6:
+			_spawn_boss_arena(y, FACTORY_BOSS_SCENE)
 		else:
 			level_end_cam_target = y
 			_spawn_level_end_zone(y)
@@ -1835,7 +1838,7 @@ func _spawn_rest_zone(y: float) -> void:
 ## ledges to fight from, and the prison boss on the floor. Defeating the boss
 ## completes the level (handled in boss_warden.gd). The camera follows the player
 ## down normally (no level_end_cam_target), and the boss pauses the urge hazard.
-func _spawn_boss_arena(y: float) -> void:
+func _spawn_boss_arena(y: float, boss_scene: PackedScene) -> void:
 	# Stop spawning chunks below — the player must beat the boss to proceed.
 	_gen_paused = true
 
@@ -1872,7 +1875,7 @@ func _spawn_boss_arena(y: float) -> void:
 
 	# The boss — its origin is at its feet (see boss_warden.tscn), so place it on
 	# the floor top.
-	var boss := BOSS_SCENE.instantiate()
+	var boss := boss_scene.instantiate()
 	boss.position = Vector2(WELL_RIGHT / 2.0, arena_h - 8.0)
 	zone.add_child(boss)
 
