@@ -203,6 +203,13 @@ func _build_debug_panel() -> void:
 	_apply_theme(b3)
 	b3.pressed.connect(_start_at_level.bind(3))
 
+	var b4 := Button.new()
+	b4.text = "Level 4  (Factory)"
+	b4.custom_minimum_size = Vector2(160, 0)
+	vbox.add_child(b4)
+	_apply_theme(b4)
+	b4.pressed.connect(_start_at_level.bind(4))
+
 	var bc := Button.new()
 	bc.text = "Chest Room"
 	bc.custom_minimum_size = Vector2(160, 0)

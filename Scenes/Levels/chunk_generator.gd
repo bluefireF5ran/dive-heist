@@ -30,9 +30,10 @@ const HEATED_PLATFORM_SCRIPT := preload("res://Scenes/Levels/heated_platform.gd"
 const WALL_TRAP_SCRIPT := preload("res://Scenes/Levels/wall_trap.gd")
 const BOSS_SCENE := preload("res://Scenes/Enemies/boss_warden.tscn")
 const ELEVATOR_SCRIPT := preload("res://Scenes/Levels/elevator_platform.gd")
+const SAW_TEX := preload("res://Sprites/Active_Sprites/objects/animated/Saw.png")
 
-# Factory enemies are recolored (cold steel) and tougher/faster than prison ones.
-const FACTORY_ENEMY_TINT := Color(0.6, 0.78, 1.0, 1.0)
+## Spinning-sawblade frames, built once and shared by all wall hazards.
+static var _saw_frames_cache: SpriteFrames
 
 const STANCE_SCENES: Array[PackedScene] = [
 	preload("res://Scenes/Rooms/shop_stance.tscn"),
@@ -51,7 +52,7 @@ const PHASE_CONFIG := {
 		"max_platform_w": 96.0,
 		"squad_chance": 0.15,
 		"enemy_chance": 0.55,
-		"enemy_types": ["prisoner", "warden", "drone", "spider", "floor_drone", "bat", "frog"],
+		"enemy_types": ["prisoner", "warden", "drone", "spider", "floor_drone", "bat", "frog", "hammer", "alarmobot", "copter"],
 		"squad_tiers": ["easy"],
 	},
 	"escalation":
@@ -63,7 +64,7 @@ const PHASE_CONFIG := {
 		"max_platform_w": 88.0,
 		"squad_chance": 0.35,
 		"enemy_chance": 0.75,
-		"enemy_types": ["prisoner", "warden", "drone", "spider", "floor_drone", "bat", "frog"],
+		"enemy_types": ["prisoner", "warden", "drone", "spider", "floor_drone", "bat", "frog", "hammer", "alarmobot", "copter"],
 		"squad_tiers": ["easy", "medium"],
 	},
 	"climax":
@@ -75,7 +76,7 @@ const PHASE_CONFIG := {
 		"max_platform_w": 72.0,
 		"squad_chance": 0.55,
 		"enemy_chance": 0.90,
-		"enemy_types": ["prisoner", "warden", "drone", "spider", "floor_drone", "bat", "frog"],
+		"enemy_types": ["prisoner", "warden", "drone", "spider", "floor_drone", "bat", "frog", "hammer", "alarmobot", "copter"],
 		"squad_tiers": ["easy", "medium", "hard"],
 	},
 }
@@ -191,6 +192,56 @@ const SQUAD_DEFS := [
 			{"type": "spider", "ox": 0.0, "oy": 10.0, "wall_side": "right"},
 			{"type": "floor_drone", "ox": 0.0, "oy": 0.0},
 			{"type": "frog", "ox": 0.0, "oy": 0.0},
+		],
+	},
+	# --- Factory squads (only eligible when the era filter allows these types) ---
+	{
+		"tier": "easy",
+		"members":
+		[
+			{"type": "hammer", "ox": 0.0, "oy": 0.0},
+		],
+	},
+	{
+		"tier": "easy",
+		"members":
+		[
+			{"type": "alarmobot", "ox": -28.0, "oy": 0.0},
+			{"type": "drone", "ox": 28.0, "oy": -28.0},
+		],
+	},
+	{
+		"tier": "medium",
+		"members":
+		[
+			{"type": "hammer", "ox": 0.0, "oy": 0.0},
+			{"type": "copter", "ox": 0.0, "oy": -45.0},
+		],
+	},
+	{
+		"tier": "medium",
+		"members":
+		[
+			{"type": "alarmobot", "ox": -30.0, "oy": 0.0},
+			{"type": "alarmobot", "ox": 30.0, "oy": 0.0},
+		],
+	},
+	{
+		"tier": "hard",
+		"members":
+		[
+			{"type": "hammer", "ox": -28.0, "oy": 0.0},
+			{"type": "alarmobot", "ox": 28.0, "oy": 0.0},
+			{"type": "copter", "ox": 0.0, "oy": -50.0},
+		],
+	},
+	{
+		"tier": "hard",
+		"members":
+		[
+			{"type": "copter", "ox": -35.0, "oy": -45.0},
+			{"type": "copter", "ox": 35.0, "oy": -45.0},
+			{"type": "hammer", "ox": 0.0, "oy": 0.0},
 		],
 	},
 ]
@@ -346,6 +397,9 @@ const ZONE_TYPES := [
 @export var floor_drone_scene: PackedScene
 @export var bat_scene: PackedScene
 @export var frog_scene: PackedScene
+@export var hammer_scene: PackedScene
+@export var alarmobot_scene: PackedScene
+@export var copter_scene: PackedScene
 @export var platform_tile: Texture2D
 @export var bg_tiles: Array[Texture2D] = []
 @export var spike_texture: Texture2D
@@ -874,51 +928,54 @@ func _maybe_place_wall_trap(chunk: Node2D, phase: String) -> void:
 	_add_wall_trap(chunk, on_left, cy, h)
 
 
-## Build a spiked wall hazard with code-drawn red spikes (no texture dependency).
+## Spinning-sawblade frames (6 x 32px), built once and shared by every wall hazard.
+func _saw_frames() -> SpriteFrames:
+	if _saw_frames_cache == null:
+		var sf := SpriteFrames.new()
+		sf.remove_animation("default")
+		sf.add_animation("spin")
+		sf.set_animation_loop("spin", true)
+		sf.set_animation_speed("spin", 18.0)
+		for i in range(6):
+			var at := AtlasTexture.new()
+			at.atlas = SAW_TEX
+			at.region = Rect2(i * 32, 0, 32, 32)
+			sf.add_frame("spin", at)
+		_saw_frames_cache = sf
+	return _saw_frames_cache
+
+
+## Build a wall hazard: a column of spinning sawblades mounted on a well wall.
 func _add_wall_trap(parent: Node2D, on_left: bool, cy: float, height: float) -> void:
 	var trap := Area2D.new()
 	trap.set_script(WALL_TRAP_SCRIPT)
-	var base_x := 2.0 if on_left else WELL_RIGHT - 2.0
+	var base_x := 4.0 if on_left else WELL_RIGHT - 4.0
 	var dir := 1.0 if on_left else -1.0
 	trap.position = Vector2(base_x, cy)
 	parent.add_child(trap)
 
-	var spike_w := 9.0
+	var reach := 16.0  # how far the blades bite into the well
 	var shape := CollisionShape2D.new()
 	var rect := RectangleShape2D.new()
-	rect.size = Vector2(spike_w + 2.0, height)
-	shape.position = Vector2(dir * spike_w * 0.5, 0.0)
+	rect.size = Vector2(reach, height)
+	shape.position = Vector2(dir * reach * 0.5, 0.0)
 	shape.shape = rect
 	trap.add_child(shape)
 
-	# Dark mounting plate flush to the wall.
-	var base := Polygon2D.new()
-	base.polygon = PackedVector2Array(
-		[
-			Vector2(0.0, -height * 0.5),
-			Vector2(dir * 3.0, -height * 0.5),
-			Vector2(dir * 3.0, height * 0.5),
-			Vector2(0.0, height * 0.5),
-		]
-	)
-	base.color = Color(0.32, 0.1, 0.12, 1.0)
-	trap.add_child(base)
-
-	# Red spikes pointing into the well.
-	var seg := 11.0
-	var n := maxi(2, int(height / seg))
+	# Spinning sawblades distributed along the mounted height.
+	var frames := _saw_frames()
+	var step := 26.0
+	var n := maxi(1, int(round(height / step)))
 	for i in range(n):
-		var yy := -height * 0.5 + i * seg + seg * 0.5
-		var tri := Polygon2D.new()
-		tri.polygon = PackedVector2Array(
-			[
-				Vector2(dir * 2.0, yy - seg * 0.5),
-				Vector2(dir * 2.0, yy + seg * 0.5),
-				Vector2(dir * spike_w, yy),
-			]
-		)
-		tri.color = Color(0.85, 0.18, 0.2, 1.0)
-		trap.add_child(tri)
+		var t := 0.0 if n == 1 else float(i) / float(n - 1)
+		var yy := lerpf(-height * 0.5 + 13.0, height * 0.5 - 13.0, t)
+		var saw := AnimatedSprite2D.new()
+		saw.sprite_frames = frames
+		saw.play("spin")
+		saw.position = Vector2(dir * 10.0, yy)
+		saw.scale = Vector2(0.9, 0.9)
+		saw.flip_h = not on_left
+		trap.add_child(saw)
 
 
 # Zone Templates — Multi-chunk structural sections for variety
@@ -1420,11 +1477,21 @@ const PRISON_ENEMIES_BY_LEVEL := {
 	3: ["prisoner", "warden", "bat", "drone", "spider", "frog", "floor_drone"],
 }
 
+## Factory roster: the new industrial enemies (hammer/alarmobot/copter) plus the
+## robotic reused ones (drone/floor_drone/bat). No prison humans/animals here.
+const FACTORY_ENEMIES_BY_LEVEL := {
+	4: ["hammer", "drone", "bat"],
+	5: ["hammer", "alarmobot", "copter", "drone", "bat"],
+	6: ["hammer", "alarmobot", "copter", "drone", "bat", "floor_drone"],
+}
 
-## Allowed enemy types for the current spot. Empty = no restriction (non-prison).
+
+## Allowed enemy types for the current spot. Empty = no restriction.
 func _level_enemy_filter() -> Array:
 	if _is_prison():
 		return PRISON_ENEMIES_BY_LEVEL.get(current_level, PRISON_ENEMIES_BY_LEVEL[3])
+	if _is_factory():
+		return FACTORY_ENEMIES_BY_LEVEL.get(current_level, FACTORY_ENEMIES_BY_LEVEL[6])
 	return []
 
 
@@ -1496,6 +1563,15 @@ func _place_squad(chunk: Node2D, squad_def: Dictionary, platforms: Array[Rect2])
 					var plat: Rect2 = platforms[_rng.randi() % platforms.size()]
 					var fx := clampf(plat.position.x + plat.size.x * 0.5, WELL_LEFT + 12.0, WELL_RIGHT - 12.0)
 					_add_frog(chunk, fx, -24.0)
+			"hammer":
+				var hx := clampf(anchor.x + ox, WELL_LEFT + 14.0, WELL_RIGHT - 14.0)
+				_add_hammer(chunk, hx, -16.0)
+			"alarmobot":
+				var ax := clampf(anchor.x + ox, WELL_LEFT + 12.0, WELL_RIGHT - 12.0)
+				_add_alarmobot(chunk, ax, -16.0)
+			"copter":
+				var cx := clampf(anchor.x + ox, WELL_LEFT + 14.0, WELL_RIGHT - 14.0)
+				_add_copter(chunk, cx, anchor.y + oy)
 
 func _try_spawn_single(
 	chunk: Node2D, cfg: Dictionary, platforms: Array[Rect2], phase_progress: float
@@ -1546,6 +1622,23 @@ func _try_spawn_single(
 				var plat: Rect2 = platforms[_rng.randi() % platforms.size()]
 				var fx := clampf(plat.position.x + plat.size.x * 0.5, WELL_LEFT + 12.0, WELL_RIGHT - 12.0)
 				_add_frog(chunk, fx, -24.0)
+
+			"hammer":
+				if platforms.is_empty():
+					return
+				var hplat: Rect2 = platforms[_rng.randi() % platforms.size()]
+				var hx := _rng.randf_range(hplat.position.x + 14, hplat.position.x + hplat.size.x - 14)
+				_add_hammer(chunk, hx, -16.0)
+			"alarmobot":
+				if platforms.is_empty():
+					return
+				var aplat: Rect2 = platforms[_rng.randi() % platforms.size()]
+				var ax := _rng.randf_range(aplat.position.x + 12, aplat.position.x + aplat.size.x - 12)
+				_add_alarmobot(chunk, ax, -16.0)
+			"copter":
+				var ccx := _rng.randf_range(WELL_LEFT + 16, WELL_RIGHT - 16)
+				var ccy := _rng.randf_range(-48.0, -22.0)
+				_add_copter(chunk, ccx, ccy)
 
 # Enemy Spawn Helpers
 
@@ -1618,38 +1711,39 @@ func _add_frog(parent: Node2D, x: float, y: float) -> void:
 	_post_config_enemy(frog)
 
 
-## Buff + recolor an enemy for the factory era ("recolored variants, better AI").
-## AI stats are set before add_child so the enemy's _ready() picks them up.
-func _pre_config_enemy(enemy: Node) -> void:
-	if not _is_factory():
+func _add_hammer(parent: Node2D, x: float, y: float) -> void:
+	if hammer_scene == null:
 		return
-	if "speed" in enemy:
-		enemy.speed *= 1.35
-	if "chase_speed" in enemy:
-		enemy.chase_speed *= 1.4
-	if "patrol_speed" in enemy:
-		enemy.patrol_speed *= 1.3
-	if "dive_speed_h" in enemy:
-		enemy.dive_speed_h *= 1.3
-	if "dive_speed_v" in enemy:
-		enemy.dive_speed_v *= 1.3
-	if "detection_range" in enemy:
-		enemy.detection_range *= 1.3
-	if "windup_min" in enemy:
-		enemy.windup_min = maxf(enemy.windup_min * 0.6, 0.6)
-	if "windup_max" in enemy:
-		enemy.windup_max = maxf(enemy.windup_max * 0.6, 1.0)
-	if "hp" in enemy:
-		enemy.hp += 1
+	var e := hammer_scene.instantiate()
+	e.position = Vector2(x, y)
+	parent.add_child(e)
 
 
-## Tint the enemy's sprite (not the root) so it survives the white hurt flash.
-func _post_config_enemy(enemy: Node) -> void:
-	if not _is_factory():
+func _add_alarmobot(parent: Node2D, x: float, y: float) -> void:
+	if alarmobot_scene == null:
 		return
-	var spr := enemy.get_node_or_null("AnimatedSprite2D") as CanvasItem
-	if spr:
-		spr.modulate = FACTORY_ENEMY_TINT
+	var e := alarmobot_scene.instantiate()
+	e.position = Vector2(x, y)
+	parent.add_child(e)
+
+
+func _add_copter(parent: Node2D, x: float, y: float) -> void:
+	if copter_scene == null:
+		return
+	var e := copter_scene.instantiate()
+	e.position = Vector2(x, y)
+	parent.add_child(e)
+
+
+## Per-era enemy setup hooks (kept for the existing call sites). The factory no
+## longer recolors or buffs reused enemies — it fields dedicated, stronger
+## industrial enemies (hammer / alarmobot / copter) instead of a tint "filter".
+func _pre_config_enemy(_enemy: Node) -> void:
+	pass
+
+
+func _post_config_enemy(_enemy: Node) -> void:
+	pass
 
 
 func _spawn_rest_zone(y: float) -> void:
