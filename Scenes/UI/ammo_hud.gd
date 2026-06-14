@@ -31,6 +31,12 @@ var ds_kills := 0
 var ds_money := 0
 var ds_max_combo := 0
 
+# Boss health bar (shown during a boss fight)
+var boss_active := false
+var boss_hp := 0
+var boss_max_hp := 1
+var boss_name := ""
+
 @onready var bar_container: Control = $AmmoBar
 
 
@@ -164,6 +170,26 @@ func show_victory(depth_val: int, kills: int, money_val: int, max_combo: int) ->
 	ds_kills = kills
 	ds_money = money_val
 	ds_max_combo = max_combo
+	bar_container.queue_redraw()
+
+
+func show_boss_bar(name: String, max_hp: int) -> void:
+	boss_active = true
+	boss_name = name
+	boss_max_hp = maxi(max_hp, 1)
+	boss_hp = boss_max_hp
+	bar_container.queue_redraw()
+
+
+func set_boss_hp(hp: int) -> void:
+	if not boss_active:
+		return
+	boss_hp = hp
+	bar_container.queue_redraw()
+
+
+func hide_boss_bar() -> void:
+	boss_active = false
 	bar_container.queue_redraw()
 
 

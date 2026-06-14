@@ -47,6 +47,7 @@ func _draw() -> void:
 	_draw_score(hud.score)
 	_draw_depth(hud.depth)
 	_draw_combo(hud.combo)
+	_draw_boss_bar(hud)
 	if hud.reward_text != "":
 		_draw_reward(hud.reward_text, hud.reward_timer)
 	if hud.victory_screen:
@@ -350,6 +351,32 @@ func _draw_death_screen(hud: CanvasLayer) -> void:
 		8,
 		Color(0.6, 0.6, 0.6, 0.8 + 0.2 * sin(Time.get_ticks_msec() / 300.0))
 	)
+
+
+## Boss health bar across the bottom-centre during a boss fight.
+func _draw_boss_bar(hud: CanvasLayer) -> void:
+	if not hud.boss_active or hud.boss_max_hp <= 0:
+		return
+	var vp := get_viewport_rect().size
+	var w := vp.x * 0.56
+	var h := 5.0
+	var x := (vp.x - w) / 2.0
+	var y := vp.y - 12.0
+	var frac := clampf(float(hud.boss_hp) / float(hud.boss_max_hp), 0.0, 1.0)
+	# Frame + empty track
+	draw_rect(Rect2(x - 1.0, y - 1.0, w + 2.0, h + 2.0), Color(0, 0, 0, 0.7))
+	draw_rect(Rect2(x, y, w, h), Color(0.22, 0.06, 0.06, 0.95))
+	# Fill — red, shifting to orange as the boss nears death
+	var fill_col := Color(0.9, 0.2, 0.2, 1.0) if frac > 0.3 else Color(1.0, 0.55, 0.12, 1.0)
+	if frac > 0.0:
+		draw_rect(Rect2(x, y, w * frac, h), fill_col)
+	draw_rect(Rect2(x, y, w, h), Color(0.75, 0.35, 0.35, 0.9), false, 1.0)
+	# Name label above the bar
+	var label: String = hud.boss_name if hud.boss_name != "" else "BOSS"
+	var lsize := _font.get_string_size(label, HORIZONTAL_ALIGNMENT_CENTER, -1, 7)
+	var lx := (vp.x - lsize.x) / 2.0
+	draw_string(_font, Vector2(lx + 1, y - 3), label, HORIZONTAL_ALIGNMENT_LEFT, -1, 7, Color(0, 0, 0, 0.7))
+	draw_string(_font, Vector2(lx, y - 4), label, HORIZONTAL_ALIGNMENT_LEFT, -1, 7, Color(0.95, 0.6, 0.55, 1.0))
 
 
 ## Demo-cleared terminal screen (factory boss beaten).

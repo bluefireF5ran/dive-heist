@@ -68,6 +68,8 @@ var _urge_last_max_y := 0.0
 var _was_safe := false
 var _took_damage_level := false  # For the "Untouchable" achievement
 var _boss_active := false  # Set by the boss; pauses the urge hazard during the fight
+var _active_boss: Node = null  # Reference to the live boss, for the HUD health bar
+var _boss_max_hp := 1
 
 @onready var player: CharacterBody2D = $Player
 @onready var ammo_hud: CanvasLayer = $AmmoHUD
@@ -217,6 +219,12 @@ func _physics_process(delta: float) -> void:
 	chunk_gen.current_depth = depth
 	chunk_gen.current_level = _current_level
 
+	# Keep the boss health bar in sync while a boss is alive.
+	if _boss_active and is_instance_valid(_active_boss):
+		ammo_hud.set_boss_hp(_active_boss.hp)
+	elif ammo_hud.boss_active:
+		ammo_hud.hide_boss_bar()
+
 	_update_safe_zone()
 	_update_urge(delta)
 	Achievements.notify_depth(depth)
@@ -304,6 +312,7 @@ func hitstop(duration: float = 0.08) -> void:
 
 func _on_player_died() -> void:
 	_is_game_over = true
+	ammo_hud.hide_boss_bar()
 	_music_player.stop()
 	SFX.play(SFX.game_over, -5.0)
 	Achievements.notify_death(_total_kills, _total_money_earned)
@@ -312,10 +321,22 @@ func _on_player_died() -> void:
 	set_process_input(true)
 
 
+## Called by a boss from its _ready() so the HUD can show its health bar.
+func register_boss(boss: Node) -> void:
+	_active_boss = boss
+	_boss_active = true
+	_boss_max_hp = maxi(int(boss.hp), 1)
+	var nm := "BOSS"
+	if "boss_name" in boss:
+		nm = boss.boss_name
+	ammo_hud.show_boss_bar(nm, _boss_max_hp)
+
+
 func _on_level_complete() -> void:
 	if _is_level_complete or _is_game_over:
 		return
 	_is_level_complete = true
+	ammo_hud.hide_boss_bar()
 
 	_level_end_y = chunk_gen._level_end_y
 	_max_camera_y = _level_end_y - LEVEL_END_CAM_OFFSET

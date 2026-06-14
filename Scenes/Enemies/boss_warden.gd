@@ -44,6 +44,7 @@ enum State { PATROL, BUSY, CHARGE_WINDUP, CHARGE_DASH, PUNCH, RECOVER }
 @export var attack_interval := 1.4
 @export var patrol_half_width := 92.0
 @export var charge_speed := 170.0
+var boss_name := "WARDEN"
 
 var _is_dead := false
 var _dir := 1.0
@@ -72,6 +73,8 @@ func _ready() -> void:
 	_hitbox.body_entered.connect(_on_hitbox_body_entered)
 	if _world and "_boss_active" in _world:
 		_world._boss_active = true
+	if _world and _world.has_method("register_boss"):
+		_world.register_boss(self)
 
 
 func _build_frames() -> void:
