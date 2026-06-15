@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 
 SFX="*res://Scenes/Audio/sfx_manager.gd"
 Achievements="*res://Scenes/Systems/achievements.gd"
+Settings="*res://Scenes/Systems/settings.gd"
 
 [display]
 

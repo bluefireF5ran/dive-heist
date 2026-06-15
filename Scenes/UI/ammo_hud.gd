@@ -56,8 +56,8 @@ func _process(delta: float) -> void:
 	if boss_intro_timer > 0.0:
 		boss_intro_timer -= delta
 		bar_container.queue_redraw()
-	# Continuous redraw for pulsing text overlays
-	if level_complete or death_screen or victory_screen:
+	# Continuous redraw for pulsing text overlays / live FPS counter
+	if level_complete or death_screen or victory_screen or Settings.show_fps:
 		bar_container.queue_redraw()
 
 

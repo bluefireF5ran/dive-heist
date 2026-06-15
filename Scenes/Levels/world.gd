@@ -13,6 +13,7 @@ const TRANSITION_FADE := 0.35
 const LEVEL_END_CAM_OFFSET := 175.0
 const PERK_SELECT_SCRIPT := preload("res://Scenes/UI/perk_select.gd")
 const URGE_HAZARD_SCRIPT := preload("res://Scenes/Levels/urge_hazard.gd")
+const PAUSE_MENU_SCRIPT := preload("res://Scenes/UI/pause_menu.gd")
 
 # Urge mechanic — a rising hazard from the top that pressures the player to keep
 # diving. It pauses on safe floors and while a combo is active.
@@ -37,6 +38,7 @@ var _shake_decay := 8.0
 var _music_player: AudioStreamPlayer
 var _start_platform: StaticBody2D
 var _fade_overlay: ColorRect
+var _pause_menu: CanvasLayer
 
 ## Debug: level to start at when launched from the main-menu debug panel (1 = normal).
 static var debug_start_level := 1
@@ -142,6 +144,9 @@ func _ready() -> void:
 	_hazard_visual.position = Vector2(0, _hazard_y)
 	_urge_last_max_y = _max_camera_y
 
+	_pause_menu = PAUSE_MENU_SCRIPT.new()
+	add_child(_pause_menu)
+
 
 ## Track pools per era (prison/lab/bank rotate for variety). Factory uses a designed
 ## sequence (see _pick_track): phase 1 = Factory1, phases 2-3 = Factory2 (continuous).
@@ -208,6 +213,8 @@ func _update_era_clear_color(era: String) -> void:
 
 
 func _physics_process(delta: float) -> void:
+	if _pause_menu and _pause_menu.is_open():
+		return  # world runs while the tree is paused (PROCESS_MODE_ALWAYS); freeze it here
 	if _is_game_over:
 		return
 
@@ -330,7 +337,7 @@ func _on_weapon_changed(weapon_name: String, color: Color) -> void:
 
 
 func screen_shake(intensity: float = 2.5) -> void:
-	_shake_intensity = maxf(_shake_intensity, intensity)
+	_shake_intensity = maxf(_shake_intensity, intensity * Settings.screen_shake_scale)
 
 
 func _reset_camera_to(pos: Vector2) -> void:
@@ -339,6 +346,8 @@ func _reset_camera_to(pos: Vector2) -> void:
 
 
 func hitstop(duration: float = 0.08) -> void:
+	if not Settings.hitstop_enabled:
+		return
 	get_tree().paused = true
 	await get_tree().create_timer(duration, true, false, true).timeout
 	get_tree().paused = false
@@ -566,6 +575,26 @@ func _apply_debug_build(level: int) -> void:
 
 	player.heal(player.MAX_HP)
 
+	# Seed a live combo + a phase-appropriate pseudo-random score so a debug run feels
+	# mid-game and the victory screen shows a realistic rank when testing later phases.
+	var era := _get_era(level)
+	var combo_seed := randi_range(8, 30)
+	var score_seed := 0
+	match era:
+		"prison":
+			score_seed = randi_range(3000, 18000)
+		"factory":
+			score_seed = randi_range(55000, 140000)
+		"lab":
+			score_seed = randi_range(150000, 280000)
+		_:
+			score_seed = randi_range(280000, 450000)
+	player._combo = combo_seed
+	player.combo_changed.emit(combo_seed)
+	_carry_combo = combo_seed
+	player._score = score_seed
+	player.score_changed.emit(score_seed)
+
 
 ## Fill the well background across the whole entry view: from above what the
 ## camera sees down to where procedural generation begins, so the spawn area
@@ -670,7 +699,22 @@ func _spawn_start_platform(y: float) -> void:
 	add_child(_start_platform)
 
 
+func _can_pause() -> bool:
+	return not (_is_game_over or _is_level_complete or _demo_complete or _perk_pending)
+
+
 func _input(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_cancel"):
+		if _pause_menu and _pause_menu.is_open():
+			_pause_menu.back()
+			get_viewport().set_input_as_handled()
+			return
+		elif _can_pause():
+			_pause_menu.open()
+			get_viewport().set_input_as_handled()
+			return
+	if _pause_menu and _pause_menu.is_open():
+		return  # swallow other inputs while paused (buttons handle their own)
 	if _demo_complete and event.is_action_pressed("jump"):
 		SFX.play(SFX.restart_menu, -10.0)
 		get_tree().change_scene_to_file("res://Scenes/UI/main_menu.tscn")

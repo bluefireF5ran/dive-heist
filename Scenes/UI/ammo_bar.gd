@@ -60,6 +60,9 @@ func _draw() -> void:
 		_draw_death_screen(hud)
 	elif hud.game_over:
 		_draw_game_over()
+	if Settings.show_fps:
+		var vp := get_viewport_rect().size
+		draw_string(_font, Vector2(6, vp.y - 6), str(Engine.get_frames_per_second()) + " fps", HORIZONTAL_ALIGNMENT_LEFT, -1, 7, Color(0.4, 1.0, 0.5, 0.8))
 
 
 
@@ -403,40 +406,78 @@ func _draw_boss_bar(hud: CanvasLayer) -> void:
 	draw_string(_font, Vector2(lx, y - 4), label, HORIZONTAL_ALIGNMENT_LEFT, -1, 7, Color(0.95, 0.6, 0.55, 1.0))
 
 
+## Score-based rank tiers. Rainbow kicks in at the high thresholds (~60k+), which is
+## where a strong combo run lands.
+func _victory_rank(score: int) -> Dictionary:
+	if score >= 130000:
+		return {"letter": "SS", "color": Color(1, 1, 1), "rainbow": true, "speed": 0.95}
+	elif score >= 90000:
+		return {"letter": "S", "color": Color(1, 0.85, 0.2), "rainbow": true, "speed": 0.65}
+	elif score >= 60000:
+		return {"letter": "A", "color": Color(0.4, 1.0, 0.7), "rainbow": true, "speed": 0.5}
+	elif score >= 35000:
+		return {"letter": "B", "color": Color(0.4, 0.8, 1.0), "rainbow": false, "speed": 0.0}
+	elif score >= 15000:
+		return {"letter": "C", "color": Color(0.85, 0.85, 0.9), "rainbow": false, "speed": 0.0}
+	return {"letter": "D", "color": Color(0.65, 0.65, 0.7), "rainbow": false, "speed": 0.0}
+
+
+## Draw centered text; if rainbow, each glyph cycles through hues over time (the
+## animation). Honors the Reduce Flashing accessibility option (falls back to base).
+func _draw_centered_text(text: String, cx: float, y: float, size: int, base: Color, rainbow: bool, speed: float) -> void:
+	var total := _font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, size).x
+	var x := cx - total / 2.0
+	var t := Time.get_ticks_msec() / 1000.0
+	var anim := rainbow and not Settings.reduce_flashing
+	for i in range(text.length()):
+		var ch := text[i]
+		var col := base
+		if anim:
+			col = Color.from_hsv(fmod(t * speed + i * 0.07, 1.0), 0.85, 1.0)
+		draw_char(_font, Vector2(x + 1, y + 1), ch, size, Color(0, 0, 0, 0.7))
+		draw_char(_font, Vector2(x, y), ch, size, col)
+		x += _font.get_string_size(ch, HORIZONTAL_ALIGNMENT_LEFT, -1, size).x
+
+
 ## Demo-cleared terminal screen (factory boss beaten).
 func _draw_victory_screen(hud: CanvasLayer) -> void:
 	var vp := get_viewport_rect().size
+	var cx := vp.x / 2.0
 	var cy := vp.y / 2.0
 	var pulse := 0.7 + 0.3 * sin(Time.get_ticks_msec() / 250.0)
-	draw_rect(Rect2(Vector2.ZERO, vp), Color(0.02, 0.05, 0.03, 0.82))
+	draw_rect(Rect2(Vector2.ZERO, vp), Color(0.02, 0.05, 0.03, 0.85))
 
+	var rank: Dictionary = _victory_rank(hud.score)
+
+	# Title + subtitle
 	var title := "FACTORY CLEARED!"
-	var ts := _font.get_string_size(title, HORIZONTAL_ALIGNMENT_CENTER, -1, 16)
+	var ts := _font.get_string_size(title, HORIZONTAL_ALIGNMENT_CENTER, -1, 14)
 	var tx := (vp.x - ts.x) / 2.0
-	draw_string(_font, Vector2(tx + 1, cy - 71), title, HORIZONTAL_ALIGNMENT_CENTER, -1, 16, Color(0, 0, 0, 0.8))
-	draw_string(_font, Vector2(tx, cy - 72), title, HORIZONTAL_ALIGNMENT_CENTER, -1, 16, Color(0.3, 1.0, 0.5, pulse))
-
+	draw_string(_font, Vector2(tx + 1, cy - 149), title, HORIZONTAL_ALIGNMENT_CENTER, -1, 14, Color(0, 0, 0, 0.8))
+	draw_string(_font, Vector2(tx, cy - 150), title, HORIZONTAL_ALIGNMENT_CENTER, -1, 14, Color(0.3, 1.0, 0.5, pulse))
 	var sub := "DEMO COMPLETE"
-	var ss := _font.get_string_size(sub, HORIZONTAL_ALIGNMENT_CENTER, -1, 9)
-	draw_string(_font, Vector2((vp.x - ss.x) / 2.0, cy - 50), sub, HORIZONTAL_ALIGNMENT_CENTER, -1, 9, Color(0.7, 0.9, 0.75, 0.9))
+	var ss := _font.get_string_size(sub, HORIZONTAL_ALIGNMENT_CENTER, -1, 8)
+	draw_string(_font, Vector2((vp.x - ss.x) / 2.0, cy - 130), sub, HORIZONTAL_ALIGNMENT_CENTER, -1, 8, Color(0.7, 0.9, 0.75, 0.9))
 
-	var stats: Array[String] = [
-		"Depth: " + str(hud.ds_depth) + "m",
-		"Kills: " + str(hud.ds_kills),
-		"Money: $" + str(hud.ds_money),
-		"Max Combo: x" + str(hud.ds_max_combo),
-	]
-	for i in range(stats.size()):
-		var s: String = stats[i]
-		var sz := _font.get_string_size(s, HORIZONTAL_ALIGNMENT_CENTER, -1, 10)
-		var x := (vp.x - sz.x) / 2.0
-		var yy := cy - 24.0 + i * 16.0
-		draw_string(_font, Vector2(x + 1, yy + 1), s, HORIZONTAL_ALIGNMENT_CENTER, -1, 10, Color(0, 0, 0, 0.6))
-		draw_string(_font, Vector2(x, yy), s, HORIZONTAL_ALIGNMENT_CENTER, -1, 10, Color(0.85, 0.9, 0.85, 1.0))
+	# SCORE — big, rainbow at high tiers
+	draw_string(_font, Vector2(cx - _font.get_string_size("SCORE", HORIZONTAL_ALIGNMENT_LEFT, -1, 9).x / 2.0, cy - 100), "SCORE", HORIZONTAL_ALIGNMENT_LEFT, -1, 9, Color(0.7, 0.7, 0.78))
+	_draw_centered_text(str(hud.score), cx, cy - 66, 32, rank["color"], rank["rainbow"], rank["speed"])
+
+	# MAX COMBO — prominent
+	_draw_centered_text("MAX COMBO  x" + str(hud.ds_max_combo), cx, cy - 26, 13, Color(1.0, 0.7, 0.2), false, 0.0)
+
+	# RANK letter — big, colored/rainbow to match the tier
+	draw_string(_font, Vector2(cx - _font.get_string_size("RANK", HORIZONTAL_ALIGNMENT_LEFT, -1, 8).x / 2.0, cy + 4), "RANK", HORIZONTAL_ALIGNMENT_LEFT, -1, 8, Color(0.7, 0.7, 0.78))
+	_draw_centered_text(str(rank["letter"]), cx, cy + 50, 44, rank["color"], rank["rainbow"], rank["speed"] * 0.8)
+
+	# Secondary stats — one compact line
+	var line := "Depth " + str(hud.ds_depth) + "m    Kills " + str(hud.ds_kills) + "    $" + str(hud.ds_money)
+	var ls := _font.get_string_size(line, HORIZONTAL_ALIGNMENT_CENTER, -1, 8)
+	draw_string(_font, Vector2((vp.x - ls.x) / 2.0, cy + 78), line, HORIZONTAL_ALIGNMENT_CENTER, -1, 8, Color(0.8, 0.85, 0.8, 0.95))
 
 	var hint := "JUMP for menu"
 	var hs := _font.get_string_size(hint, HORIZONTAL_ALIGNMENT_CENTER, -1, 8)
-	draw_string(_font, Vector2((vp.x - hs.x) / 2.0, cy + 58), hint, HORIZONTAL_ALIGNMENT_CENTER, -1, 8, Color(0.6, 0.8, 0.6, pulse))
+	draw_string(_font, Vector2((vp.x - hs.x) / 2.0, cy + 104), hint, HORIZONTAL_ALIGNMENT_CENTER, -1, 8, Color(0.6, 0.8, 0.6, pulse))
 
 
 func _draw_level_complete(hud: CanvasLayer) -> void:
