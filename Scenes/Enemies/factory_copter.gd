@@ -13,6 +13,7 @@ const BOMB_SCRIPT := preload("res://Scenes/Enemies/factory_bomb.gd")
 @export var hover_speed := 48.0
 @export var target_height := 72.0
 @export var bomb_interval := 2.8
+@export var armored := true  # Weak shots ping off — stomp it or use a strong gun
 
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var stomp_area: Area2D = $StompArea
@@ -85,8 +86,13 @@ func _drop_bomb() -> void:
 	bomb.global_position = global_position + Vector2(0.0, 6.0)
 
 
-func take_damage(amount: int = 1) -> void:
+func take_damage(amount: int = 1, from_stomp: bool = false) -> void:
 	if _is_dead:
+		return
+	if armored and not from_stomp and amount < 2:
+		modulate = Color(1.5, 1.5, 1.7, 1)
+		var clang := create_tween()
+		clang.tween_property(self, "modulate", Color.WHITE, 0.1)
 		return
 	hp -= amount
 	if hp <= 0:
@@ -134,7 +140,7 @@ func _on_stomp(body: Node2D) -> void:
 	if _is_dead:
 		return
 	if body is CharacterBody2D and body.has_method("refill_ammo") and body.velocity.y > 0:
-		take_damage(6)
+		take_damage(6, true)  # stomp bypasses armour
 		if not _is_dead:
 			return
 		if _world and _world.has_method("screen_shake"):

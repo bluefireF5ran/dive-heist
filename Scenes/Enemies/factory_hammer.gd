@@ -1,7 +1,7 @@
 extends CharacterBody2D
 ## Factory HAMMER — a heavy, tanky ground bruiser. Patrols slowly; when the player
-## gets close on the same level it stops, winds up (Attack telegraph) and lunges
-## forward, dealing contact damage. High HP, slow — a wall you must out-manoeuvre.
+## gets close it stops, winds up (telegraph) and SLAMS the hammer in a wide arc
+## around it. Armoured: shrugs off weak gunfire, so stomp it or bring a big gun.
 
 signal died
 
@@ -11,10 +11,11 @@ const DEATH_EXPLOSION := preload("res://Scenes/VFX/death_explosion.tscn")
 
 @export var hp := 3
 @export var speed := 28.0
-@export var detect_x := 58.0
-@export var lunge_speed := 140.0
+@export var detect_x := 64.0
+@export var slam_radius := 54.0
+@export var armored := true  # Weak (1-dmg) shots bounce off — must stomp or use a strong gun
 
-enum {PATROL, WINDUP, LUNGE, RECOVER}
+enum {PATROL, WINDUP, SLAM, RECOVER}
 
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var stomp_area: Area2D = $StompArea
@@ -25,6 +26,7 @@ var _state := PATROL
 var _t := 0.0
 var _dir := 1.0
 var _turn_cd := 0.0  # Debounce so tiny platforms don't make it spin
+var _slam_done := false
 var _is_dead := false
 var _hurt_timer := 0.0
 var _sprite_base_x: float
@@ -83,17 +85,18 @@ func _physics_process(delta: float) -> void:
 			velocity.x = 0.0
 			_t -= delta
 			if _t <= 0.0:
-				_state = LUNGE
-				_t = 0.4
-		LUNGE:
-			edge_ray.position.x = _dir * 12.0
-			velocity.x = _dir * lunge_speed
-			var lunge_edge := is_on_floor() and not edge_ray.is_colliding()
+				_state = SLAM
+				_t = 0.42
+				_slam_done = false
+		SLAM:
+			velocity.x = 0.0
 			_t -= delta
-			if _t <= 0.0 or is_on_wall() or lunge_edge:
-				velocity.x = 0.0
+			if not _slam_done and _t <= 0.24:
+				_slam_done = true
+				_do_slam()
+			if _t <= 0.0:
 				_state = RECOVER
-				_t = 0.5
+				_t = 0.45
 				sprite.play("Idle")
 		RECOVER:
 			velocity.x = 0.0
@@ -110,8 +113,27 @@ func _physics_process(delta: float) -> void:
 		sprite.position.x = _sprite_base_x
 
 
-func take_damage(amount: int = 1) -> void:
+## Wide hammer slam — a shockwave arc around the boss when the head comes down.
+func _do_slam() -> void:
+	if _world and _world.has_method("screen_shake"):
+		_world.screen_shake(3.5)
+	SFX.play_stomp_material()
+	if not _player:
+		return
+	var rel: Vector2 = _player.global_position - global_position
+	# Big 180° arc: anything within reach that's level with or above the head.
+	if rel.length() <= slam_radius and rel.y < 22.0 and _player.has_method("take_damage"):
+		_player.take_damage(1)
+
+
+func take_damage(amount: int = 1, from_stomp: bool = false) -> void:
 	if _is_dead:
+		return
+	# Armoured: weak (1-dmg) gunfire pings off — stomp it or bring a stronger gun.
+	if armored and not from_stomp and amount < 2:
+		modulate = Color(1.5, 1.5, 1.7, 1)
+		var clang := create_tween()
+		clang.tween_property(self, "modulate", Color.WHITE, 0.1)
 		return
 	hp -= amount
 	if hp <= 0:
@@ -159,7 +181,7 @@ func _on_stomp(body: Node2D) -> void:
 	if _is_dead:
 		return
 	if body is CharacterBody2D and body.has_method("refill_ammo") and body.velocity.y > 0:
-		take_damage(6)
+		take_damage(6, true)  # stomp bypasses armour
 		if not _is_dead:
 			return
 		if _world and _world.has_method("screen_shake"):
