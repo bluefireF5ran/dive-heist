@@ -2,6 +2,8 @@ extends StaticBody2D
 ## Breakable crate that spawns money collectibles when destroyed.
 ## Player shoots or stomps it to break it open.
 
+signal opened(was_mimic: bool)  # Emitted when broken (used by the mimic arena room)
+
 const MONEY_SCENE := preload("res://Scenes/Collectibles/money.tscn")
 
 @export var money_count := 12
@@ -35,6 +37,7 @@ func take_damage(_amount: int = 1) -> void:
 
 func _break() -> void:
 	_is_broken = true
+	opened.emit(is_mimic)
 	# Mimic: no loot — bite whoever is standing close (stomping is risky; shooting
 	# it from range is safe but wastes the gamble).
 	if is_mimic:
