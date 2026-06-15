@@ -109,6 +109,7 @@ func _ready() -> void:
 	_music_player = AudioStreamPlayer.new()
 	_music_player.bus = "Music"
 	_music_player.process_mode = Node.PROCESS_MODE_ALWAYS
+	_music_player.finished.connect(_on_music_finished)
 	add_child(_music_player)
 	_set_era_music(_get_era(_current_level))
 
@@ -142,36 +143,56 @@ func _ready() -> void:
 	_urge_last_max_y = _max_camera_y
 
 
-## Each era has a pool of tracks; we pick a (preferably new) one per level for variety.
+## Track pools per era (prison/lab/bank rotate for variety). Factory uses a designed
+## sequence (see _pick_track): phase 1 = Factory1, phases 2-3 = Factory2 (continuous).
+const FACTORY1 := "res://Audio/Soundrack/Factory.mp3"
+const FACTORY2 := "res://Audio/Soundrack/Factory2.mp3"
 const ERA_MUSIC := {
 	"prison": ["res://Audio/Soundrack/Prison1.5.mp3", "res://Audio/Soundrack/Prison.mp3"],
-	"factory": ["res://Audio/Soundrack/Factory.mp3", "res://Audio/Soundrack/Factory2.mp3"],
+	"factory": [FACTORY1, FACTORY2],
 	"lab": ["res://Audio/Soundrack/Lab.mp3", "res://Audio/Soundrack/Lab2.mp3"],
 	"bank": ["res://Audio/Soundrack/Bank.mp3"],
 }
 var _current_music_path := ""
 
 
-## Play (and loop) a soundtrack for the era, rotating to a different track when
-## possible so the music varies level to level.
-func _set_era_music(era: String) -> void:
-	var pool: Array = ERA_MUSIC.get(era, ERA_MUSIC["factory"])
+## Choose the track for an era. Factory: level 4 -> Factory1, levels 5-6 -> Factory2.
+func _pick_track(era: String) -> String:
+	if era == "factory":
+		return FACTORY1 if _current_level <= 4 else FACTORY2
+	var pool: Array = ERA_MUSIC.get(era, [FACTORY1])
 	if pool.is_empty():
-		return
-	var path: String = pool[randi() % pool.size()]
-	# Prefer a track different from the one currently playing.
-	if path == _current_music_path and pool.size() > 1:
-		var alts: Array = pool.filter(func(p: String) -> bool: return p != _current_music_path)
-		path = alts[randi() % alts.size()]
+		return FACTORY1
+	var p: String = pool[randi() % pool.size()]
+	if p == _current_music_path and pool.size() > 1:
+		var alts: Array = pool.filter(func(x: String) -> bool: return x != _current_music_path)
+		p = alts[randi() % alts.size()]
+	return p
+
+
+func _set_era_music(era: String) -> void:
+	var path := _pick_track(era)
 	if path == _current_music_path and _music_player.playing:
-		return
+		return  # already playing it (keeps Factory2 continuous across levels 5->6)
 	_current_music_path = path
 	var stream := load(path)
-	# MP3/OGG don't loop by default — the import has loop=false — so force it here.
+	# Factory2 plays once then hands off to Factory1; everything else loops.
+	var should_loop := path != FACTORY2
 	if stream is AudioStreamMP3 or stream is AudioStreamOggVorbis:
-		stream.loop = true
+		stream.loop = should_loop
 	_music_player.stream = stream
 	_music_player.play()
+
+
+## When Factory2 finishes (it doesn't loop), fall back to a looping Factory1.
+func _on_music_finished() -> void:
+	if _current_music_path == FACTORY2:
+		_current_music_path = FACTORY1
+		var stream := load(FACTORY1)
+		if stream is AudioStreamMP3 or stream is AudioStreamOggVorbis:
+			stream.loop = true
+		_music_player.stream = stream
+		_music_player.play()
 
 
 func _update_era_clear_color(era: String) -> void:

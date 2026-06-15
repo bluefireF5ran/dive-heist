@@ -118,12 +118,30 @@ func _do_slam() -> void:
 	if _world and _world.has_method("screen_shake"):
 		_world.screen_shake(3.5)
 	SFX.play_stomp_material()
+	_spawn_slam_vfx()
 	if not _player:
 		return
 	var rel: Vector2 = _player.global_position - global_position
 	# Big 180° arc: anything within reach that's level with or above the head.
 	if rel.length() <= slam_radius and rel.y < 22.0 and _player.has_method("take_damage"):
 		_player.take_damage(1)
+
+
+## A fading ring that shows the slam's hit area.
+func _spawn_slam_vfx() -> void:
+	var poly := Polygon2D.new()
+	var pts := PackedVector2Array()
+	for i in range(21):
+		var a := TAU * float(i) / 20.0
+		pts.append(Vector2(cos(a), sin(a)) * slam_radius)
+	poly.polygon = pts
+	poly.color = Color(1.0, 0.5, 0.2, 0.45)
+	poly.position = Vector2(0.0, -10.0)
+	poly.z_index = -1
+	add_child(poly)
+	var tw := create_tween()
+	tw.tween_property(poly, "color:a", 0.0, 0.3)
+	tw.tween_callback(poly.queue_free)
 
 
 func take_damage(amount: int = 1, from_stomp: bool = false) -> void:
