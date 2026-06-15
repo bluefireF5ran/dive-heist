@@ -169,24 +169,24 @@ animations = [{
 }]
 
 [sub_resource type="RectangleShape2D" id="body"]
-size = Vector2(23, 16)
+size = Vector2(16, 22)
 [sub_resource type="RectangleShape2D" id="stomp"]
-size = Vector2(22, 6)
+size = Vector2(16, 6)
 [sub_resource type="RectangleShape2D" id="hit"]
-size = Vector2(21.5, 26)
+size = Vector2(18, 22)
 
 [node name="Alarmobot" type="CharacterBody2D"]
 collision_layer = 4
 script = ExtResource("90_script")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-position = Vector2(10, -24)
+position = Vector2(9, -24)
 sprite_frames = SubResource("frames")
 animation = &"Idle"
 autoplay = "Idle"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(3, -8)
+position = Vector2(0, -11)
 shape = SubResource("body")
 
 [node name="EdgeDetector" type="RayCast2D" parent="."]
@@ -198,7 +198,7 @@ collision_layer = 0
 collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StompArea"]
-position = Vector2(2, -29)
+position = Vector2(0, -21)
 shape = SubResource("stomp")
 
 [node name="Hitbox" type="Area2D" parent="."]
@@ -206,5 +206,5 @@ collision_layer = 0
 collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox"]
-position = Vector2(-1, -13)
+position = Vector2(0, -11)
 shape = SubResource("hit")

@@ -23,10 +23,12 @@ var _hurt_timer := 0.0
 var _bomb_cd := 1.2
 var _world: Node2D
 var _player: CharacterBody2D
+var _sprite_base_x := 0.0
 
 
 func _ready() -> void:
 	_world = get_tree().current_scene as Node2D
+	_sprite_base_x = sprite.position.x
 	collision_layer = 4
 	collision_mask = 1
 	stomp_area.collision_layer = 0
@@ -67,7 +69,9 @@ func _physics_process(delta: float) -> void:
 
 	if _hurt_timer <= 0.0 and sprite.animation != "Attack":
 		sprite.play("Run")
-	sprite.flip_h = _player.global_position.x < global_position.x
+	var face_left := _player.global_position.x < global_position.x
+	sprite.flip_h = face_left
+	sprite.position.x = -_sprite_base_x if face_left else _sprite_base_x
 
 
 func _drop_bomb() -> void:
