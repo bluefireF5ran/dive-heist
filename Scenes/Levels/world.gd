@@ -90,6 +90,7 @@ func _ready() -> void:
 	_max_camera_y = player.position.y
 	player.ammo_changed.connect(_on_ammo_changed)
 	player.hp_changed.connect(_on_hp_changed)
+	player.shield_changed.connect(func(v: int) -> void: ammo_hud.set_shield(v))
 	player.player_died.connect(_on_player_died)
 	player.combo_changed.connect(_on_combo_changed)
 	player.combo_reward.connect(_on_combo_reward)

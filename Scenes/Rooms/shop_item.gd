@@ -18,7 +18,7 @@ const CATALOG := {
 	"heal":
 	{"name": "REPAIR", "price": 4, "icon": "shop_repair.png", "color": Color(0.9, 0.35, 0.35)},
 	"armor":
-	{"name": "ARMOR", "price": 9, "icon": "shop_armor.png", "color": Color(0.5, 0.8, 1.0)},
+	{"name": "ARMOR", "price": 8, "icon": "shop_armor.png", "color": Color(0.4, 0.7, 1.0)},
 	"ammo_up":
 	{"name": "AMMO+", "price": 6, "icon": "shop_ammo.png", "color": Color(0.9, 0.8, 0.2)},
 	"max_hp":
@@ -29,6 +29,12 @@ const CATALOG := {
 	{"name": "DMG+1", "price": 11, "icon": "shop_damage.png", "color": Color(0.8, 0.7, 1.0)},
 	"magnet":
 	{"name": "MAGNET", "price": 7, "icon": "shop_magnet.png", "color": Color(0.95, 0.6, 0.15)},
+	"swift":
+	{"name": "BOOTS", "price": 8, "icon": "perk_swift.png", "color": Color(0.4, 0.9, 0.9)},
+	"high_jump":
+	{"name": "SPRINGS", "price": 8, "icon": "perk_high_jump.png", "color": Color(0.6, 1.0, 0.5)},
+	"vampire":
+	{"name": "VAMPIRE", "price": 13, "icon": "perk_vampire.png", "color": Color(0.7, 0.15, 0.25)},
 }
 
 @export var item_id := "heal"
@@ -120,8 +126,17 @@ func _apply_item(player: Node2D) -> void:
 			if player.has_method("increase_max_ammo"):
 				player.increase_max_ammo(1)
 		"armor":
-			if player.has_method("heal"):
-				player.heal(player.MAX_HP)  # Full heal
+			if player.has_method("add_shield"):
+				player.add_shield(1)  # blue armour pip (absorbs one hit, not regenerated)
+		"swift":
+			if player.has_method("apply_perk"):
+				player.apply_perk("swift")
+		"high_jump":
+			if player.has_method("apply_perk"):
+				player.apply_perk("high_jump")
+		"vampire":
+			if player.has_method("apply_perk"):
+				player.apply_perk("vampire")
 		"max_hp":
 			if player.has_method("apply_perk"):
 				player.apply_perk("max_hp")

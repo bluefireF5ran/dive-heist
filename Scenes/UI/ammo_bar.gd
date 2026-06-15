@@ -42,7 +42,7 @@ func _draw() -> void:
 	var hud: CanvasLayer = get_parent()
 	_draw_ammo_bar(hud.max_ammo, hud.current_ammo)
 	_draw_weapon_name()
-	_draw_hp(hud.max_hp, hud.current_hp)
+	_draw_hp(hud.max_hp, hud.current_hp, hud.shield)
 	_draw_money(hud.money)
 	_draw_score(hud.score)
 	_draw_depth(hud.depth)
@@ -108,7 +108,7 @@ func _draw_weapon_name() -> void:
 	draw_string(_font, Vector2(x, y), text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, weapon_color)
 
 
-func _draw_hp(max_hp: int, current_hp: int) -> void:
+func _draw_hp(max_hp: int, current_hp: int, shield: int = 0) -> void:
 	for i in range(max_hp):
 		var x := HP_MARGIN_LEFT + i * (HP_SIZE + HP_GAP)
 		var rect := Rect2(x, HP_MARGIN_TOP, HP_SIZE, HP_SIZE)
@@ -119,6 +119,13 @@ func _draw_hp(max_hp: int, current_hp: int) -> void:
 			draw_rect(rect, HP_EMPTY)
 
 		draw_rect(rect, HP_BORDER, false, 1.0)
+
+	# Blue armour pips after the red HP.
+	for i in range(shield):
+		var sx := HP_MARGIN_LEFT + (max_hp + i) * (HP_SIZE + HP_GAP)
+		var srect := Rect2(sx, HP_MARGIN_TOP, HP_SIZE, HP_SIZE)
+		draw_rect(srect, Color(0.3, 0.6, 1.0, 1.0))
+		draw_rect(srect, Color(0.6, 0.8, 1.0, 0.9), false, 1.0)
 
 
 func _draw_score(amount: int) -> void:

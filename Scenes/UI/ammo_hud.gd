@@ -4,6 +4,7 @@ var max_ammo := 8
 var current_ammo := 8
 var max_hp := 4
 var current_hp := 4
+var shield := 0
 var depth := 0
 var combo := 0
 var money := 0
@@ -72,6 +73,11 @@ func set_max_ammo(value: int) -> void:
 
 func set_hp(value: int) -> void:
 	current_hp = clampi(value, 0, max_hp)
+	bar_container.queue_redraw()
+
+
+func set_shield(value: int) -> void:
+	shield = maxi(value, 0)
 	bar_container.queue_redraw()
 
 
