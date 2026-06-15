@@ -23,16 +23,16 @@ const WEAPONS_BY_LEVEL := {
 ## big rifle-class weapons cost money.
 const WEAPON_PRICES := {
 	"pistol": 0,
-	"smg": 8,
+	"smg": 16,
 	"scatter": 0,
-	"revolver": 5,
+	"revolver": 12,
 	"flak": 0,
-	"ricochet": 7,
-	"railgun": 7,
-	"assault_rifle": 10,
-	"shotgun": 12,
-	"laser": 16,
-	"cannon": 18,
+	"ricochet": 16,
+	"railgun": 20,
+	"assault_rifle": 22,
+	"shotgun": 24,
+	"laser": 30,
+	"cannon": 34,
 }
 
 var _current_level := 1

@@ -66,11 +66,11 @@ func _build_vault() -> void:
 	_ledge(100.0, -54.0, 46.0)
 	_ledge(160.0, -96.0, 50.0)
 	_ledge(220.0, -54.0, 46.0)
-	_crate_on(160.0, -96.0, _rng.randi_range(22, 30))  # jackpot
-	_crate_on(100.0, -54.0, _rng.randi_range(7, 10))
-	_crate_on(220.0, -54.0, _rng.randi_range(7, 10))
-	_crate_on(64.0, FLOOR_TOP, _rng.randi_range(6, 9))
-	_crate_on(256.0, FLOOR_TOP, _rng.randi_range(6, 9))
+	_crate_on(160.0, -96.0, _rng.randi_range(14, 18))  # jackpot
+	_crate_on(100.0, -54.0, _rng.randi_range(5, 7))
+	_crate_on(220.0, -54.0, _rng.randi_range(5, 7))
+	_crate_on(64.0, FLOOR_TOP, _rng.randi_range(4, 6))
+	_crate_on(256.0, FLOOR_TOP, _rng.randi_range(4, 6))
 
 
 ## SPIKE CROSSING — hop a zig-zag of small stones over a lethal floor.
@@ -107,7 +107,7 @@ func _build_greed_tower() -> void:
 	_ledge(210.0, -46.0, 30.0)  # step down to exit
 	# Three reachable rungs (the old 4th was out of jump range).
 	var tops := [-54.0, -94.0, -134.0]
-	var values := [8, 14, 22]
+	var values := [6, 10, 16]
 	for i in range(tops.size()):
 		_ledge(160.0, tops[i], 30.0)
 		_crate_on(160.0, tops[i], values[i])
@@ -167,7 +167,7 @@ func _build_gallery() -> void:
 	_label("GALLERY", Color(0.4, 0.85, 1.0))
 	for p in [Vector2(70.0, -92.0), Vector2(120.0, -132.0), Vector2(170.0, -100.0),
 			Vector2(220.0, -132.0), Vector2(268.0, -96.0)]:
-		_crate(p.x, p.y, _rng.randi_range(8, 12))
+		_crate(p.x, p.y, _rng.randi_range(5, 8))
 
 
 # --- Building blocks ----------------------------------------------------------
