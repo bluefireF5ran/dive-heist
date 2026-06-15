@@ -49,6 +49,7 @@ const DEBUG_ROOM_X := 600.0
 var _current_level := 1
 var _level_kills := 0
 var _level_max_combo := 0
+var _carry_combo := 0  # Combo carried into the next level (kept across completion)
 var _level_money_earned := 0
 var _last_money := 0
 
@@ -140,16 +141,27 @@ func _ready() -> void:
 	_urge_last_max_y = _max_camera_y
 
 
+## Each era has a pool of tracks; we pick a (preferably new) one per level for variety.
 const ERA_MUSIC := {
-	"prison": "res://Audio/Soundrack/Prison1.5.mp3",
-	"factory": "res://Audio/Soundrack/Factory.mp3",
+	"prison": ["res://Audio/Soundrack/Prison1.5.mp3", "res://Audio/Soundrack/Prison.mp3"],
+	"factory": ["res://Audio/Soundrack/Factory.mp3", "res://Audio/Soundrack/Factory2.mp3"],
+	"lab": ["res://Audio/Soundrack/Lab.mp3", "res://Audio/Soundrack/Lab2.mp3"],
+	"bank": ["res://Audio/Soundrack/Bank.mp3"],
 }
 var _current_music_path := ""
 
 
-## Play (and loop) the soundtrack for the given era, swapping tracks if needed.
+## Play (and loop) a soundtrack for the era, rotating to a different track when
+## possible so the music varies level to level.
 func _set_era_music(era: String) -> void:
-	var path: String = ERA_MUSIC.get(era, ERA_MUSIC["factory"])
+	var pool: Array = ERA_MUSIC.get(era, ERA_MUSIC["factory"])
+	if pool.is_empty():
+		return
+	var path: String = pool[randi() % pool.size()]
+	# Prefer a track different from the one currently playing.
+	if path == _current_music_path and pool.size() > 1:
+		var alts: Array = pool.filter(func(p: String) -> bool: return p != _current_music_path)
+		path = alts[randi() % alts.size()]
 	if path == _current_music_path and _music_player.playing:
 		return
 	_current_music_path = path
@@ -336,6 +348,7 @@ func _on_level_complete() -> void:
 	if _is_level_complete or _is_game_over:
 		return
 	_is_level_complete = true
+	_carry_combo = player._combo  # keep the chain alive into the next level
 	ammo_hud.hide_boss_bar()
 
 	_level_end_y = chunk_gen._level_end_y
@@ -587,6 +600,9 @@ func _continue_to_next_level() -> void:
 	player._stomp_invincible = 0.5
 	player._in_safe_zone = true
 	player.set_physics_process(true)
+	# Carry the combo chain into the new level instead of wiping it on completion.
+	player._combo = _carry_combo
+	player.combo_changed.emit(player._combo)
 	player.heal(1)
 
 	# Reset the urge hazard for the new level.
@@ -602,7 +618,8 @@ func _continue_to_next_level() -> void:
 	if new_era != old_era:
 		parallax.set_era_smooth(new_era, TRANSITION_FADE)
 		_update_era_clear_color(new_era)
-		_set_era_music(new_era)
+	# Re-roll the track each level so the soundtrack varies (even within an era).
+	_set_era_music(new_era)
 
 	_fade_in(TRANSITION_FADE)
 	get_tree().create_timer(1.5).timeout.connect(

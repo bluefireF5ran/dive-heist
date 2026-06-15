@@ -664,11 +664,11 @@ func _add_combo_kill(is_stomp: bool) -> void:
 ## Cash in combo rewards on landing. Higher combo = better rewards.
 func _cash_in_combo() -> void:
 	var tier := 0
-	if _combo >= 25:
+	if _combo >= 35:
 		tier = 3
-	elif _combo >= 15:
+	elif _combo >= 20:
 		tier = 2
-	elif _combo >= 8:
+	elif _combo >= 10:
 		tier = 1
 
 	_score += _combo * 50
