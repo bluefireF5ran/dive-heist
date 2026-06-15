@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://da26prl1knwi4"
-path="res://.godot/imported/Walk.png-3fef04f08131a7eaf9a9658930a4c9c5.ctex"
+path="res://.godot/imported/Walk.png-059672eca46184b847119740e0e1a1c5.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://Sprites/Active_Sprites/enemies/boss_loader/Walk.png"
-dest_files=["res://.godot/imported/Walk.png-3fef04f08131a7eaf9a9658930a4c9c5.ctex"]
+dest_files=["res://.godot/imported/Walk.png-059672eca46184b847119740e0e1a1c5.ctex"]
 
 [params]
 

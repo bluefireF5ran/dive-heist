@@ -670,8 +670,8 @@ func _cash_in_combo() -> void:
 	_score += _combo * 50
 	score_changed.emit(_score)
 
-	# Vampire perk: heal on every cash-in regardless of tier.
-	if _lifesteal > 0 and _hp < MAX_HP:
+	# Vampire perk: only heals on long-combo cash-ins (tier 2+), not every landing.
+	if _lifesteal > 0 and tier >= 2 and _hp < MAX_HP:
 		_hp = mini(_hp + _lifesteal, MAX_HP)
 		hp_changed.emit(_hp, MAX_HP)
 

@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c3vchc22wmlb8"
-path="res://.godot/imported/Attack4.png-889d23597b0c55c0ab014200513de257.ctex"
+path="res://.godot/imported/Attack4.png-ec7003b3590290cad1b3390fbedc8846.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://Sprites/Active_Sprites/enemies/boss_loader/Attack4.png"
-dest_files=["res://.godot/imported/Attack4.png-889d23597b0c55c0ab014200513de257.ctex"]
+dest_files=["res://.godot/imported/Attack4.png-ec7003b3590290cad1b3390fbedc8846.ctex"]
 
 [params]
 

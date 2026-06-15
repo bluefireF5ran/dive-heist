@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://m5p12dfwq6bq"
-path="res://.godot/imported/Death.png-8d11f0af9ffacd4784af161dfef3c8eb.ctex"
+path="res://.godot/imported/Death.png-808b8968436626bc99c47af44ecdeba0.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://Sprites/Active_Sprites/enemies/boss_loader/Death.png"
-dest_files=["res://.godot/imported/Death.png-8d11f0af9ffacd4784af161dfef3c8eb.ctex"]
+dest_files=["res://.godot/imported/Death.png-808b8968436626bc99c47af44ecdeba0.ctex"]
 
 [params]
 

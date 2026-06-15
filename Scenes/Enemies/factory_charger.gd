@@ -24,6 +24,7 @@ enum {PATROL, ALARM, CHARGE, RECOVER}
 var _state := PATROL
 var _t := 0.0
 var _dir := 1.0
+var _turn_cd := 0.0  # Debounce so tiny platforms don't make it spin
 var _is_dead := false
 var _hurt_timer := 0.0
 var _sprite_base_x: float
@@ -57,10 +58,15 @@ func _physics_process(delta: float) -> void:
 
 	match _state:
 		PATROL:
-			velocity.x = _dir * speed
+			_turn_cd -= delta
 			var at_edge := is_on_floor() and not edge_ray.is_colliding()
 			if is_on_wall() or at_edge:
-				_dir *= -1.0
+				velocity.x = 0.0  # hold at the edge so it never spins or walks off
+				if _turn_cd <= 0.0:
+					_dir *= -1.0
+					_turn_cd = 0.3
+			else:
+				velocity.x = _dir * speed
 			edge_ray.position.x = _dir * 10.0
 			if _hurt_timer <= 0.0:
 				sprite.play("Run")

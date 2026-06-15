@@ -444,9 +444,11 @@ func _set_enemies_frozen(frozen: bool) -> void:
 ## Detect safe-zone transitions and stop/restart enemies accordingly.
 func _update_safe_zone() -> void:
 	var safe: bool = player._in_safe_zone
-	if safe and not _was_safe:
+	# Re-freeze every frame while safe so enemies that spawn *after* entering the
+	# safe zone are also stopped (the one-shot transition missed those).
+	if safe:
 		_set_enemies_frozen(true)
-	elif not safe and _was_safe:
+	elif _was_safe:
 		_set_enemies_frozen(false)
 	_was_safe = safe
 
