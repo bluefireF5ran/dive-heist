@@ -35,7 +35,12 @@ func _ready() -> void:
 	var old_floor := get_node_or_null("LeftWall/BottomWall")
 	if old_floor:
 		old_floor.queue_free()
-	spike_floor.body_entered.connect(_on_spike_entered)
+	# Disable the tscn spike overlay (it sits below our code floor and never hits the
+	# player); spike variants build their own spike strip at the floor surface.
+	spike_floor.monitoring = false
+	var tscn_spike_vis := spike_floor.get_node_or_null("Visual") as CanvasItem
+	if tscn_spike_vis:
+		tscn_spike_vis.visible = false
 
 	_solid_floor()
 	# Footing at the entrance and exit so every variant is enterable/exitable.
@@ -100,8 +105,9 @@ func _build_greed_tower() -> void:
 	_label("GREED", Color(0.6, 1.0, 0.5))
 	_ledge(96.0, -46.0, 30.0)   # step up from spawn
 	_ledge(210.0, -46.0, 30.0)  # step down to exit
-	var tops := [-54.0, -94.0, -134.0, -172.0]
-	var values := [6, 11, 16, 24]
+	# Three reachable rungs (the old 4th was out of jump range).
+	var tops := [-54.0, -94.0, -134.0]
+	var values := [8, 14, 22]
 	for i in range(tops.size()):
 		_ledge(160.0, tops[i], 30.0)
 		_crate_on(160.0, tops[i], values[i])
@@ -253,17 +259,43 @@ func _start_crumble(plat: StaticBody2D) -> void:
 		plat.queue_free()
 
 
-## Toggle the floor spikes (overlay damage + red visual) for this variant.
+## Enable a spike strip at the floor surface (damage + red sawtooth visual).
 func _set_spikes(active: bool) -> void:
 	_spike_active = active
-	spike_floor.monitoring = active
-	var vis := spike_floor.get_node_or_null("Visual") as CanvasItem
-	if vis:
-		vis.visible = active
+	if active:
+		_build_spike_floor()
+
+
+func _build_spike_floor() -> void:
+	var area := Area2D.new()
+	area.collision_layer = 0
+	area.collision_mask = 2  # player
+	var cs := CollisionShape2D.new()
+	var rect := RectangleShape2D.new()
+	rect.size = Vector2(320.0, 10.0)
+	cs.shape = rect
+	cs.position = Vector2(160.0, FLOOR_TOP - 2.0)
+	area.add_child(cs)
+	area.body_entered.connect(_on_spike_entered)
+	add_child(area)
+	# Red sawtooth along the floor surface.
+	var n := 20
+	var step := 320.0 / float(n)
+	for i in range(n):
+		var bx := float(i) * step
+		var tri := Polygon2D.new()
+		tri.polygon = PackedVector2Array([
+			Vector2(bx, FLOOR_TOP),
+			Vector2(bx + step, FLOOR_TOP),
+			Vector2(bx + step * 0.5, FLOOR_TOP - 8.0),
+		])
+		tri.color = Color(0.85, 0.18, 0.2, 0.95)
+		tri.z_index = 1
+		add_child(tri)
 
 
 func _on_spike_entered(body: Node2D) -> void:
-	if _spike_active and body.is_in_group("player") and body.has_method("take_damage"):
+	if body.is_in_group("player") and body.has_method("take_damage"):
 		body.take_damage(1)
 
 
