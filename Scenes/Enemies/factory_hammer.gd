@@ -80,9 +80,11 @@ func _physics_process(delta: float) -> void:
 				_state = LUNGE
 				_t = 0.4
 		LUNGE:
+			edge_ray.position.x = _dir * 12.0
 			velocity.x = _dir * lunge_speed
+			var lunge_edge := is_on_floor() and not edge_ray.is_colliding()
 			_t -= delta
-			if _t <= 0.0 or is_on_wall():
+			if _t <= 0.0 or is_on_wall() or lunge_edge:
 				velocity.x = 0.0
 				_state = RECOVER
 				_t = 0.5
