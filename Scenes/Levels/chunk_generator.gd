@@ -612,7 +612,7 @@ func _spawn_chunk(y: float) -> void:
 	# Factory walls are lined with spike traps so the player can't just hug a
 	# wall to plummet safely.
 	if _is_factory():
-		_maybe_place_wall_trap(chunk, phase)
+		_maybe_place_wall_trap(chunk, phase, platforms)
 
 	_populate_enemies(chunk, cfg, platforms, phase_progress)
 
@@ -915,7 +915,7 @@ func _furnish_prison_room(room: Node2D, stance_idx: int) -> void:
 
 
 ## Maybe mount a spiked trap on one of the well walls (factory only).
-func _maybe_place_wall_trap(chunk: Node2D, phase: String) -> void:
+func _maybe_place_wall_trap(chunk: Node2D, phase: String, platforms: Array[Rect2]) -> void:
 	var chance := 0.22
 	if phase == "escalation":
 		chance = 0.32
@@ -923,10 +923,27 @@ func _maybe_place_wall_trap(chunk: Node2D, phase: String) -> void:
 		chance = 0.42
 	if _rng.randf() >= chance:
 		return
-	var on_left := _rng.randf() < 0.5
 	var h := _rng.randf_range(44.0, 66.0)
 	var cy := _rng.randf_range(-CHUNK_HEIGHT * 0.3, CHUNK_HEIGHT * 0.3)
-	_add_wall_trap(chunk, on_left, cy, h)
+	# Mount it on whichever wall is clear of a flush platform; skip if both blocked
+	# (so saws don't end up sitting on a ledge where enemies also stand).
+	var sides := [true, false]
+	sides.shuffle()
+	for on_left: bool in sides:
+		if not _wall_trap_blocked(on_left, cy, h, platforms):
+			_add_wall_trap(chunk, on_left, cy, h)
+			return
+
+
+## True if a platform flush to that wall overlaps the trap's vertical band.
+func _wall_trap_blocked(on_left: bool, cy: float, h: float, platforms: Array[Rect2]) -> bool:
+	var top := cy - h * 0.5 - 10.0
+	var bot := cy + h * 0.5 + 10.0
+	for p in platforms:
+		var flush := p.position.x <= 16.0 if on_left else p.position.x + p.size.x >= WELL_RIGHT - 16.0
+		if flush and p.position.y <= bot and p.position.y + p.size.y >= top:
+			return true
+	return false
 
 
 ## Spinning-sawblade frames (6 x 32px), built once and shared by every wall hazard.
