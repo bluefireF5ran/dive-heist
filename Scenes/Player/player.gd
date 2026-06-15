@@ -153,10 +153,10 @@ const WEAPONS := {
 	# Flak — a single shell that bursts into a fan of fragments on impact.
 	"flak":
 	{
-		"fire_cooldown": 0.34,
+		"fire_cooldown": 0.30,
 		"bullet_speed": 360.0,
-		"bullet_lifetime": 0.8,
-		"split_count": 5,
+		"bullet_lifetime": 0.85,
+		"split_count": 7,
 		"collision_radius": 5.0,
 		"sfx_pitch_min": 0.85,
 		"sfx_pitch_max": 1.05,
@@ -200,17 +200,20 @@ const WEAPONS := {
 		"hud_color": Color(0.85, 0.4, 0.9, 1.0),
 	},
 	# --- Rifles / big weapons (free-guns-pack-2, gun_scale 1.0) ---
-	# Assault rifle — rapid 3-round bursts whose rounds punch through enemies.
+	# Assault rifle — rapid 3-round bursts that drill through enemies AND floors,
+	# so you can shoot foes through the platforms below you (nothing's wasted).
 	"assault_rifle":
 	{
 		"is_burst": true,
 		"is_piercer": true,
+		"pierces_platforms": true,
 		"burst_count": 3,
 		"burst_interval": 0.06,
 		"fire_cooldown": 0.34,
-		"ammo_cost": 2,
+		"ammo_cost": 1,
 		"spread_angle": 6.0,
-		"bullet_speed": 520.0,
+		"bullet_speed": 540.0,
+		"bullet_lifetime": 1.1,
 		"sfx_pitch_min": 1.0,
 		"sfx_pitch_max": 1.25,
 		"gun_texture": RIFLE_GUN + "6_1.png",
@@ -529,6 +532,7 @@ func _spawn_bullet(wd: Dictionary, angle_deg: float, bullet_damage: int) -> void
 	bullet.global_position = muzzle_point.global_position
 	# Weapon behavior flags
 	bullet.is_piercer = bool(wd.get("is_piercer", false))
+	bullet.pierces_platforms = bool(wd.get("pierces_platforms", false))
 	bullet.is_ricochet = bool(wd.get("is_ricochet", false))
 	bullet.max_bounces = int(wd.get("max_bounces", 0))
 	bullet.is_homing = bool(wd.get("is_homing", false))

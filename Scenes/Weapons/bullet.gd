@@ -11,6 +11,7 @@ var lifetime := 2.0
 var is_piercer := false
 var is_ricochet := false
 var max_bounces := 0
+var pierces_platforms := false  # Passes through world platforms/walls (shoot through floors)
 
 # Extended behaviors (default off → straight-line bullet, identical to before)
 var is_homing := false
@@ -115,6 +116,8 @@ func _on_body_entered(body: Node2D) -> void:
 		if is_ricochet and _bounce_count < max_bounces:
 			_bounce()
 			return
+		if pierces_platforms:
+			return  # drill straight through floors/platforms
 		if is_explosive:
 			_explode()
 		_consume()
