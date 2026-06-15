@@ -12,6 +12,9 @@ CLAUDE.md
 .godot/
 /android/
 
+# Exported builds (large binaries — keep out of git; export_presets.cfg is tracked)
+/build/
+
 # ============================================================
 # Sprites: only the in-use set is tracked. Every used image/font has been moved
 # into Sprites/Active_Sprites/ (organised by purpose — see its MANIFEST.md).
