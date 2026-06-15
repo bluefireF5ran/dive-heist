@@ -21,6 +21,7 @@ const BOMB_SCRIPT := preload("res://Scenes/Enemies/factory_bomb.gd")
 var _is_dead := false
 var _hurt_timer := 0.0
 var _bomb_cd := 1.2
+var _anim_timer := 0.0  # Holds the Attack anim briefly after a bomb drop
 var _world: Node2D
 var _player: CharacterBody2D
 var _sprite_base_x := 0.0
@@ -45,6 +46,7 @@ func _physics_process(delta: float) -> void:
 		return
 	_hurt_timer -= delta
 	_bomb_cd -= delta
+	_anim_timer -= delta
 
 	if not _player:
 		_player = get_tree().get_first_node_in_group("player") as CharacterBody2D
@@ -67,7 +69,7 @@ func _physics_process(delta: float) -> void:
 		_drop_bomb()
 		_bomb_cd = bomb_interval
 
-	if _hurt_timer <= 0.0 and sprite.animation != "Attack":
+	if _hurt_timer <= 0.0 and _anim_timer <= 0.0:
 		sprite.play("Run")
 	var face_left := _player.global_position.x < global_position.x
 	sprite.flip_h = face_left
@@ -76,6 +78,7 @@ func _physics_process(delta: float) -> void:
 
 func _drop_bomb() -> void:
 	sprite.play("Attack")
+	_anim_timer = 0.6
 	var bomb := Area2D.new()
 	bomb.set_script(BOMB_SCRIPT)
 	_world.add_child(bomb)
