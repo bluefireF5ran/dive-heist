@@ -710,13 +710,23 @@ func _find_valid_x(w: float, existing: Array[Rect2]) -> float:
 			return x
 	return -1.0
 
+## Mechanical platforms (grey solid, blue moving, hot) are factory machinery — the
+## prison only uses plain + the red breakable platform, so it has one clear
+## "special" platform instead of several inert coloured ones.
+const _FACTORY_ONLY_PLATFORMS := ["solid", "moving", "heated"]
+
+
 func _pick_platform_type() -> String:
 	var pool: Array[String] = []
+	var factory := _is_factory()
 	for type: String in PLATFORM_TYPE_WEIGHTS:
 		var info: Dictionary = PLATFORM_TYPE_WEIGHTS[type]
-		if current_level >= info["min_level"]:
-			for _w in range(int(info["weight"])):
-				pool.append(type)
+		if current_level < info["min_level"]:
+			continue
+		if type in _FACTORY_ONLY_PLATFORMS and not factory:
+			continue
+		for _w in range(int(info["weight"])):
+			pool.append(type)
 	if pool.is_empty():
 		return "static"
 	return pool[_rng.randi() % pool.size()]
