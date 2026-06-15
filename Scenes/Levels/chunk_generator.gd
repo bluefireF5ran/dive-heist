@@ -745,27 +745,27 @@ func _add_thin_platform(parent: Node2D, cx: float, cy: float, w: float) -> void:
 func _add_moving_platform(parent: Node2D, cx: float, cy: float, w: float) -> void:
 	var cfg: Dictionary = PLATFORM_TYPE_CONFIG["moving"]
 	var body := _add_platform_body(
-		parent, cx, cy, w, PLATFORM_H, cfg["one_way"], cfg["modulate"], "", "moving"
+		parent, cx, cy, w, PLATFORM_H, cfg["one_way"], cfg["modulate"], "", "moving",
+		MOVING_PLATFORM_SCRIPT
 	)
-	body.set_script(MOVING_PLATFORM_SCRIPT)
 	body.move_range = cfg["move_range"]
 	body.move_speed = cfg["move_speed"]
 
 func _add_breakable_platform(parent: Node2D, cx: float, cy: float, w: float) -> void:
 	var cfg: Dictionary = PLATFORM_TYPE_CONFIG["breakable"]
 	var body := _add_platform_body(
-		parent, cx, cy, w, PLATFORM_H, cfg["one_way"], cfg["modulate"], "Visual", "breakable"
+		parent, cx, cy, w, PLATFORM_H, cfg["one_way"], cfg["modulate"], "Visual", "breakable",
+		BREAKABLE_PLATFORM_SCRIPT
 	)
 	body.collision_layer = 5
-	body.set_script(BREAKABLE_PLATFORM_SCRIPT)
 	body.collapse_delay = cfg["collapse_delay"]
 
 func _add_heated_platform(parent: Node2D, cx: float, cy: float, w: float) -> void:
 	var cfg: Dictionary = PLATFORM_TYPE_CONFIG["heated"]
 	var body := _add_platform_body(
-		parent, cx, cy, w, PLATFORM_H, cfg["one_way"], cfg["modulate"], "Visual", "heated"
+		parent, cx, cy, w, PLATFORM_H, cfg["one_way"], cfg["modulate"], "Visual", "heated",
+		HEATED_PLATFORM_SCRIPT
 	)
-	body.set_script(HEATED_PLATFORM_SCRIPT)
 	body.damage_interval = cfg["damage_interval"]
 	body.warmup_time = cfg["warmup_time"]
 
@@ -778,11 +778,14 @@ func _add_platform_body(
 	one_way: bool,
 	plat_modulate: Variant,
 	visual_name: String,
-	ptype: String = "static"
+	ptype: String = "static",
+	script: Script = null
 ) -> StaticBody2D:
+	# Build the collision + visual as children FIRST, attach the optional behaviour
+	# script, and only then enter the tree — so the script's _ready() runs with its
+	# children in place (the special platforms build detectors / capture _start_x there).
 	var body := StaticBody2D.new()
 	body.position = Vector2(cx, cy)
-	parent.add_child(body)
 
 	var shape := RectangleShape2D.new()
 	shape.size = Vector2(w, h)
@@ -804,6 +807,9 @@ func _add_platform_body(
 			visual.modulate = plat_modulate
 		body.add_child(visual)
 
+	if script:
+		body.set_script(script)
+	parent.add_child(body)
 	return body
 
 
