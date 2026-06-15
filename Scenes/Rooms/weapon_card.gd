@@ -29,6 +29,11 @@ func _ready() -> void:
 
 func _process(_delta: float) -> void:
 	if _player_nearby and not _selected and Input.is_action_just_pressed("interact"):
+		# If the player is also standing in a door, that interact is for leaving the
+		# room — don't snatch a weapon on the way out.
+		for d in get_tree().get_nodes_in_group("room_door"):
+			if d.get("_player_in_range"):
+				return
 		_select()
 
 

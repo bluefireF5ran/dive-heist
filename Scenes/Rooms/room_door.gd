@@ -21,6 +21,7 @@ var _door_anim: AnimatedSprite2D
 
 func _ready() -> void:
 	_world = get_tree().current_scene as Node2D
+	add_to_group("room_door")
 	collision_layer = 0
 	collision_mask = 2
 	body_entered.connect(_on_body_entered)

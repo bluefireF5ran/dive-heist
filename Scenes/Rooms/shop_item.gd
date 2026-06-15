@@ -94,6 +94,10 @@ func _process(_delta: float) -> void:
 	if _sold or not _player_in_range:
 		return
 	if _player_ref and _player_ref.is_on_floor() and Input.is_action_just_pressed("interact"):
+		# Don't buy when the interact press is meant for leaving via a door.
+		for d in get_tree().get_nodes_in_group("room_door"):
+			if d.get("_player_in_range"):
+				return
 		_try_purchase()
 
 
