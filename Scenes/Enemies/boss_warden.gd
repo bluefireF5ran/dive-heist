@@ -302,7 +302,11 @@ func _nearest_elev(e: float) -> float:
 func take_damage(amount: int = 1) -> void:
 	if _is_dead:
 		return
-	hp -= amount
+	# Grounded hits do half — fight from the air (ride the elevators), don't camp.
+	var dmg := amount
+	if _player and is_instance_valid(_player) and _player.is_on_floor():
+		dmg = maxi(1, int(dmg / 2.0))
+	hp -= dmg
 	if hp <= 0:
 		_die()
 		return

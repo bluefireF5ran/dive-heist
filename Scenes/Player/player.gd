@@ -108,6 +108,7 @@ const WEAPONS := {
 		"bullet_speed": 460.0,
 		"air_retention": -210.0,
 		"is_explosive": true,
+		"pierces_armor": true,
 		"explosion_radius": 26.0,
 		"explosion_damage": 1,
 		"sfx_pitch_min": 0.6,
@@ -187,6 +188,7 @@ const WEAPONS := {
 	"railgun":
 	{
 		"is_piercer": true,
+		"pierces_armor": true,
 		"damage": 2,
 		"fire_cooldown": 0.34,
 		"bullet_speed": 640.0,
@@ -208,6 +210,7 @@ const WEAPONS := {
 		"is_burst": true,
 		"is_piercer": true,
 		"pierces_platforms": true,
+		"pierces_armor": true,
 		"burst_count": 3,
 		"burst_interval": 0.06,
 		"fire_cooldown": 0.34,
@@ -226,6 +229,7 @@ const WEAPONS := {
 	{
 		"is_shotgun": true,
 		"is_piercer": true,
+		"pierces_armor": true,
 		"bullet_count": 7,
 		"spread_angle": 28.0,
 		"fire_cooldown": 0.5,
@@ -260,6 +264,7 @@ const WEAPONS := {
 	{
 		"is_piercer": true,
 		"is_explosive": true,
+		"pierces_armor": true,
 		"explosion_radius": 42.0,
 		"explosion_damage": 2,
 		"damage": 3,
@@ -535,6 +540,7 @@ func _spawn_bullet(wd: Dictionary, angle_deg: float, bullet_damage: int) -> void
 	# Weapon behavior flags
 	bullet.is_piercer = bool(wd.get("is_piercer", false))
 	bullet.pierces_platforms = bool(wd.get("pierces_platforms", false))
+	bullet.pierces_armor = bool(wd.get("pierces_armor", false))
 	bullet.is_ricochet = bool(wd.get("is_ricochet", false))
 	bullet.max_bounces = int(wd.get("max_bounces", 0))
 	bullet.is_homing = bool(wd.get("is_homing", false))

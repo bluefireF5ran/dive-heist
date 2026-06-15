@@ -12,6 +12,7 @@ var is_piercer := false
 var is_ricochet := false
 var max_bounces := 0
 var pierces_platforms := false  # Passes through world platforms/walls (shoot through floors)
+var pierces_armor := false  # Hurts armoured / stomp-only enemies
 
 # Extended behaviors (default off → straight-line bullet, identical to before)
 var is_homing := false
@@ -90,7 +91,16 @@ func _on_body_entered(body: Node2D) -> void:
 		if is_piercer:
 			_hit_enemies.append(body)
 
-		body.take_damage(damage)
+		# Armour-piercing rounds hurt stomp-only enemies (floor drone) and bypass the
+		# "weak shots ping off" guard on armoured ones (hammer/copter).
+		var armored_val: Variant = body.get("armored")
+		if pierces_armor and body.has_method("stomp_damage"):
+			body.stomp_damage(maxi(damage, 1))
+		else:
+			var dmg := damage
+			if pierces_armor and armored_val == true:
+				dmg = maxi(dmg, 2)
+			body.take_damage(dmg)
 		if damage > 0:
 			SFX.play_bullet_hit()
 		if "hp" in body and body.hp <= 0:
