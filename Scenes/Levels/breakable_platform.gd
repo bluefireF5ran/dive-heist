@@ -51,6 +51,7 @@ func _start_collapse() -> void:
 	var col := get_child(0) as CollisionShape2D
 	if col:
 		col.set_deferred("disabled", true)
+	SFX.play_platform_crumble()
 	if visual:
 		var tween2 := create_tween()
 		tween2.tween_property(visual, "modulate:a", 0.0, 0.2)

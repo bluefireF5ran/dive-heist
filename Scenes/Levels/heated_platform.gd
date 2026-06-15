@@ -41,6 +41,7 @@ func _on_body_landed(body: Node2D) -> void:
 	_damage_timer = damage_interval
 	_active = false
 	set_process(true)
+	SFX.play_heated_platform()  # sizzling warning as it heats up
 
 
 func _on_body_left(body: Node2D) -> void:

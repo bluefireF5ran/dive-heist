@@ -679,6 +679,9 @@ func _cash_in_combo() -> void:
 	elif _combo >= 10:
 		tier = 1
 
+	if tier == 0 and _combo > 0:
+		SFX.play_combo_lost()
+
 	_score += _combo * 50
 	score_changed.emit(_score)
 
@@ -717,7 +720,7 @@ func take_damage(amount: int = 1) -> void:
 		_shield -= 1
 		shield_changed.emit(_shield)
 		_invincible_timer = INVINCIBLE_TIME + _adrenaline_iframes
-		SFX.play(SFX.damage_taken, -11.0)
+		SFX.play_shield_break()
 		velocity.y = -200.0
 		return
 	_hp -= amount
@@ -794,15 +797,21 @@ func apply_perk(perk_id: String) -> void:
 
 ## Heal HP (clamped to max).
 func heal(amount: int) -> void:
+	var before := _hp
 	_hp = mini(_hp + amount, MAX_HP)
 	hp_changed.emit(_hp, MAX_HP)
+	if _hp > before:
+		SFX.play_heal()
 
 
 ## Add blue armour pips (absorb a hit each, never regenerated). Capped so the HUD
 ## doesn't overflow.
 func add_shield(amount: int) -> void:
+	var before := _shield
 	_shield = mini(_shield + amount, 4)
 	shield_changed.emit(_shield)
+	if _shield > before:
+		SFX.play_shield_up()
 
 
 ## Permanently increase max ammo and refill.

@@ -191,6 +191,7 @@ func _explode() -> void:
 	fx.explosion_type = "explosion"
 	fx.global_position = global_position
 	_world.call_deferred("add_child", fx)
+	SFX.play_explosion()
 	if _world.has_method("screen_shake"):
 		_world.screen_shake(2.5)
 

@@ -112,7 +112,7 @@ func _try_purchase() -> void:
 		# Note: shop upgrades are NOT shown in the HUD perk row (only end-of-level
 		# perk picks are); _apply_item still records them in player.perks for gameplay.
 		purchased.emit(item_id)
-		SFX.play(SFX.combo_tier_1, -6.0)
+		SFX.play_purchase()
 		_spawn_purchase_vfx()
 		var tween := create_tween()
 		tween.tween_property(self, "modulate:a", 0.0, 0.3)

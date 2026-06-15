@@ -47,6 +47,25 @@ var restart_menu: AudioStream = preload("res://Audio/SFX/restart_menu.wav")
 # Collectibles
 var coin_pickup: AudioStream = preload("res://Audio/SFX/heal_pickup_2.wav")
 
+# Session additions — unique sounds for previously silent / borrowed events
+var explosion: AudioStream = preload("res://Audio/SFX/explosion.wav")
+var shield_up: AudioStream = preload("res://Audio/SFX/shield_up.wav")
+var shield_break: AudioStream = preload("res://Audio/SFX/shield_break.wav")
+var boss_intro: AudioStream = preload("res://Audio/SFX/boss_intro.wav")
+var heated_platform: AudioStream = preload("res://Audio/SFX/heated_platform.wav")
+var platform_crumble: AudioStream = preload("res://Audio/SFX/platform_crumble.wav")
+var sawblade: AudioStream = preload("res://Audio/SFX/sawblade.wav")
+var combo_lost: AudioStream = preload("res://Audio/SFX/combo_lost.wav")
+var purchase: AudioStream = preload("res://Audio/SFX/purchase.wav")
+var weapon_equip: AudioStream = preload("res://Audio/SFX/weapon_equip.wav")
+var chest_open: AudioStream = preload("res://Audio/SFX/chest_open.wav")
+var mimic_reveal: AudioStream = preload("res://Audio/SFX/mimic_reveal.wav")
+var descend: AudioStream = preload("res://Audio/SFX/descend.wav")
+var boss_shell: AudioStream = preload("res://Audio/SFX/boss_shell.wav")
+var shockwave: AudioStream = preload("res://Audio/SFX/shockwave.wav")
+var heal_chime: AudioStream = preload("res://Audio/SFX/heal.wav")
+var victory: AudioStream = preload("res://Audio/SFX/victory.wav")
+
 # Pool of AudioStreamPlayers for concurrent sounds
 var _players: Array[AudioStreamPlayer] = []
 const POOL_SIZE := 12
@@ -142,3 +161,69 @@ func play_combo_reward(tier: int) -> void:
 ## Coin pickup — pitched up for a bright "ding"
 func play_coin_pickup() -> void:
 	play(coin_pickup, -16.0, randf_range(1.2, 1.4))
+
+
+# --- Session additions ---------------------------------------------------------
+
+func play_explosion() -> void:
+	play(explosion, -6.0, randf_range(0.9, 1.1))
+
+
+func play_shield_up() -> void:
+	play(shield_up, -8.0, randf_range(0.98, 1.05))
+
+
+func play_shield_break() -> void:
+	play(shield_break, -6.0, randf_range(0.95, 1.08))
+
+
+func play_boss_intro() -> void:
+	play(boss_intro, -4.0)
+
+
+func play_heated_platform() -> void:
+	play(heated_platform, -10.0, randf_range(0.95, 1.05))
+
+
+func play_platform_crumble() -> void:
+	play(platform_crumble, -8.0, randf_range(0.9, 1.1))
+
+
+func play_combo_lost() -> void:
+	play(combo_lost, -12.0)
+
+
+func play_purchase() -> void:
+	play(purchase, -6.0, randf_range(0.98, 1.04))
+
+
+func play_weapon_equip() -> void:
+	play(weapon_equip, -6.0, randf_range(0.97, 1.05))
+
+
+func play_chest_open() -> void:
+	play(chest_open, -5.0, randf_range(0.95, 1.08))
+
+
+func play_mimic_reveal() -> void:
+	play(mimic_reveal, -3.0, randf_range(0.95, 1.05))
+
+
+func play_descend() -> void:
+	play(descend, -7.0, randf_range(0.95, 1.05))
+
+
+func play_boss_shell() -> void:
+	play(boss_shell, -8.0, randf_range(0.9, 1.1))
+
+
+func play_shockwave() -> void:
+	play(shockwave, -5.0, randf_range(0.9, 1.05))
+
+
+func play_heal() -> void:
+	play(heal_chime, -8.0, randf_range(0.98, 1.05))
+
+
+func play_victory() -> void:
+	play(victory, -3.0)

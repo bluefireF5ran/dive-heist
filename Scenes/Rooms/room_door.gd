@@ -71,7 +71,7 @@ func _teleport() -> void:
 		if _world.has_method("_reset_camera_to"):
 			_world._reset_camera_to(target_position)
 	# Brief visual feedback
-	SFX.play(SFX.landing, -8.0)
+	SFX.play_descend()
 	# Re-enable after a short delay to prevent double-triggering
 	await get_tree().create_timer(0.5).timeout
 	_used = false

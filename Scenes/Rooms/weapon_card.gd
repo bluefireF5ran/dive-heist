@@ -104,7 +104,7 @@ func _select() -> void:
 	_selected = true
 	if player and player.has_method("equip_weapon"):
 		player.equip_weapon(weapon_name)
-	SFX.play(SFX.combo_tier_2, -6.0)
+	SFX.play_weapon_equip()
 	weapon_selected.emit(weapon_name)
 	# Flash and disappear
 	var tween := create_tween()

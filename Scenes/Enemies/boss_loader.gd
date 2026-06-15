@@ -204,7 +204,7 @@ func _fire_fan() -> void:
 	var base := (_player.global_position - origin).angle()
 	for spread: float in [-0.42, -0.21, 0.0, 0.21, 0.42]:
 		_spawn_shell(origin, base + spread, 150.0)
-	SFX.play_shoot(0.5, 0.6)
+	SFX.play_boss_shell()
 
 
 ## Tight, fast burst straight at the player — point-blank punish.
@@ -213,14 +213,14 @@ func _fire_volley() -> void:
 	var base := (_player.global_position - origin).angle()
 	for spread: float in [-0.08, 0.0, 0.08, 0.0]:
 		_spawn_shell(origin, base + spread, 220.0)
-	SFX.play_shoot(0.6, 0.75)
+	SFX.play_boss_shell()
 
 
 ## Two shockwaves rolling along the floor in both directions — jump over them.
 func _fire_shockwave() -> void:
 	if _world and _world.has_method("screen_shake"):
 		_world.screen_shake(3.0)
-	SFX.play_stomp_material()
+	SFX.play_shockwave()
 	for d: float in [-1.0, 1.0]:
 		var p := PROJECTILE.new()
 		p.velocity = Vector2(d * 150.0, 0.0)

@@ -364,6 +364,7 @@ func register_boss(boss: Node) -> void:
 	if "boss_name" in boss:
 		nm = boss.boss_name
 	ammo_hud.show_boss_bar(nm, _boss_max_hp)
+	SFX.play_boss_intro()
 
 
 func _on_level_complete() -> void:
@@ -394,7 +395,7 @@ func _on_level_complete() -> void:
 	if _current_level >= 6:
 		_demo_complete = true
 		_music_player.stop()
-		SFX.play(SFX.combo_tier_2, -2.0)
+		SFX.play_victory()
 		screen_shake(4.0)
 		ammo_hud.show_victory(depth, _total_kills, _total_money_earned, _overall_max_combo)
 		set_process_input(true)

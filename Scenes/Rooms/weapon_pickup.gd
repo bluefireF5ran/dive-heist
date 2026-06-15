@@ -71,15 +71,15 @@ func _on_body_entered(body: Node2D) -> void:
 	match pickup_type:
 		PickupType.LIFE:
 			if body.has_method("heal"):
-				body.heal(1)
+				body.heal(1)  # heal() plays its own chime
 		PickupType.ENERGY:
 			if body.has_method("increase_max_ammo"):
 				body.increase_max_ammo(1)
+			SFX.play_coin_pickup()
 		PickupType.WEAPON:
 			if body.has_method("equip_weapon"):
 				body.equip_weapon(weapon_type)
-
-	SFX.play(SFX.combo_tier_2, -6.0)
+			SFX.play_weapon_equip()
 
 	# Flash and disappear
 	var tween := create_tween()
