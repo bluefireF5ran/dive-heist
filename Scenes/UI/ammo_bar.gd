@@ -48,6 +48,8 @@ func _draw() -> void:
 	_draw_depth(hud.depth)
 	_draw_combo(hud.combo)
 	_draw_boss_bar(hud)
+	if hud.boss_intro_timer > 0.0 and not (hud.level_complete or hud.death_screen or hud.victory_screen or hud.game_over):
+		_draw_boss_intro(hud)
 	if hud.reward_text != "":
 		_draw_reward(hud.reward_text, hud.reward_timer)
 	if hud.victory_screen:
@@ -351,6 +353,21 @@ func _draw_death_screen(hud: CanvasLayer) -> void:
 		8,
 		Color(0.6, 0.6, 0.6, 0.8 + 0.2 * sin(Time.get_ticks_msec() / 300.0))
 	)
+
+
+## Transient "boss appeared" flash near the top-centre.
+func _draw_boss_intro(hud: CanvasLayer) -> void:
+	var vp := get_viewport_rect().size
+	var a := clampf(hud.boss_intro_timer / 0.6, 0.0, 1.0)  # fade out in the last 0.6s
+	var y := vp.y * 0.34
+	var tag := "- BOSS -"
+	var tsz := _font.get_string_size(tag, HORIZONTAL_ALIGNMENT_CENTER, -1, 8)
+	draw_string(_font, Vector2((vp.x - tsz.x) / 2.0, y - 16.0), tag, HORIZONTAL_ALIGNMENT_LEFT, -1, 8, Color(0.9, 0.5, 0.5, a))
+	var bname: String = hud.boss_intro_name
+	var nsz := _font.get_string_size(bname, HORIZONTAL_ALIGNMENT_CENTER, -1, 20)
+	var nx := (vp.x - nsz.x) / 2.0
+	draw_string(_font, Vector2(nx + 1, y + 1), bname, HORIZONTAL_ALIGNMENT_LEFT, -1, 20, Color(0, 0, 0, 0.7 * a))
+	draw_string(_font, Vector2(nx, y), bname, HORIZONTAL_ALIGNMENT_LEFT, -1, 20, Color(1.0, 0.25, 0.2, a))
 
 
 ## Boss health bar across the bottom-centre during a boss fight.

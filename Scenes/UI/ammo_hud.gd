@@ -36,6 +36,8 @@ var boss_active := false
 var boss_hp := 0
 var boss_max_hp := 1
 var boss_name := ""
+var boss_intro_name := ""  # Transient "boss appeared" flash
+var boss_intro_timer := 0.0
 
 @onready var bar_container: Control = $AmmoBar
 
@@ -49,6 +51,9 @@ func _process(delta: float) -> void:
 		reward_timer -= delta
 		if reward_timer <= 0:
 			reward_text = ""
+		bar_container.queue_redraw()
+	if boss_intro_timer > 0.0:
+		boss_intro_timer -= delta
 		bar_container.queue_redraw()
 	# Continuous redraw for pulsing text overlays
 	if level_complete or death_screen or victory_screen:
@@ -173,11 +178,13 @@ func show_victory(depth_val: int, kills: int, money_val: int, max_combo: int) ->
 	bar_container.queue_redraw()
 
 
-func show_boss_bar(name: String, max_hp: int) -> void:
+func show_boss_bar(bname: String, max_hp: int) -> void:
 	boss_active = true
-	boss_name = name
+	boss_name = bname
 	boss_max_hp = maxi(max_hp, 1)
 	boss_hp = boss_max_hp
+	boss_intro_name = bname
+	boss_intro_timer = 2.2
 	bar_container.queue_redraw()
 
 
