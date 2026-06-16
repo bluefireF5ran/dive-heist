@@ -10,31 +10,54 @@ const TOAST_SCRIPT := preload("res://Scenes/UI/achievement_toast.gd")
 
 ## id -> {title, desc}. ORDER controls display order in the menu.
 const CATALOG := {
+	# Combat & combo
 	"first_kill": {"title": "First Blood", "desc": "Defeat your first enemy."},
 	"combo_10": {"title": "Chain Reaction", "desc": "Reach a x10 combo."},
 	"combo_25": {"title": "Unstoppable", "desc": "Reach a x25 combo."},
 	"combo_50": {"title": "Bullet Ballet", "desc": "Reach a x50 combo."},
+	"combo_100": {"title": "Combo Deity", "desc": "Reach a x100 combo."},
+	# Score (run)
+	"score_25k": {"title": "Combo Artist", "desc": "Score 25,000 in one run."},
+	"score_60k": {"title": "A-Rank Run", "desc": "Score 60,000 in one run."},
+	"score_120k": {"title": "S-Rank Legend", "desc": "Score 120,000 in one run."},
+	# Depth
 	"depth_500": {"title": "Going Down", "desc": "Descend 500m in one run."},
 	"depth_1500": {"title": "Deep Diver", "desc": "Descend 1500m in one run."},
 	"depth_3000": {"title": "The Abyss", "desc": "Descend 3000m in one run."},
-	"level_1": {"title": "Breakout", "desc": "Complete the prison (level 1)."},
-	"factory": {"title": "Factory Floor", "desc": "Reach the factory (level 2)."},
-	"kills_100": {"title": "Exterminator", "desc": "Defeat 100 enemies total."},
-	"kills_1000": {"title": "Rampage", "desc": "Defeat 1000 enemies total."},
-	"money_500": {"title": "Big Heist", "desc": "Collect $500 total."},
+	# Progression & bosses
+	"first_level": {"title": "Breakout", "desc": "Complete your first level."},
+	"warden": {"title": "Warden Down", "desc": "Defeat the Warden (prison boss)."},
+	"factory": {"title": "Factory Floor", "desc": "Reach the factory (level 4)."},
+	"loader": {"title": "Scrapped", "desc": "Defeat the Loader (factory boss)."},
+	"demo_clear": {"title": "The Big Score", "desc": "Clear the demo."},
+	"flawless": {"title": "Flawless", "desc": "Beat a boss without taking damage."},
+	# Economy & loot
 	"rich": {"title": "High Roller", "desc": "Hold $50 at once."},
+	"money_500": {"title": "Big Heist", "desc": "Collect $500 total."},
+	"treasure": {"title": "Treasure Hunter", "desc": "Open 25 chests (lifetime)."},
+	"mimic": {"title": "Bamboozled", "desc": "Open a mimic chest."},
+	# Loadout
 	"gun_nut": {"title": "Gun Nut", "desc": "Use 5 different weapons."},
 	"perks_5": {"title": "Loaded Out", "desc": "Hold 5 perks in one run."},
+	"perks_8": {"title": "Fully Augmented", "desc": "Hold 8 perks in one run."},
+	"bulletproof": {"title": "Bulletproof", "desc": "Gain a shield."},
+	# Kills (lifetime)
+	"kills_100": {"title": "Exterminator", "desc": "Defeat 100 enemies total."},
+	"kills_1000": {"title": "Rampage", "desc": "Defeat 1000 enemies total."},
+	# Meta
 	"first_death": {"title": "Welcome to the Heist", "desc": "Die for the first time."},
 	"untouchable": {"title": "Untouchable", "desc": "Clear a level without taking damage."},
 }
 
 const ORDER := [
-	"first_kill", "combo_10", "combo_25", "combo_50",
+	"first_kill", "combo_10", "combo_25", "combo_50", "combo_100",
+	"score_25k", "score_60k", "score_120k",
 	"depth_500", "depth_1500", "depth_3000",
-	"level_1", "factory",
-	"kills_100", "kills_1000", "money_500", "rich",
-	"gun_nut", "perks_5", "first_death", "untouchable",
+	"first_level", "warden", "factory", "loader", "demo_clear", "flawless",
+	"rich", "money_500", "treasure", "mimic",
+	"gun_nut", "perks_5", "perks_8", "bulletproof",
+	"kills_100", "kills_1000",
+	"first_death", "untouchable",
 ]
 
 var _unlocked := {}  # id -> true
@@ -46,6 +69,9 @@ var _stats := {
 	"best_depth": 0,
 	"best_combo": 0,
 	"best_level": 1,
+	"best_score": 0,
+	"chests_opened": 0,
+	"bosses_defeated": 0,
 }
 
 
@@ -84,6 +110,51 @@ func notify_combo(combo: int) -> void:
 		unlock("combo_25")
 	if combo >= 50:
 		unlock("combo_50")
+	if combo >= 100:
+		unlock("combo_100")
+
+
+func notify_score(score: int) -> void:
+	if score > int(_stats["best_score"]):
+		_stats["best_score"] = score
+	if score >= 25000:
+		unlock("score_25k")
+	if score >= 60000:
+		unlock("score_60k")
+	if score >= 120000:
+		unlock("score_120k")
+
+
+func notify_boss_defeated(boss_id: String) -> void:
+	_stats["bosses_defeated"] = int(_stats["bosses_defeated"]) + 1
+	if boss_id == "WARDEN":
+		unlock("warden")
+	elif boss_id == "LOADER":
+		unlock("loader")
+	_save()
+
+
+func notify_flawless_boss() -> void:
+	unlock("flawless")
+
+
+func notify_demo_complete() -> void:
+	unlock("demo_clear")
+
+
+func notify_chest_opened() -> void:
+	_stats["chests_opened"] = int(_stats["chests_opened"]) + 1
+	if int(_stats["chests_opened"]) >= 25:
+		unlock("treasure")
+	_save()
+
+
+func notify_mimic_opened() -> void:
+	unlock("mimic")
+
+
+func notify_shield_gained() -> void:
+	unlock("bulletproof")
 
 
 func notify_depth(depth: int) -> void:
@@ -114,20 +185,22 @@ func notify_weapon(weapon_name: String) -> void:
 func notify_level_complete(level: int) -> void:
 	if level > int(_stats["best_level"]):
 		_stats["best_level"] = level
-	unlock("level_1")
+	unlock("first_level")
 	_save()
 
 
 func notify_level_reached(level: int) -> void:
 	if level > int(_stats["best_level"]):
 		_stats["best_level"] = level
-	if level >= 2:
+	if level >= 4:
 		unlock("factory")
 
 
 func notify_perks(count: int) -> void:
 	if count >= 5:
 		unlock("perks_5")
+	if count >= 8:
+		unlock("perks_8")
 
 
 func notify_untouchable() -> void:

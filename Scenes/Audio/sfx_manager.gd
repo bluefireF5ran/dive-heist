@@ -65,6 +65,7 @@ var boss_shell: AudioStream = preload("res://Audio/SFX/boss_shell.wav")
 var shockwave: AudioStream = preload("res://Audio/SFX/shockwave.wav")
 var heal_chime: AudioStream = preload("res://Audio/SFX/heal.wav")
 var victory: AudioStream = preload("res://Audio/SFX/victory.wav")
+var steam_achievement: AudioStream = preload("res://Audio/SFX/steam-achievement.mp3")
 
 # Pool of AudioStreamPlayers for concurrent sounds
 var _players: Array[AudioStreamPlayer] = []
@@ -154,8 +155,8 @@ func play_ricochet() -> void:
 func play_combo_reward(tier: int) -> void:
 	match tier:
 		1: play(combo_tier_1, -7.0)
-		2: play(combo_tier_2, -5.0)
-		3: play(combo_tier_3, -3.0)
+		2: play(combo_tier_2, -8.0)
+		3: play(combo_tier_3, -11.0)
 
 
 ## Coin pickup — pitched up for a bright "ding"
@@ -227,3 +228,7 @@ func play_heal() -> void:
 
 func play_victory() -> void:
 	play(victory, -3.0)
+
+
+func play_achievement() -> void:
+	play(steam_achievement, -4.0)

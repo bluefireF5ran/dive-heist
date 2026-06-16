@@ -5,12 +5,14 @@ extends Control
 
 const WORLD_SCENE := "res://Scenes/Levels/world.tscn"
 const WORLD_SCRIPT := preload("res://Scenes/Levels/world.gd")
+const PAUSE_MENU := preload("res://Scenes/UI/pause_menu.gd")
 const FONT_PATH := "res://Sprites/Active_Sprites/ui/font/CyberpunkCraftpixPixel.otf"
 
 var _font: Font
 var _transitioning := false
 var _ach_panel: Panel
 var _debug_panel: Panel
+var _controls_panel: Panel
 
 @onready var _start_button: Button = $VBoxContainer/StartButton
 @onready var _options_button: Button = $VBoxContainer/OptionsButton
@@ -51,11 +53,20 @@ func _ready() -> void:
 	ach_button.pressed.connect(_on_achievements_pressed)
 	_build_achievements_panel()
 
+	# Add a Controls button (after Options) + its panel.
+	var ctrl_button := Button.new()
+	ctrl_button.text = "Controls"
+	vbox.add_child(ctrl_button)
+	vbox.move_child(ctrl_button, 2)
+	_apply_theme(ctrl_button)
+	ctrl_button.pressed.connect(_on_controls_pressed)
+	_build_controls_panel()
+
 	# Add a Debug button (between Achievements and Quit) + its panel.
 	var dbg_button := Button.new()
 	dbg_button.text = "Debug"
 	vbox.add_child(dbg_button)
-	vbox.move_child(dbg_button, 3)
+	vbox.move_child(dbg_button, 4)
 	_apply_theme(dbg_button)
 	dbg_button.pressed.connect(_on_debug_pressed)
 	_build_debug_panel()
@@ -95,6 +106,10 @@ func _input(event: InputEvent) -> void:
 	elif _ach_panel and _ach_panel.visible:
 		if event.is_action_pressed("jump") or event.is_action_pressed("ui_cancel"):
 			_close_achievements()
+			get_viewport().set_input_as_handled()
+	elif _controls_panel and _controls_panel.visible:
+		if event.is_action_pressed("jump") or event.is_action_pressed("ui_cancel"):
+			_close_controls()
 			get_viewport().set_input_as_handled()
 	elif _options_panel.visible:
 		if event.is_action_pressed("jump"):
@@ -235,6 +250,61 @@ func _build_debug_panel() -> void:
 	_debug_panel.add_child(hint)
 
 	_debug_panel.visible = false
+
+
+func _on_controls_pressed() -> void:
+	if _controls_panel:
+		_controls_panel.visible = true
+		_controls_panel.move_to_front()
+
+
+func _close_controls() -> void:
+	if _controls_panel:
+		_controls_panel.visible = false
+	_options_button.grab_focus()
+
+
+func _build_controls_panel() -> void:
+	_controls_panel = Panel.new()
+	_controls_panel.size = Vector2(260, 220)
+	_controls_panel.position = Vector2(30, 90)
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0.08, 0.07, 0.11, 0.97)
+	style.border_color = Color(0.5, 0.45, 0.6, 0.8)
+	style.set_border_width_all(2)
+	style.set_corner_radius_all(3)
+	_controls_panel.add_theme_stylebox_override("panel", style)
+	add_child(_controls_panel)
+
+	var title := Label.new()
+	title.text = "CONTROLS"
+	title.add_theme_font_override("font", _font)
+	title.add_theme_font_size_override("font_size", 12)
+	title.add_theme_color_override("font_color", Color(0.6, 0.85, 0.95))
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.size = Vector2(260, 16)
+	title.position = Vector2(0, 8)
+	_controls_panel.add_child(title)
+
+	var body := Label.new()
+	body.text = PAUSE_MENU.CONTROLS_TEXT
+	body.add_theme_font_override("font", _font)
+	body.add_theme_font_size_override("font_size", 9)
+	body.add_theme_color_override("font_color", Color(0.85, 0.85, 0.92))
+	body.position = Vector2(16, 30)
+	_controls_panel.add_child(body)
+
+	var hint := Label.new()
+	hint.text = "JUMP / ESC to return"
+	hint.add_theme_font_override("font", _font)
+	hint.add_theme_font_size_override("font_size", 6)
+	hint.add_theme_color_override("font_color", Color(0.55, 0.55, 0.6))
+	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	hint.size = Vector2(260, 12)
+	hint.position = Vector2(0, 202)
+	_controls_panel.add_child(hint)
+
+	_controls_panel.visible = false
 
 
 func _on_options_pressed() -> void:

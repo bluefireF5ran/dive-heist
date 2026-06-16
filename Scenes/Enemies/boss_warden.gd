@@ -337,6 +337,7 @@ func _die() -> void:
 	collision_layer = 0
 	collision_mask = 0
 	died.emit()
+	Achievements.notify_boss_defeated(boss_name)
 	if _world and "_boss_active" in _world:
 		_world._boss_active = false
 	if _world and _world.has_method("_on_level_complete"):

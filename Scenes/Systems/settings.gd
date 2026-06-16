@@ -18,6 +18,43 @@ func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	load_settings()
 	_apply_window()
+	_setup_gamepad()
+
+
+## Add controller bindings at runtime so a gamepad works without editing the saved
+## InputMap. UI navigation (ui_accept/ui_left/…) already includes joypad defaults.
+func _setup_gamepad() -> void:
+	_bind_button("jump", JOY_BUTTON_A)          # A = jump / shoot
+	_bind_button("jump", JOY_BUTTON_RIGHT_SHOULDER)
+	_bind_button("interact", JOY_BUTTON_X)      # X = interact / enter door
+	_bind_button("move_left", JOY_BUTTON_DPAD_LEFT)
+	_bind_button("move_right", JOY_BUTTON_DPAD_RIGHT)
+	_bind_axis("move_left", JOY_AXIS_LEFT_X, -1.0)
+	_bind_axis("move_right", JOY_AXIS_LEFT_X, 1.0)
+	_bind_button("ui_cancel", JOY_BUTTON_START) # Start = pause / back
+
+
+func _bind_button(action: String, btn: int) -> void:
+	if not InputMap.has_action(action):
+		return
+	for e in InputMap.action_get_events(action):
+		if e is InputEventJoypadButton and e.button_index == btn:
+			return
+	var ev := InputEventJoypadButton.new()
+	ev.button_index = btn
+	InputMap.action_add_event(action, ev)
+
+
+func _bind_axis(action: String, axis: int, value: float) -> void:
+	if not InputMap.has_action(action):
+		return
+	for e in InputMap.action_get_events(action):
+		if e is InputEventJoypadMotion and e.axis == axis and signf(e.axis_value) == signf(value):
+			return
+	var ev := InputEventJoypadMotion.new()
+	ev.axis = axis
+	ev.axis_value = value
+	InputMap.action_add_event(action, ev)
 
 
 func load_settings() -> void:

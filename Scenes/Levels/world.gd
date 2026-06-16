@@ -73,6 +73,8 @@ var _took_damage_level := false  # For the "Untouchable" achievement
 var _boss_active := false  # Set by the boss; pauses the urge hazard during the fight
 var _active_boss: Node = null  # Reference to the live boss, for the HUD health bar
 var _boss_max_hp := 1
+var _end_input_ms := 0.0  # When an end screen appeared; gates its dismiss input briefly
+const END_INPUT_DELAY_MS := 600.0
 
 @onready var player: CharacterBody2D = $Player
 @onready var ammo_hud: CanvasLayer = $AmmoHUD
@@ -314,6 +316,7 @@ func _on_combo_changed(combo: int) -> void:
 func _on_score_changed(score: int) -> void:
 	ammo_hud.set_score(score)
 	_total_score = score
+	Achievements.notify_score(score)
 
 
 func _on_combo_reward(tier: int, combo: int) -> void:
@@ -355,6 +358,7 @@ func hitstop(duration: float = 0.08) -> void:
 
 func _on_player_died() -> void:
 	_is_game_over = true
+	_end_input_ms = Time.get_ticks_msec()
 	ammo_hud.hide_boss_bar()
 	_music_player.stop()
 	SFX.play(SFX.game_over, -5.0)
@@ -380,6 +384,7 @@ func _on_level_complete() -> void:
 	if _is_level_complete or _is_game_over:
 		return
 	_is_level_complete = true
+	_end_input_ms = Time.get_ticks_msec()
 	_carry_combo = player._combo  # keep the chain alive into the next level
 	ammo_hud.hide_boss_bar()
 
@@ -396,6 +401,9 @@ func _on_level_complete() -> void:
 	Achievements.notify_level_complete(_current_level)
 	if not _took_damage_level:
 		Achievements.notify_untouchable()
+		# Boss levels are every 3rd (3, 6, ...); clearing one unhurt is "Flawless".
+		if _current_level % 3 == 0:
+			Achievements.notify_flawless_boss()
 
 	var depth := int(maxf(0, _level_end_y - _start_y))
 
@@ -403,6 +411,7 @@ func _on_level_complete() -> void:
 	# stop here instead of continuing into the unfinished lab.
 	if _current_level >= 6:
 		_demo_complete = true
+		Achievements.notify_demo_complete()
 		_music_player.stop()
 		SFX.play_victory()
 		screen_shake(4.0)
@@ -488,7 +497,10 @@ func _set_enemies_frozen(frozen: bool) -> void:
 
 ## Detect safe-zone transitions and stop/restart enemies accordingly.
 func _update_safe_zone() -> void:
-	var safe: bool = player._in_safe_zone
+	# Treat being off in a stance room (x > 400) as safe too: teleporting into the
+	# room fires the shaft safe-area's body_exited, which would otherwise clear the
+	# flag and let shaft enemies (drones) chase toward the room entrance.
+	var safe: bool = player._in_safe_zone or player.position.x > 400.0
 	# Re-freeze every frame while safe so enemies that spawn *after* entering the
 	# safe zone are also stopped (the one-shot transition missed those).
 	if safe:
@@ -715,12 +727,14 @@ func _input(event: InputEvent) -> void:
 			return
 	if _pause_menu and _pause_menu.is_open():
 		return  # swallow other inputs while paused (buttons handle their own)
-	if _demo_complete and event.is_action_pressed("jump"):
+	# Cooldown so the jump that ended the level/run doesn't instantly skip its screen.
+	var ready: bool = (Time.get_ticks_msec() - _end_input_ms) > END_INPUT_DELAY_MS
+	if _demo_complete and ready and event.is_action_pressed("jump"):
 		SFX.play(SFX.restart_menu, -10.0)
 		get_tree().change_scene_to_file("res://Scenes/UI/main_menu.tscn")
-	elif _is_game_over and event.is_action_pressed("jump"):
+	elif _is_game_over and ready and event.is_action_pressed("jump"):
 		SFX.play(SFX.restart_menu, -10.0)
 		get_tree().change_scene_to_file("res://Scenes/UI/main_menu.tscn")
-	elif _is_level_complete and not _perk_pending and event.is_action_pressed("jump"):
+	elif _is_level_complete and not _perk_pending and ready and event.is_action_pressed("jump"):
 		SFX.play(SFX.landing, -8.0)
 		_continue_to_next_level()

@@ -812,6 +812,7 @@ func add_shield(amount: int) -> void:
 	shield_changed.emit(_shield)
 	if _shield > before:
 		SFX.play_shield_up()
+		Achievements.notify_shield_gained()
 
 
 ## Permanently increase max ammo and refill.

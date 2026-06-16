@@ -137,11 +137,14 @@ var perks: Array = []
 var selected := 0
 var _done := false
 var _panel: Control
+const CONFIRM_DELAY_MS := 500.0  # Ignore confirm briefly so the level-clear jump doesn't auto-pick
+var _opened_ms := 0.0
 
 
 func _ready() -> void:
 	layer = 50  # Above the HUD (CanvasLayer layer 1)
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	_opened_ms = Time.get_ticks_msec()
 	if perks.is_empty():
 		# Youth perk raises how many cards are offered.
 		var count := 3
@@ -195,6 +198,8 @@ func _input(event: InputEvent) -> void:
 		SFX.play(SFX.combo_increase, -14.0, 0.9)
 		_panel.queue_redraw()
 	elif event.is_action_pressed("jump") or event.is_action_pressed("interact"):
+		if Time.get_ticks_msec() - _opened_ms < CONFIRM_DELAY_MS:
+			return  # too soon — avoid accidentally skipping the perk choice
 		_confirm()
 
 

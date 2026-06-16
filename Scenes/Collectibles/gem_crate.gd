@@ -42,12 +42,14 @@ func _break() -> void:
 	# it from range is safe but wastes the gamble).
 	if is_mimic:
 		SFX.play_mimic_reveal()
+		Achievements.notify_mimic_opened()
 		var p := get_tree().get_first_node_in_group("player")
 		if p and p.has_method("take_damage") and p.global_position.distance_to(global_position) < 42.0:
 			p.take_damage(1)
 		call_deferred("queue_free")
 		return
 	SFX.play_chest_open()
+	Achievements.notify_chest_opened()
 	# Spawn money in a burst
 	for i in range(money_count):
 		var money := MONEY_SCENE.instantiate()

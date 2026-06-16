@@ -42,7 +42,7 @@ func _ready() -> void:
 	l2.position = Vector2(8, 18)
 	panel.add_child(l2)
 
-	SFX.play(SFX.combo_tier_2, -4.0)
+	SFX.play_achievement()
 
 	var tw := create_tween()
 	tw.tween_property(panel, "position:y", 8.0, 0.3).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)

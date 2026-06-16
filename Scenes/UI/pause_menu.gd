@@ -6,9 +6,22 @@ extends CanvasLayer
 
 const FONT_PATH := "res://Sprites/Active_Sprites/ui/font/CyberpunkCraftpixPixel.otf"
 
+## Shared control reference, also used by the main menu.
+const CONTROLS_TEXT := """KEYBOARD
+Move          A / D / Arrows
+Jump / Shoot  Space / W / Up
+Interact      S / Down
+Pause         Esc
+
+GAMEPAD
+Move          Stick / D-Pad
+Jump / Shoot  A  /  RB
+Interact      X
+Pause         Start"""
+
 var _font: Font
 var _open := false
-var _panel := "main"        # main | options | audio | confirm
+var _panel := "main"        # main | options | audio | controls | confirm
 var _confirm_action := ""   # menu | quit
 
 var _root: Control
@@ -17,6 +30,7 @@ var _title: Label
 var _main_box: VBoxContainer
 var _options_box: VBoxContainer
 var _audio_box: VBoxContainer
+var _controls_box: VBoxContainer
 var _confirm_box: VBoxContainer
 var _confirm_label: Label
 
@@ -80,6 +94,10 @@ func _show_panel(p: String) -> void:
 			_title.text = "AUDIO"
 			_audio_box.visible = true
 			_focus_first(_audio_box)
+		"controls":
+			_title.text = "CONTROLS"
+			_controls_box.visible = true
+			_focus_first(_controls_box)
 		"confirm":
 			_title.text = ""
 			_confirm_box.visible = true
@@ -87,7 +105,7 @@ func _show_panel(p: String) -> void:
 
 
 func _set_all_hidden() -> void:
-	for b: Control in [_main_box, _options_box, _audio_box, _confirm_box]:
+	for b: Control in [_main_box, _options_box, _audio_box, _controls_box, _confirm_box]:
 		if b:
 			b.visible = false
 
@@ -126,6 +144,7 @@ func _build() -> void:
 	_build_main()
 	_build_options()
 	_build_audio()
+	_build_controls()
 	_build_confirm()
 
 
@@ -150,6 +169,9 @@ func _build_main() -> void:
 	var aud_b := _mk_btn("Audio")
 	aud_b.pressed.connect(_show_panel.bind("audio"))
 	_main_box.add_child(aud_b)
+	var ctrl_b := _mk_btn("Controls")
+	ctrl_b.pressed.connect(_show_panel.bind("controls"))
+	_main_box.add_child(ctrl_b)
 	var menu_b := _mk_btn("Exit to Menu")
 	menu_b.pressed.connect(_ask_confirm.bind("menu"))
 	_main_box.add_child(menu_b)
@@ -193,6 +215,20 @@ func _build_audio() -> void:
 	var back_b := _mk_btn("Back")
 	back_b.pressed.connect(_show_panel.bind("main"))
 	_audio_box.add_child(back_b)
+
+
+func _build_controls() -> void:
+	_controls_box = _box()
+	var l := Label.new()
+	l.text = CONTROLS_TEXT
+	l.add_theme_font_override("font", _font)
+	l.add_theme_font_size_override("font_size", 8)
+	l.add_theme_color_override("font_color", Color(0.85, 0.85, 0.92))
+	l.custom_minimum_size = Vector2(200, 0)
+	_controls_box.add_child(l)
+	var back_b := _mk_btn("Back")
+	back_b.pressed.connect(_show_panel.bind("main"))
+	_controls_box.add_child(back_b)
 
 
 func _build_confirm() -> void:
