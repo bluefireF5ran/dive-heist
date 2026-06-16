@@ -113,7 +113,9 @@ func _set_all_hidden() -> void:
 func _focus_first(box: Control) -> void:
 	for c in box.get_children():
 		if c is Button:
-			(c as Button).grab_focus()
+			# Deferred: grabbing focus the same frame a control becomes visible can
+			# fail, which breaks keyboard/gamepad navigation of the pause menu.
+			(c as Button).call_deferred("grab_focus")
 			return
 
 

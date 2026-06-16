@@ -21,6 +21,7 @@ var bullet_gravity := 0.0  # downward accel for arcing shots
 var is_explosive := false
 var explosion_radius := 26.0
 var explosion_damage := 1
+var is_mega_explosion := false  # Cannon: bigger, flashier blast (nuclear + shockwave rings)
 var split_count := 0  # fragments spawned when the bullet is consumed
 var is_fragment := false  # split fragments never split again
 
@@ -187,13 +188,55 @@ func _explode() -> void:
 		if c and c is Node2D and c.has_method("take_damage") and not (c in _hit_enemies):
 			c.take_damage(explosion_damage)
 	# VFX + feedback
+	if is_mega_explosion:
+		_mega_explosion_fx()
+	else:
+		var fx := DEATH_EXPLOSION.instantiate()
+		fx.explosion_type = "explosion"
+		fx.global_position = global_position
+		_world.call_deferred("add_child", fx)
+		SFX.play_explosion()
+		if _world.has_method("screen_shake"):
+			_world.screen_shake(2.5)
+
+
+## Cannon's signature blast: a big nuclear flash, twin expanding shockwave rings,
+## heavy shake + hitstop. Much more spectacular than a normal explosion.
+func _mega_explosion_fx() -> void:
 	var fx := DEATH_EXPLOSION.instantiate()
-	fx.explosion_type = "explosion"
+	fx.explosion_type = "nuclear"
 	fx.global_position = global_position
+	fx.scale = Vector2(2.0, 2.0)
 	_world.call_deferred("add_child", fx)
+	_spawn_shockwave_ring(Color(1.0, 0.85, 0.35, 0.9), 4.0)
+	_spawn_shockwave_ring(Color(1.0, 1.0, 0.9, 0.8), 2.5)
 	SFX.play_explosion()
 	if _world.has_method("screen_shake"):
-		_world.screen_shake(2.5)
+		_world.screen_shake(6.5)
+	if _world.has_method("hitstop"):
+		_world.hitstop(0.06)
+
+
+## An expanding, fading ring centered on the blast.
+func _spawn_shockwave_ring(color: Color, width: float) -> void:
+	var ring := Line2D.new()
+	ring.width = width
+	ring.default_color = color
+	ring.joint_mode = Line2D.LINE_JOINT_ROUND
+	var pts := PackedVector2Array()
+	for i in range(33):
+		var a := TAU * float(i) / 32.0
+		pts.append(Vector2(cos(a), sin(a)) * 8.0)
+	ring.points = pts
+	ring.z_index = 50
+	_world.add_child(ring)
+	ring.global_position = global_position
+	var target_scale := maxf(explosion_radius / 8.0 * 1.8, 4.0)
+	var tw := ring.create_tween()
+	tw.set_parallel(true)
+	tw.tween_property(ring, "scale", Vector2(target_scale, target_scale), 0.32).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	tw.tween_property(ring, "modulate:a", 0.0, 0.32)
+	tw.chain().tween_callback(ring.queue_free)
 
 
 func _bounce() -> void:

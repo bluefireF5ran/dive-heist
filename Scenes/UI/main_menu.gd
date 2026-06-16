@@ -358,7 +358,7 @@ func _build_achievements_panel() -> void:
 			unlocked_count += 1
 	var stats := Label.new()
 	stats.text = (
-		"%d / %d unlocked   -   Kills %d   Deaths %d   Best %dm"
+		"%d / %d unlocked\nKills %d   Deaths %d   Best %dm"
 		% [
 			unlocked_count,
 			Achievements.ORDER.size(),
@@ -368,17 +368,19 @@ func _build_achievements_panel() -> void:
 		]
 	)
 	stats.add_theme_font_override("font", _font)
-	stats.add_theme_font_size_override("font_size", 6)
+	stats.add_theme_font_size_override("font_size", 7)
 	stats.add_theme_color_override("font_color", Color(0.6, 0.6, 0.7))
 	stats.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	stats.size = Vector2(300, 12)
-	stats.position = Vector2(0, 26)
+	stats.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	stats.position = Vector2(0, 24)
+	stats.size = Vector2(300, 24)
+	stats.custom_minimum_size = Vector2(300, 24)
 	_ach_panel.add_child(stats)
 
 	var scroll := ScrollContainer.new()
-	scroll.position = Vector2(10, 42)
-	scroll.custom_minimum_size = Vector2(280, 340)
-	scroll.size = Vector2(280, 340)
+	scroll.position = Vector2(10, 56)
+	scroll.custom_minimum_size = Vector2(280, 326)
+	scroll.size = Vector2(280, 326)
 	_ach_panel.add_child(scroll)
 
 	var list := VBoxContainer.new()

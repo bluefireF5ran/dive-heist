@@ -32,6 +32,16 @@ func _setup_gamepad() -> void:
 	_bind_axis("move_left", JOY_AXIS_LEFT_X, -1.0)
 	_bind_axis("move_right", JOY_AXIS_LEFT_X, 1.0)
 	_bind_button("ui_cancel", JOY_BUTTON_START) # Start = pause / back
+	# Menu navigation (explicit so it works in every menu, incl. while paused).
+	_bind_button("ui_accept", JOY_BUTTON_A)
+	_bind_button("ui_up", JOY_BUTTON_DPAD_UP)
+	_bind_button("ui_down", JOY_BUTTON_DPAD_DOWN)
+	_bind_button("ui_left", JOY_BUTTON_DPAD_LEFT)
+	_bind_button("ui_right", JOY_BUTTON_DPAD_RIGHT)
+	_bind_axis("ui_up", JOY_AXIS_LEFT_Y, -1.0)
+	_bind_axis("ui_down", JOY_AXIS_LEFT_Y, 1.0)
+	_bind_axis("ui_left", JOY_AXIS_LEFT_X, -1.0)
+	_bind_axis("ui_right", JOY_AXIS_LEFT_X, 1.0)
 
 
 func _bind_button(action: String, btn: int) -> void:

@@ -265,15 +265,16 @@ const WEAPONS := {
 		"is_piercer": true,
 		"is_explosive": true,
 		"pierces_armor": true,
-		"explosion_radius": 42.0,
-		"explosion_damage": 2,
-		"damage": 3,
-		"fire_cooldown": 0.55,
-		"ammo_cost": 3,
-		"bullet_speed": 540.0,
+		"mega_explosion": true,
+		"explosion_radius": 66.0,
+		"explosion_damage": 4,
+		"damage": 5,
+		"fire_cooldown": 0.62,
+		"ammo_cost": 4,
+		"bullet_speed": 500.0,
 		"bullet_lifetime": 1.2,
-		"collision_radius": 7.0,
-		"air_retention": -210.0,
+		"collision_radius": 9.0,
+		"air_retention": -260.0,
 		"sfx_pitch_min": 0.5,
 		"sfx_pitch_max": 0.65,
 		"gun_texture": RIFLE_GUN + "3_1.png",
@@ -549,6 +550,7 @@ func _spawn_bullet(wd: Dictionary, angle_deg: float, bullet_damage: int) -> void
 	bullet.is_explosive = bool(wd.get("is_explosive", false))
 	bullet.explosion_radius = float(wd.get("explosion_radius", 26.0))
 	bullet.explosion_damage = int(wd.get("explosion_damage", 1))
+	bullet.is_mega_explosion = bool(wd.get("mega_explosion", false))
 	bullet.split_count = int(wd.get("split_count", 0))
 	var bullet_sprite: Sprite2D = bullet.get_node_or_null("Sprite2D")
 	if bullet_sprite:
