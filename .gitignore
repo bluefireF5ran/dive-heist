@@ -1,8 +1,13 @@
 # macOS metadata
 __MACOSX
 
-# Scratch
+# Scratch / local-only files
 test.txt
+Captura*
+CLAUDE-FABLE-5.md
+__pycache__/
+*.pyc
+*.bak
 
 # Claude AI tooling
 .claude/

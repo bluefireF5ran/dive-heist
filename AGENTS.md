@@ -5,7 +5,7 @@ Dive Heist — Godot 4.6 vertical-descent roguelike (GDScript).
 ## Quick start
 
 - **Run:** Open in Godot 4.6 editor, press **F5**. No test framework — manual playtesting only.
-- **Read first:** `ARCHITECTURE.md` (technical reference) and `GDD.md` (game design, Spanish).
+- **Read first:** `docs/ARCHITECTURE.md` (technical reference) and `docs/GDD.md` (game design, Spanish).
 
 ## Commands
 
@@ -32,7 +32,7 @@ main_menu.tscn → fade → world.tscn
 - **Player lookup:** `get_tree().get_first_node_in_group("player")`
 - **World access:** `get_tree().current_scene` for `screen_shake()`, `hitstop()`, adding children
 - **`world.gd`** uses `process_mode = PROCESS_MODE_ALWAYS` so hitstop timers work while tree is paused
-- **Code in English**, design docs (GDD.md) in Spanish
+- **Code in English**, design docs (docs/GDD.md) in Spanish
 - **Naming:** `snake_case` for files/variables/functions, `PascalCase` for nodes/classes
 
 ## Behavioral gotchas

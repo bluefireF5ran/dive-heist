@@ -152,13 +152,13 @@ func _ready() -> void:
 
 ## Track pools per era (prison/lab/bank rotate for variety). Factory uses a designed
 ## sequence (see _pick_track): phase 1 = Factory1, phases 2-3 = Factory2 (continuous).
-const FACTORY1 := "res://Audio/Soundrack/Factory.mp3"
-const FACTORY2 := "res://Audio/Soundrack/Factory2.mp3"
+const FACTORY1 := "res://Audio/Soundtrack/Factory.mp3"
+const FACTORY2 := "res://Audio/Soundtrack/Factory2.mp3"
 const ERA_MUSIC := {
-	"prison": ["res://Audio/Soundrack/Prison1.5.mp3", "res://Audio/Soundrack/Prison.mp3"],
+	"prison": ["res://Audio/Soundtrack/Prison1.5.mp3", "res://Audio/Soundtrack/Prison.mp3"],
 	"factory": [FACTORY1, FACTORY2],
-	"lab": ["res://Audio/Soundrack/Lab.mp3", "res://Audio/Soundrack/Lab2.mp3"],
-	"bank": ["res://Audio/Soundrack/Bank.mp3"],
+	"lab": ["res://Audio/Soundtrack/Lab.mp3", "res://Audio/Soundtrack/Lab2.mp3"],
+	"bank": ["res://Audio/Soundtrack/Bank.mp3"],
 }
 var _current_music_path := ""
 

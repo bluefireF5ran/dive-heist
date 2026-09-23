@@ -1,167 +1,162 @@
-# 🎮 Dive Heist
+<div align="center">
 
-![Godot 4.6](https://img.shields.io/badge/Godot-4.6-blue?logo=godot-engine)
-![Platform](https://img.shields.io/badge/platform-Desktop-lightgrey)
-![Status](https://img.shields.io/badge/status-Alpha-orange)
+<img src="Sprites/Active_Sprites/ui/title_dive_heist.png" alt="Dive Heist" width="360">
 
-> A vertical roguelike inspired by Downwell, set in a cyberpunk prison.  
-> Fall. Shoot. Stomp. Combo. Repeat.
+**A vertical-descent roguelike inspired by *Downwell*, set in a cyberpunk underworld.**
+*Fall. Shoot. Stomp. Combo. Repeat.*
 
----
+[![Godot 4.6](https://img.shields.io/badge/Godot-4.6-478cbf?logo=godot-engine&logoColor=white)](https://godotengine.org/)
+[![GDScript](https://img.shields.io/badge/language-GDScript-355570)](https://docs.godotengine.org/en/stable/tutorials/scripting/gdscript/)
+[![Platforms](https://img.shields.io/badge/platforms-Windows%20%7C%20Linux-lightgrey)](../../releases)
+[![License: MIT](https://img.shields.io/badge/code-MIT-green)](LICENSE)
 
-## 📖 About
+[**⬇ Download the demo**](../../releases/latest) · [Game Design Document](docs/GDD.md) · [Architecture](docs/ARCHITECTURE.md)
 
-**Dive Heist** is a vertical-descent roguelike built in [Godot 4.6](https://godotengine.org/). You play as a prisoner escaping through a deep well — shooting downward, stomping enemies, chaining air combos, and spending your loot in rest rooms between levels.
+<img src="docs/images/gameplay.gif" alt="Gameplay" width="320">
 
-**Design pillars:**
-
-- **Constant vertical action** — Free-fall + shooting + stomps = non-stop flow.
-- **Risk / reward** — Higher combos yield better rewards, but losing your combo hurts.
-- **Phased progression** — 5 themed environments with unique enemies and mechanics.
+</div>
 
 ---
 
-## 📸 Screenshots
+## About
 
-<!-- Replace the placeholders below with actual screenshots or a gameplay GIF -->
+**Dive Heist** is a fast-paced roguelike where the only way forward is **down**. You dive through a
+procedurally generated shaft, shooting beneath your feet and stomping enemies to stay airborne.
+Every kill in mid-air feeds a combo that you only cash in when you land — so each jump is a
+risk/reward decision: keep falling for a bigger payout, or touch down and bank what you have?
 
-| Gameplay | Rest Room |
-|----------|-----------|
-| ![Gameplay placeholder](https://placehold.co/320x448/1a1a2e/e0e0e0?text=Gameplay+Screenshot) | ![Rest room placeholder](https://placehold.co/320x448/1a1a2e/e0e0e0?text=Rest+Room+Screenshot) |
+Between levels you spend your loot in rest rooms (shops, treasure vaults, weapon armories) and
+pick a perk to shape your build. A rising red hazard from above keeps you from playing it safe.
 
----
+The demo contains **two complete eras — Prison and Factory — with 6 levels and 2 bosses**.
 
-## ✨ Features
+## Screenshots
 
-- **Combo system** — Chain kills in the air; land to cash in tiered rewards (HP, ammo, invincibility).
-- **5 enemy types** — Prisoners, Wardens, Drones, Spiders, and Floor Drones, each with unique behavior.
-- **Procedural levels** — Chunk-based generation that scales difficulty with depth.
-- **Rest rooms** — Shops, gem crates, and weapon pickups every 600m.
-- **Custom HUD** — Ammo bar, HP pips, combo counter, depth meter, and money display drawn with `_draw()`.
-- **SFX pool** — 12-voice AudioStreamPlayer pool managed by a global autoload singleton.
-- **Pixel art cyberpunk** — Prison tilesets, character sprites, and VFX from Craftpix and Scraper.
+<div align="center">
 
-> **Current status:** Phase 1 — Prison Alpha (all core mechanics implemented).
+| Main menu | Prison | Factory |
+|:---:|:---:|:---:|
+| <img src="docs/images/main_menu.png" width="240"> | <img src="docs/images/prison.png" width="240"> | <img src="docs/images/factory.png" width="240"> |
 
----
+</div>
 
-## 🎮 Controls
+## Features
 
-| Action | Keys |
-|--------|------|
-| Move Left | `A` or `←` |
-| Move Right | `D` or `→` |
-| Jump | `Space` / `W` / `↑` |
-| Shoot | Automatic when airborne |
-| Interact | `S` or `↓` |
+- **Gunboots-style combat** — shooting down slows your fall; stomping refills ammo and bounces you back up.
+- **Air combo system** — chain kills without landing; cash in on touchdown for HP, bonus ammo or invincibility. Alternating stomps and shots grants a *style bonus*.
+- **11 weapons** with distinct bullet behaviours: homing, piercing, ricochet, explosive, split, burst, spread and a hold-to-fire laser.
+- **16 perks** chosen after each level (Glass Cannon, Vampire, Blast Stomp, Jetpack…).
+- **2 eras, 6 levels, 2 bosses** — the Prison *Warden* and the Factory *Loader*, each with telegraphed, position-aware attack patterns.
+- **10 enemy types** — patrollers, chasers, wall-climbers, dive-bombers, bombers, chargers and armoured bruisers.
+- **Procedural generation** — chunk-based level streaming, squad formations, zone templates and difficulty that ramps within every level.
+- **Rest rooms** — Shop, Money (6 challenge variants, including mimic chests) and Weapon rooms.
+- **Urge hazard** — a rising danger zone that pushes you to keep descending.
+- **Game feel** — hitstop, screen shake, parallax backgrounds, death VFX, per-era music and 40+ SFX.
+- **Achievements**, pause menu, audio options and **full gamepad support**.
 
----
+## Controls
 
-## 🚀 Getting Started
+| Action | Keyboard | Gamepad |
+|---|---|---|
+| Move | `A` / `D` or `←` / `→` | Left stick / D-pad |
+| Jump · **Shoot** (in the air) | `Space`, `W` or `↑` | `A` / `RB` |
+| Interact / enter door | `S` or `↓` | `X` |
+| Pause / back | `Esc` | `Start` |
 
-### Prerequisites
+> Jump and shoot share the same button: on the ground it jumps, in the air it fires downwards.
 
-- [Godot 4.6](https://godotengine.org/download) or newer (Forward+ renderer)
-- Git
+## Play it
 
-### Clone & Run
+### Download
+
+Grab the latest build for **Windows** or **Linux** from the [Releases page](../../releases/latest).
+They are single-file executables — no installation needed.
+
+> On Linux, mark the file as executable first: `chmod +x DiveHeist.x86_64`.
+
+### Run from source
+
+1. Install [Godot 4.6](https://godotengine.org/download) (standard build, not .NET).
+2. Clone the repository:
+   ```bash
+   git clone https://github.com/bluefireF5ran/dive-heist.git
+   ```
+3. In the Godot Project Manager choose **Import**, select `project.godot`, and press **F5** to play.
+
+### Export
+
+Export presets for Windows and Linux are included (`export_presets.cfg`). With the Godot export
+templates installed:
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/dive-heist.git
-cd dive-heist
+godot --headless --export-release "Windows Desktop" build/windows/DiveHeist.exe
+godot --headless --export-release "Linux"           build/linux/DiveHeist.x86_64
 ```
 
-1. Open the project in Godot (`Import → select folder → Import & Edit`).
-2. Press **F5** or click the **Play** button.
-
-The main scene is [`Scenes/Levels/world.tscn`](Scenes/Levels/world.tscn), configured in [`project.godot`](project.godot).
-
----
-
-## 📁 Project Structure
+## Project structure
 
 ```
 dive-heist/
-├── project.godot              # Engine config, input mappings, autoloads
-├── GDD.md                     # Full Game Design Document (Spanish)
-├── icon.svg                   # Project icon
-│
-├── Audio/
-│   ├── SFX/                   # Sound effects (.wav)
-│   └── Soundtrack/            # Music tracks (.mp3)
-│
+├── project.godot          # Engine config, input map, autoloads
+├── export_presets.cfg     # Windows / Linux export presets
 ├── Scenes/
-│   ├── Audio/                 # SFX autoload singleton (sfx_manager.gd)
-│   ├── Collectibles/          # Money drops, gem crates
-│   ├── Enemies/               # Base enemy + 4 variants (drone, spider, floor_drone, prisoner, warden)
-│   ├── Levels/                # World scene + procedural chunk generator
-│   ├── Player/                # Player controller (movement, shooting, combos)
-│   ├── Rooms/                 # Rest room, shop items, weapon pickups, doors
-│   ├── UI/                    # HUD — ammo bar, HP, combo, depth, money
-│   └── Weapons/               # Bullet + muzzle flash
-│
-└── Sprites/
-    ├── Craftpix/              # Prison tileset, backgrounds, explosions, guns, characters
-    └── Scraper/               # Cyberpunk assets — drones, prisoners, prison tiles
+│   ├── Player/            # Player controller: movement, weapons, combo, perks
+│   ├── Enemies/           # Base enemy, prison & factory enemies, bosses
+│   ├── Levels/            # World, chunk generator, platforms, hazards
+│   ├── Rooms/             # Shop / Money / Weapon rest rooms and doors
+│   ├── Weapons/           # Bullet types and muzzle flash
+│   ├── Collectibles/      # Money and gem crates
+│   ├── UI/                # Main menu, HUD, pause menu, perk selection, toasts
+│   ├── VFX/               # Explosions, particles, text popups
+│   ├── Systems/           # Autoloads: achievements, settings, gamepad bindings
+│   └── Audio/             # SFX autoload (pooled AudioStreamPlayers)
+├── Sprites/Active_Sprites/ # Every sprite/font the game loads (see MANIFEST.md)
+├── Audio/
+│   ├── SFX/               # Sound effects
+│   └── Soundtrack/        # Music, one pool per era
+└── docs/
+    ├── GDD.md             # Game Design Document (Spanish)
+    ├── ARCHITECTURE.md    # Technical reference: scripts, signals, collision, generation
+    ├── pitch.pdf          # Project pitch
+    └── plans/             # Sprint plans and elevator pitch
 ```
 
----
+## Technical highlights
 
-## ⚙️ Game Mechanics (Summary)
+- **Chunk streaming** — the world is spawned and freed in chunks around the camera, which only ever moves down.
+- **Signal-driven architecture** — gameplay systems communicate via signals connected in code; global services (`SFX`, `Achievements`, `Settings`) are autoloads.
+- **Custom-drawn HUD** — ammo bar, HP pips, combo meter and perk icons rendered with `_draw()`.
+- **Hitstop without freezing the game loop** — the world pauses the tree while its own timers keep running (`PROCESS_MODE_ALWAYS`).
+- **Linted code** — GDScript is checked with [`gdtoolkit`](https://github.com/Scony/godot-gdscript-toolkit):
+  ```bash
+  pip install gdtoolkit
+  gdlint Scenes/
+  ```
 
-### Movement & Combat
-- **Horizontal movement** at 130 px/s with gravity at 800 px/s².
-- **Shoot downward** only while airborne (0.15s cooldown, 8 max ammo, refills on landing or stomps).
-- **Stomp** enemies by landing on them (6 damage, ammo refill, bounce).
+See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for the full technical reference and
+[`docs/GDD.md`](docs/GDD.md) for the complete game design (in Spanish).
 
-### Combo System
-Kill enemies in the air without touching the ground. Land to cash in:
+## Roadmap
 
-| Tier | Kills | Reward |
-|------|-------|--------|
-| 0 | 1–7 | Points only |
-| 1 | 8–14 | +1 HP |
-| 2 | 15–24 | +1 HP, +3 ammo |
-| 3 | 25+ | +1 HP, +3 ammo, 2s invincibility |
+- [x] Era 1 — Prison (3 levels + Warden boss)
+- [x] Era 2 — Factory (3 levels + Loader boss)
+- [ ] Era 3 — Laboratory
+- [ ] Era 4 — Bank
+- [ ] Era 5 — Bank escape
 
-Alternating between stomps and shots grants a **style bonus** (+1 kill to combo).
+## Credits
 
-### Rest Rooms
-Every 600m a rest room appears with a **gem crate** (12 coins), a **shop** (heal, ammo up, armor), and a **weapon pickup**.
+**Design & programming:** Francisco ([@bluefireF5ran](https://github.com/bluefireF5ran))
 
-> For full details see the [Game Design Document (GDD.md)](GDD.md).
+**Art:** pixel-art asset packs from [Craftpix](https://craftpix.net) (tilesets, characters, bosses,
+drones, explosions, guns, UI font) and Scraper cyberpunk packs. Used under their respective licenses.
 
----
+**Audio:** music and sound effects generated with AI audio tools for this project.
 
-## 🎨 Assets & Attribution
+**Engine:** [Godot Engine](https://godotengine.org).
 
-| Asset | Source | Usage |
-|-------|--------|-------|
-| Prison Tileset | [Craftpix](https://craftpix.net) — Prison Tileset Pixel Art | Phase 1 environment |
-| Character Sprites | [Craftpix](https://craftpix.net) — Cyberpunk characters | NPCs, trader |
-| Explosion VFX | [Craftpix](https://craftpix.net) — Free Pixel Art Explosions | Death effects |
-| Gun Sprites | [Craftpix](https://craftpix.net) — Free Guns Pack | Weapon visuals |
-| Drones, Prisoners, Tiles | Scraper — Cyberpunk Assets | Enemy sprites, environment |
-| Soundtrack | `Audio/Soundtrack/Prison1.5.mp3` | Background music |
+## License
 
----
-
-## 📚 Documentation
-
-- [**GDD.md**](GDD.md) — Full Game Design Document (in Spanish) covering vision, mechanics, enemies, audio, HUD, architecture, backlog, and conventions.
-
----
-
-## 📄 License
-
-<!-- Add your license here. For example:
-This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
--->
-
-TODO: Add license information.
-
----
-
-<p align="center">
-  Built with ❤️ and <a href="https://godotengine.org">Godot Engine</a>
-</p>
+The **source code** is released under the [MIT License](LICENSE).
+Art and audio assets are **not** covered by the MIT license and remain under their
+original licenses — see [Credits](#credits).

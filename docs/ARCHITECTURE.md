@@ -793,7 +793,7 @@ var difficulty := clampf(current_depth / 3000.0, 0.0, 1.0)
 
 1. **Duplicate** an existing `ShopItem` node in `shop_stance.tscn` (or add via code).
 2. **Set exports:** `item_id`, `price`, `description`.
-3. **Add effect** in [`shop_item.gd`](Scenes/Rooms/shop_item.gd) `_apply_item()`:
+3. **Add effect** in [`shop_item.gd`](../Scenes/Rooms/shop_item.gd) `_apply_item()`:
    ```gdscript
    match item_id:
        # ... existing items ...
@@ -805,7 +805,7 @@ var difficulty := clampf(current_depth / 3000.0, 0.0, 1.0)
 
 ### 6.3 Add a New Weapon/Pickup Type
 
-1. **Add to enum** in [`weapon_pickup.gd`](Scenes/Rooms/weapon_pickup.gd):
+1. **Add to enum** in [`weapon_pickup.gd`](../Scenes/Rooms/weapon_pickup.gd):
    ```gdscript
    enum PickupType { LIFE, ENERGY, SHIELD }
    ```
@@ -821,7 +821,7 @@ var difficulty := clampf(current_depth / 3000.0, 0.0, 1.0)
 ### 6.4 Add a New SFX
 
 1. **Place .wav file** in `Audio/SFX/`.
-2. **Add preload** in [`sfx_manager.gd`](Scenes/Audio/sfx_manager.gd):
+2. **Add preload** in [`sfx_manager.gd`](../Scenes/Audio/sfx_manager.gd):
    ```gdscript
    var new_sound: AudioStream = preload("res://Audio/SFX/new_sound.wav")
    ```
@@ -845,8 +845,8 @@ var difficulty := clampf(current_depth / 3000.0, 0.0, 1.0)
 
 ### 6.6 Add a New HUD Element
 
-1. **Add state variable** to [`ammo_hud.gd`](Scenes/UI/ammo_hud.gd) and a setter method.
-2. **Add draw call** in [`ammo_bar.gd`](Scenes/UI/ammo_bar.gd) `_draw()`:
+1. **Add state variable** to [`ammo_hud.gd`](../Scenes/UI/ammo_hud.gd) and a setter method.
+2. **Add draw call** in [`ammo_bar.gd`](../Scenes/UI/ammo_bar.gd) `_draw()`:
    ```gdscript
    func _draw() -> void:
        # ... existing draws ...
